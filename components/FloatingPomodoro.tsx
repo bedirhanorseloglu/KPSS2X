@@ -560,48 +560,65 @@ export default function FloatingPomodoro() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.2 }}
-                    className="space-y-6"
+                    className="space-y-4"
                   >
-                    <div className="mb-6">
-                      <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 mb-1">Ayarlar</h3>
+                    <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-slate-100 dark:border-slate-700/60">
+                      <AppleEmoji emoji="⚙️" size={20} />
+                      <h3 className="text-base font-black text-slate-800 dark:text-white tracking-tight">Ayarlar</h3>
                     </div>
 
-                    <div className="space-y-6">
-                      <div>
-                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">
-                          Ödül Oranı Çarpanı (dk)
+                    <div className="space-y-4">
+                      {/* Ödül Oranı Çarpanı */}
+                      <div className="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs">
+                        <label className="text-xs font-black text-slate-700 dark:text-slate-200 mb-2 flex items-center justify-between">
+                          <span className="flex items-center gap-1.5">
+                            <AppleEmoji emoji="⚡" size={16} />
+                            <span>Ödül Oranı Çarpanı (dk)</span>
+                          </span>
                         </label>
                         <input 
                           type="number" 
                           value={focusDuration}
                           onChange={(e) => setFocusDuration(Number(e.target.value))}
-                          className="w-full bg-slate-100 dark:bg-slate-900 border-0 rounded-xl px-4 py-2.5 text-slate-800 dark:text-slate-100 font-black focus:ring-2 focus:ring-emerald-500/50"
+                          className="w-full bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 rounded-xl px-4 py-2.5 text-slate-800 dark:text-white font-mono font-black text-base outline-none focus:border-[#1cb0f6] shadow-2xs transition-all"
                           min="1"
                         />
-                        <p className="text-[9px] text-slate-400 mt-1 ml-1 leading-tight">Bu süreye karşılık yandaki mola kazanılır (Örn: {focusDuration} dk çalış = {breakDuration} dk mola hak et)</p>
+                        <p className="text-[10px] font-bold text-slate-400 mt-2 leading-tight">
+                          Bu süreye karşılık yandaki mola kazanılır (Örn: {focusDuration} dk çalış = {breakDuration} dk mola hak et)
+                        </p>
                       </div>
                       
-                      <div>
-                        <label className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 mb-3">
-                          <span className="flex items-center gap-2"><Coffee className="w-4 h-4 text-orange-500" /> Mola Süresi</span>
-                          <span className="text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2.5 py-1 rounded-md text-[10px]">{breakDuration} dk</span>
-                        </label>
+                      {/* Mola Süresi Slider */}
+                      <div className="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs">
+                        <div className="flex items-center justify-between text-xs font-black text-slate-700 dark:text-slate-200 mb-3">
+                          <span className="flex items-center gap-2">
+                            <AppleEmoji emoji="☕" size={18} />
+                            <span>Mola Süresi</span>
+                          </span>
+                          <span className="bg-[#fff8ed] dark:bg-[#ff9500]/20 text-[#ff9500] border-2 border-b-2 border-[#ff9500]/40 px-3 py-1 rounded-xl text-xs font-mono font-black shadow-2xs">
+                            {breakDuration} dk
+                          </span>
+                        </div>
                         <input 
                           type="range" 
                           min="1" max="30" step="1"
                           value={breakDuration}
                           onChange={(e) => saveSettings(focusDuration, parseInt(e.target.value))}
-                          className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                          className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#ff9500]"
                         />
                       </div>
 
-                      <div>
-                        <label className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 mb-3">
-                          <span className="flex items-center gap-2"><Target className="w-4 h-4 text-blue-500" /> Günlük Hedef</span>
-                          <span className="text-blue-500 bg-blue-50 dark:bg-blue-500/10 px-2.5 py-1 rounded-md text-[10px]">
-                             {Math.floor(dailyGoalMinutes/60) > 0 ? `${Math.floor(dailyGoalMinutes/60)}s ` : ''}{dailyGoalMinutes%60}dk
+                      {/* Günlük Hedef Slider */}
+                      <div className="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs">
+                        <div className="flex items-center justify-between text-xs font-black text-slate-700 dark:text-slate-200 mb-3">
+                          <span className="flex items-center gap-2">
+                            <AppleEmoji emoji="🎯" size={18} />
+                            <span>Günlük Hedef</span>
                           </span>
-                        </label>
+                          <span className="bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 text-[#1cb0f6] border-2 border-b-2 border-[#1cb0f6]/40 px-3 py-1 rounded-xl text-xs font-mono font-black shadow-2xs">
+                            {Math.floor(dailyGoalMinutes/60) > 0 ? `${Math.floor(dailyGoalMinutes/60)}s ` : ''}{dailyGoalMinutes%60}dk
+                          </span>
+                        </div>
                         <input 
                           type="range" 
                           min="30" max="600" step="30"
@@ -610,16 +627,18 @@ export default function FloatingPomodoro() {
                              setDailyGoalMinutes(parseInt(e.target.value));
                              localStorage.setItem("pomodoro_daily_goal", e.target.value);
                           }}
-                          className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                          className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#1cb0f6]"
                         />
                       </div>
                     </div>
 
                     <button 
+                      type="button"
                       onClick={() => setShowSettings(false)}
-                      className="w-full mt-8 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-lg shadow-slate-900/20 dark:shadow-white/10"
+                      className="w-full mt-6 py-3.5 bg-[#1cb0f6] hover:bg-[#1899d6] text-white font-black text-xs uppercase tracking-widest rounded-2xl border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] active:translate-y-0.5 shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
-                      Bitti
+                      <AppleEmoji emoji="✅" size={18} />
+                      <span>BİTTİ</span>
                     </button>
                   </motion.div>
                 ) : (
