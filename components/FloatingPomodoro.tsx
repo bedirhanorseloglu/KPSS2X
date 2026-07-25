@@ -438,30 +438,33 @@ export default function FloatingPomodoro() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-5"
+                    className="absolute inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4"
                   >
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 border-b-[6px] shadow-2xl w-full transform transition-all">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl w-full transform transition-all">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#ff4b4b]/10 flex items-center justify-center shrink-0 border-2 border-[#ff4b4b]/20">
-                          <RotateCcw className="w-6 h-6 text-[#ff4b4b]" />
+                        <div className="w-12 h-12 rounded-2xl bg-[#ffebeb] dark:bg-[#ff4b4b]/20 border-2 border-b-4 border-[#ff4b4b] text-[#ff4b4b] flex items-center justify-center shrink-0 shadow-2xs">
+                          <AppleEmoji emoji={mode === "stopwatch" ? "⏱️" : "☕"} size={24} />
                         </div>
-                        <div className="pt-1">
-                          <h4 className="text-base font-black text-slate-700 dark:text-slate-100 mb-1.5 leading-tight">
+                        <div className="pt-0.5">
+                          <h4 className="text-base font-black text-slate-800 dark:text-white mb-1 tracking-tight leading-tight">
                              {mode === "stopwatch" ? "Dersi bitirmek ister misin?" : "Seansı İptal Et?"}
                           </h4>
-                          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 leading-relaxed">
+                          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 leading-relaxed">
                              {mode === "stopwatch" ? "Mevcut çalışmanız sonlandırılıp molaya geçilecek." : "Mevcut seansınız henüz tamamlanmadı. Yeni moda geçerseniz bu seans iptal edilecek."}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 mt-6">
                         <button 
+                          type="button"
                           onClick={() => setPendingMode(null)}
-                          className="flex-1 py-3.5 px-2 text-[13px] font-black text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 border-b-4 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all active:border-b-2 active:translate-y-[2px]"
+                          className="flex-1 py-3.5 px-3 bg-white dark:bg-slate-700 text-slate-700 dark:text-white font-black text-xs uppercase tracking-wider rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 dark:border-b-slate-700 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                         >
-                          {mode === "stopwatch" ? "Derse Devam Et 🚀" : "Vazgeç"}
+                          <span>{mode === "stopwatch" ? "Derse Devam Et" : "Vazgeç"}</span>
+                          {mode === "stopwatch" && <AppleEmoji emoji="🚀" size={16} />}
                         </button>
                         <button 
+                          type="button"
                           onClick={() => {
                             if (mode === "stopwatch" && pendingMode === "break") {
                                 const workedMins = Math.floor(timeLeft / 60);
@@ -475,11 +478,75 @@ export default function FloatingPomodoro() {
                             if (pendingMode) changeMode(pendingMode);
                             setPendingMode(null);
                           }}
-                          className="flex-1 py-3.5 px-2 text-[13px] font-black text-white bg-[#ff9600] rounded-2xl border-2 border-[#cc7800] border-b-4 hover:bg-[#e68700] transition-all active:border-b-2 active:translate-y-[2px]"
+                          className="flex-1 py-3.5 px-3 bg-[#ff9500] hover:bg-[#e08400] text-white font-black text-xs uppercase tracking-wider rounded-2xl border-2 border-b-4 border-[#ff9500] border-b-[#e08400] shadow-xs active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                         >
-                          {mode === "stopwatch" ? "Molaya Çık ☕" : "Yine de Geç"}
+                          <span>{mode === "stopwatch" ? "Molaya Çık" : "Yine de Geç"}</span>
+                          {mode === "stopwatch" && <AppleEmoji emoji="☕" size={16} />}
                         </button>
                       </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {earnedBreakData && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="absolute inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4"
+                  >
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl w-full text-center flex flex-col items-center">
+                       <motion.div 
+                         initial={{ scale: 0, y: 10 }}
+                         animate={{ scale: 1, y: 0 }}
+                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                         className="w-20 h-20 rounded-2xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] flex items-center justify-center shadow-2xs mb-4"
+                       >
+                         <AppleEmoji emoji="💎" size={36} />
+                       </motion.div>
+                       
+                       <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Harika İş!</h3>
+                       
+                       <div className="text-sm font-bold text-slate-500 dark:text-slate-400 leading-relaxed max-w-xs mb-6">
+                          Tam <span className="font-mono font-black text-slate-800 dark:text-white bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-600">{earnedBreakData.workedMins} dk</span> odaklandınız. 
+                          <div className="mt-2.5 mb-1 flex items-center justify-center gap-1.5">
+                            <span className="px-3 py-1 rounded-xl bg-[#58cc02] text-white font-black font-mono border-2 border-b-2 border-[#46a302] shadow-2xs text-xs uppercase tracking-wider inline-flex items-center gap-1.5">
+                              <AppleEmoji emoji="☕" size={16} />
+                              <span>{earnedBreakData.earnedMins} DAKİKA</span>
+                            </span>
+                          </div>
+                          <span>mola kazandınız!</span>
+                       </div>
+
+                       <div className="w-full space-y-2.5">
+                         <button 
+                           type="button"
+                           onClick={() => {
+                             changeMode("break");
+                             setTimeLeft(earnedBreakData.earnedMins * 60);
+                             setEarnedBreakData(null);
+                             lastTickRef.current = Date.now();
+                             setIsActive(true);
+                           }}
+                           className="w-full py-3.5 bg-[#58cc02] hover:bg-[#46a302] text-white font-black text-xs uppercase tracking-widest rounded-2xl border-2 border-b-4 border-[#58cc02] border-b-[#46a302] active:translate-y-0.5 shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2"
+                         >
+                           <AppleEmoji emoji="☕" size={16} />
+                           <span>ÖDÜL MOLASINI BAŞLAT</span>
+                         </button>
+                         
+                         <button 
+                           type="button"
+                           onClick={() => {
+                             changeMode("break");
+                             setEarnedBreakData(null);
+                           }}
+                           className="w-full py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 font-black text-xs uppercase tracking-widest rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 dark:border-b-slate-700 active:translate-y-0.5 shadow-2xs transition-all cursor-pointer"
+                         >
+                           STANDART MOLA ({breakDuration} DK)
+                         </button>
+                       </div>
                     </div>
                   </motion.div>
                 )}
@@ -603,66 +670,6 @@ export default function FloatingPomodoro() {
                          </div>
                       </div>
 
-                      <AnimatePresence>
-                        {earnedBreakData && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 20 }}
-                            className="absolute top-[108px] inset-x-0 bottom-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center border-t-2 border-emerald-50 dark:border-slate-800"
-                          >
-                             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                                <div className="absolute -top-[20%] -left-[20%] w-[140%] h-[140%] bg-[radial-gradient(circle,rgba(52,211,153,0.15)_0%,transparent_60%)] animate-[spin_10s_linear_infinite]" />
-                             </div>
-
-                             <motion.div 
-                               initial={{ scale: 0, y: 20 }}
-                               animate={{ scale: 1, y: 0 }}
-                               transition={{ type: "spring", bounce: 0.6, delay: 0.4 }}
-                               className="relative z-10 w-20 h-20 mb-5"
-                             >
-                               <div className="absolute inset-0 bg-emerald-200 dark:bg-emerald-500/30 rounded-full animate-ping opacity-50" />
-                               <div className="relative w-full h-full bg-gradient-to-tr from-emerald-400 to-emerald-300 rounded-3xl rotate-12 flex items-center justify-center shadow-xl shadow-emerald-500/30 border-4 border-white dark:border-slate-800">
-                                  <span className="text-3xl -rotate-12 drop-shadow-md">💎</span>
-                               </div>
-                             </motion.div>
-                             
-                             <h3 className="relative z-10 text-xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Harika İş!</h3>
-                             
-                             <p className="relative z-10 text-xs text-slate-500 dark:text-slate-400 font-medium mb-6 leading-relaxed px-2">
-                                Tam <strong className="text-slate-800 dark:text-white bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md mx-1 shadow-sm">{earnedBreakData.workedMins} dk</strong> odaklandınız. 
-                                Karşılığında <br/>
-                                <strong className="text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-500/20 px-1.5 py-0.5 rounded-md mx-1 shadow-sm mt-1 inline-block">{earnedBreakData.earnedMins} DAKİKA</strong> mola kazandınız! ☕
-                             </p>
-
-                             <div className="relative z-10 w-full space-y-2">
-                               <button 
-                                 onClick={() => {
-                                   changeMode("break");
-                                   setTimeLeft(earnedBreakData.earnedMins * 60);
-                                   setEarnedBreakData(null);
-                                   lastTickRef.current = Date.now();
-                                   setIsActive(true);
-                                 }}
-                                 className="w-full group relative py-3 bg-emerald-500 text-white text-xs font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-500/30 overflow-hidden"
-                               >
-                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-black/10" />
-                                 <span className="relative drop-shadow-sm">Ödül Molasını Başlat</span>
-                               </button>
-                               <button 
-                                 onClick={() => {
-                                   changeMode("break");
-                                   setEarnedBreakData(null);
-                                 }}
-                                 className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200/50 dark:border-slate-700/50"
-                               >
-                                 Standart Mola ({breakDuration} dk)
-                               </button>
-                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
 
                     {/* 3D Mode Tabs */}
                     <div className="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-2xl mb-8 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs gap-1.5">
