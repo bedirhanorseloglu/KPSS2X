@@ -36,7 +36,7 @@ export default function ExamSimulatorPage() {
   const [timeLeft, setTimeLeft] = useState(130 * 60);
   const [showExitWarning, setShowExitWarning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [realStartTimeSeconds, setRealStartTimeSeconds] = useState(36900); // 10:15 default
 
   const { user } = useAuth();
@@ -500,22 +500,22 @@ export default function ExamSimulatorPage() {
             {hours > 0 && `${formatDigit(hours)}:`}{formatDigit(mins)}:{formatDigit(secs)}
           </div>
           
-          <div className="mt-4 px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs">
+          <div className={`mt-4 px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest border-2 border-b-2 shadow-2xs ${isDarkMode ? 'bg-slate-900 text-slate-200 border-slate-800' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
             %{Math.floor(progressPercentage)} Tamamlandı
           </div>
         </div>
 
         {/* Real Exam Timeline Card */}
-        <div className="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs flex items-center justify-between">
+        <div className={`w-full max-w-md p-6 rounded-3xl border-2 border-b-4 flex items-center justify-between transition-colors duration-500 ${isDarkMode ? 'bg-slate-900 border-slate-800 text-white shadow-xl' : 'bg-white border-slate-200 border-b-slate-300 text-slate-800 shadow-xs'}`}>
           <div className="text-center">
             <div className="text-[10px] uppercase tracking-widest font-black mb-1 text-slate-400">Başlangıç</div>
-            <div className="text-base font-black text-slate-800 dark:text-slate-200">
+            <div className={`text-base font-black ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
               {formatDigit(Math.floor(realStartTimeSeconds / 3600) % 24)}:{formatDigit(Math.floor(realStartTimeSeconds % 3600 / 60))}
             </div>
           </div>
           
           <div className="flex-1 flex items-center px-4">
-            <div className="h-2 w-full rounded-full relative overflow-hidden bg-slate-100 dark:bg-slate-700">
+            <div className={`h-2 w-full rounded-full relative overflow-hidden ${isDarkMode ? 'bg-slate-800' : 'bg-slate-100'}`}>
               <div 
                 className="absolute top-0 left-0 h-full bg-[#1cb0f6] transition-all duration-1000"
                 style={{ width: `${progressPercentage}%` }}
@@ -525,7 +525,7 @@ export default function ExamSimulatorPage() {
 
           <div className="text-center">
             <div className="text-[10px] uppercase tracking-widest font-black mb-1 text-slate-400">Bitiş</div>
-            <div className="text-base font-black text-slate-800 dark:text-slate-200">
+            <div className={`text-base font-black ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
               {formatDigit(Math.floor((realStartTimeSeconds + customDuration * 60) / 3600) % 24)}:{formatDigit(Math.floor((realStartTimeSeconds + customDuration * 60) % 3600 / 60))}
             </div>
           </div>

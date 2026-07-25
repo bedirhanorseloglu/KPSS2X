@@ -1,335 +1,606 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Target, Trophy, TrendingUp, Sparkles, BookOpen, Clock, ShieldCheck, Users } from "lucide-react";
-import { useState, useRef } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import AppleEmoji from "@/components/AppleEmoji";
+import { estimateP3Score, estimateP1Score, estimateP2Score } from "@/lib/denemeUtils";
+
+/* ── Display Font Name ── */
+const SERIF = "'Instrument Serif', serif";
+
+/* ── Subject Brand Colors (Rule #3) ── */
+const SUBJECTS = [
+  { title: "Türkçe",           emoji: "📘", color: "#1cb0f6", q: 30 },
+  { title: "Matematik",        emoji: "🔢", color: "#af52de", q: 30 },
+  { title: "Tarih",            emoji: "🏛️", color: "#ff9500", q: 27 },
+  { title: "Coğrafya",         emoji: "🗺️", color: "#58cc02", q: 18 },
+  { title: "Vatandaşlık",      emoji: "⚖️", color: "#5856d6", q: 9  },
+  { title: "Güncel Bilgiler",  emoji: "🌍", color: "#ff2d55", q: 6  },
+];
+
+/* ── Metrics Strip Data ── */
+const METRICS = [
+  { value: "14,290+",   label: "soru çözüldü" },
+  { value: "R² 0.983",  label: "tahmin doğruluğu" },
+  { value: "2,500+",    label: "aktif aday" },
+  { value: "11",        label: "ÖSYM belgesiyle eğitilmiş" },
+];
+
+/* ── Feature Showcase ── */
+const FEATURES = [
+  {
+    tag: "Puan Tahmini",
+    tagColor: "#1cb0f6",
+    title: "Gerçek ÖSYM verileriyle kalibre edilmiş",
+    body: "11 onaylanmış ÖSYM Lisans sınav belgesinden türetilen OLS regresyon modeli, GY ve GK netlerinden P3 puanını R² = 0.983 doğrulukla tahmin eder.",
+    image: "/hero_3d_dashboard.png",
+  },
+  {
+    tag: "Gemini AI Koç",
+    tagColor: "#af52de",
+    title: "Zayıf noktalarını yapay zeka tespit etsin",
+    body: "Google Gemini 3.5 destekli kişisel koçun deneme sonuçlarını analiz eder, eksik konularını belirler ve kişiselleştirilmiş çalışma stratejisi sunar.",
+    image: "/ai_coach_3d_mockup.png",
+  },
+  {
+    tag: "ÖSYM Odak Odası",
+    tagColor: "#58cc02",
+    title: "Gerçek sınav ortamını simüle et",
+    body: "130 dakikalık geri sayım, optik form balonları ve ortam ses modları ile sınav günündeki konsantrasyonu bugünden deneyimle.",
+    image: "/osym_focus_3d_mockup.png",
+  },
+  {
+    tag: "Elmas Lig",
+    tagColor: "#ff9500",
+    title: "Rakiplerinin önüne geç, motivasyonunu koru",
+    body: "Haftalık liderlik tablosu, XP sistemi ve seri ödülleriyle çalışmayı bir rekabete dönüştür. Düştüğün yerde yeniden başla.",
+    image: "/badges_3d_collection.png",
+  },
+];
 
 export default function LandingPage() {
   const { signInWithGoogle } = useAuth();
-  const [isHovered, setIsHovered] = useState(false);
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
 
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacityFade = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15
-      }
-    }
-  };
-
-  const itemAnim = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
-  };
+  /* ── Score Predictor State ── */
+  const [gyNet, setGyNet] = useState(48);
+  const [gkNet, setGkNet] = useState(42);
+  const p3 = estimateP3Score(gyNet, gkNet);
+  const p1 = estimateP1Score(gyNet, gkNet);
+  const p2 = estimateP2Score(gyNet, gkNet);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-slate-50 font-sans selection:bg-accent/20 overflow-hidden">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200/50 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-emerald-400 text-white flex items-center justify-center text-lg font-black shadow-lg shadow-accent/20">
-              K
-            </div>
-            <span className="text-xl font-black tracking-tight text-slate-800">
-              KPSS 2026
+    <>
+      {/* ── Google Font: Instrument Serif ── */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet"
+      />
+
+      <div className="relative min-h-screen bg-[#020c1b] text-white selection:bg-[#1cb0f6]/30 overflow-x-hidden">
+
+        {/* ════════════════════════════════════════════════════════════
+            1. FULLSCREEN VIDEO BACKGROUND
+        ════════════════════════════════════════════════════════════ */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="fixed inset-0 w-full h-full object-cover z-0"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4"
+        />
+        {/* Dark cinematic overlay */}
+        <div className="fixed inset-0 z-[1] landing-overlay" />
+
+        {/* ════════════════════════════════════════════════════════════
+            2. LIQUID-GLASS FLOATING NAVIGATION
+        ════════════════════════════════════════════════════════════ */}
+        <nav className="relative z-10 flex items-center justify-between px-6 sm:px-8 py-5 max-w-7xl mx-auto anim-rise">
+          {/* Logo */}
+          <div
+            className="flex items-center gap-2.5 cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <span
+              className="text-[28px] tracking-tight text-white"
+              style={{ fontFamily: SERIF }}
+            >
+              KPSS 2026<sup className="text-[10px] ml-0.5 opacity-50">®</sup>
             </span>
           </div>
+
+          {/* Nav Links */}
+          <div className="hidden md:flex items-center gap-7 text-[13px] tracking-wide">
+            <a href="#ozellikler" className="text-white/50 hover:text-white transition-colors">Özellikler</a>
+            <a href="#puan"       className="text-white/50 hover:text-white transition-colors">Puan Tahmini</a>
+            <a href="#dersler"    className="text-white/50 hover:text-white transition-colors">Dersler</a>
+            <a href="#sss"        className="text-white/50 hover:text-white transition-colors">SSS</a>
+          </div>
+
+          {/* CTA */}
           <button
             onClick={signInWithGoogle}
-            className="hidden sm:flex items-center gap-2 bg-slate-900 text-white px-6 py-2.5 rounded-full font-black hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-900/20"
+            type="button"
+            className="liquid-glass rounded-full px-6 py-2.5 text-[13px] text-white hover:scale-[1.03] transition-transform cursor-pointer"
           >
-            Giriş Yap / Kayıt Ol
+            Başla
           </button>
-        </div>
-      </nav>
+        </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center">
-        {/* Floating Background Shapes */}
-        <motion.div 
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }} 
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 left-[10%] w-32 h-32 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" 
-        />
-        <motion.div 
-          animate={{ y: [0, 30, 0], rotate: [0, -10, 0] }} 
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-40 right-[15%] w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" 
-        />
-        
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/10 blur-[100px] rounded-full pointer-events-none" />
-        
-        <motion.div 
-          style={{ y: heroY, opacity: opacityFade }}
-          className="max-w-4xl mx-auto text-center relative z-10"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", damping: 20 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200/50 shadow-sm text-sm font-black text-slate-600 mb-8 hover:shadow-md transition-shadow cursor-default"
-          >
-            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-            Türkiye'nin En Modern KPSS Platformu
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, type: "spring", damping: 25 }}
-            className="text-5xl sm:text-7xl font-black text-slate-900 tracking-tight leading-[1.1] mb-8"
-          >
-            KPSS'ye Hazırlanmanın <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-emerald-400 inline-block hover:scale-105 transition-transform cursor-default">
-              Oyunlaştırılmış
-            </span> Yolu.
-          </motion.h1>
+        {/* ════════════════════════════════════════════════════════════
+            3. CINEMATIC HERO
+        ════════════════════════════════════════════════════════════ */}
+        <section className="relative z-10 flex flex-col items-center text-center px-6 pt-28 sm:pt-36 pb-32 sm:pb-44">
+          {/* Badge */}
+          <div className="anim-rise mb-10">
+            <span className="liquid-glass rounded-full px-5 py-2 text-[11px] sm:text-xs tracking-widest uppercase text-white/70 font-medium">
+              2026 KPSS Lisans · AI Destekli Platform
+            </span>
+          </div>
 
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg sm:text-xl text-slate-500 font-medium max-w-2xl mx-auto mb-12 leading-relaxed"
+          {/* Headline */}
+          <h1
+            className="anim-rise-d1 text-[clamp(2.5rem,7vw,6.5rem)] leading-[0.95] tracking-[-2.5px] max-w-5xl font-normal"
+            style={{ fontFamily: SERIF }}
           >
-            Sıradan takip programlarını unutun. Deneme analizleri, rekabetçi liderlik tabloları ve oyunlaştırılmış hedeflerle çalışmayı bağımlılık haline getirin.
-          </motion.p>
+            Hedefini belirle.{" "}
+            <em className="not-italic text-white/40">Sessizce çalış.</em>{" "}
+            <br className="hidden sm:inline" />
+            Derece yap.
+          </h1>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-          >
+          {/* Subtitle */}
+          <p className="anim-rise-d2 text-white/45 text-base sm:text-lg max-w-2xl mt-8 leading-relaxed font-normal">
+            Gerçek ÖSYM sınav verileriyle eğitilmiş yapay zeka destekli puan tahmini, 
+            kişiselleştirilmiş çalışma stratejisi ve oyunlaştırılmış rekabet sistemiyle
+            2026 KPSS&apos;de fark yarat.
+          </p>
+
+          {/* Hero CTAs */}
+          <div className="anim-rise-d3 flex flex-col sm:flex-row items-center gap-4 mt-12">
             <button
               onClick={signInWithGoogle}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              className="w-full sm:w-auto relative group overflow-hidden rounded-full bg-accent text-white px-8 py-4 font-black text-lg transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-15px_rgba(59,130,246,0.5)]"
+              type="button"
+              className="liquid-glass rounded-full px-14 py-5 text-base text-white hover:scale-[1.03] transition-transform cursor-pointer"
             >
-              <div className={`absolute inset-0 bg-white/20 transition-transform duration-300 ${isHovered ? 'translate-x-0' : '-translate-x-full'}`} />
-              <span className="relative flex items-center gap-2">
-                Hemen Ücretsiz Başla <TrendingUp className="w-5 h-5" />
-              </span>
+              Hemen Başla
             </button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 100, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-            className="relative mx-auto max-w-5xl group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-50 z-10 h-full w-full pointer-events-none opacity-80" />
-            <motion.img 
-              whileHover={{ y: -10, rotateX: 2 }}
-              src="/landing_hero.png" 
-              alt="KPSS Dashboard Mockup" 
-              className="w-full h-auto rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] border-4 border-white/80 object-cover transform-gpu transition-all duration-700" 
-            />
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Visual Showcase Section */}
-      <section className="py-20 bg-slate-50 overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-400/10 blur-[100px] rounded-full pointer-events-none" />
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 relative">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative z-10"
+            <a
+              href="#puan"
+              className="text-white/40 hover:text-white text-sm flex items-center gap-2 transition-colors"
             >
-              <img src="/landing_leaderboard.png" alt="Leaderboard Gamification" className="w-full rounded-[2rem] shadow-2xl border-4 border-white rotate-2 hover:rotate-0 transition-transform duration-500" />
-            </motion.div>
+              Puanını hesapla <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
-          <div className="order-1 md:order-2 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 font-black text-sm">
-              <Trophy className="w-4 h-4" /> Rekabet Et, Yüksel
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">Oyunlaştırma ile Çalışmak Artık Zevkli.</h2>
-            <p className="text-lg text-slate-500 font-medium leading-relaxed">
-              Sadece netlerini girme, binlerce rakibinin arasında Elmas Lige çıkmak için savaş! Rozetler kazan, serini koru ve her denemede kendi sınırlarını zorla.
-            </p>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Analytics & Mobile Showcase Section */}
-      <section className="py-24 bg-white overflow-hidden relative border-t border-slate-100">
-        <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-blue-400/10 blur-[100px] rounded-full pointer-events-none -translate-y-1/2" />
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 font-black text-sm">
-              <TrendingUp className="w-4 h-4" /> Gelişmiş Analitik
+        {/* ════════════════════════════════════════════════════════════
+            4. SOCIAL PROOF METRICS STRIP
+        ════════════════════════════════════════════════════════════ */}
+        <section className="relative z-10 border-y border-white/[0.06]">
+          <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4">
+            {METRICS.map((m, i) => (
+              <div
+                key={i}
+                className={`px-6 py-8 text-center ${
+                  i < METRICS.length - 1 ? "border-r border-white/[0.06]" : ""
+                }`}
+              >
+                <div className="text-2xl sm:text-3xl font-semibold text-white tracking-tight" style={{ fontFamily: SERIF }}>
+                  {m.value}
+                </div>
+                <div className="text-[11px] text-white/35 mt-1.5 uppercase tracking-widest font-medium">
+                  {m.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            5. PROBLEM → SOLUTION
+        ════════════════════════════════════════════════════════════ */}
+        <section className="relative z-10 py-28 sm:py-36 px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7 }}
+              className="text-3xl sm:text-5xl md:text-6xl tracking-[-1.5px] leading-[1.05]"
+              style={{ fontFamily: SERIF }}
+            >
+              Binlerce konu.{" "}
+              <em className="not-italic text-white/35">Sınırlı zaman.</em>{" "}
+              <br className="hidden sm:inline" />
+              <em className="not-italic text-white/35">Belirsiz bir hedef.</em>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="text-white/40 text-base sm:text-lg max-w-2xl mx-auto mt-8 leading-relaxed"
+            >
+              KPSS&apos;ye hazırlanan adayların en büyük sorunu, nerede durduğunu bilmemek.
+              Doğru veri ve strateji olmadan harcanan saatler motivasyonu tüketir.
+              <strong className="text-white/70"> Veriye dayalı strateji, her şeyi değiştirir.</strong>
+            </motion.p>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            6. FEATURE SHOWCASE — LIQUID-GLASS BENTO GRID
+        ════════════════════════════════════════════════════════════ */}
+        <section id="ozellikler" className="relative z-10 pb-28 px-6">
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-5">
+            {FEATURES.map((f, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                className="liquid-glass rounded-[2rem] p-7 sm:p-9 flex flex-col justify-between group"
+              >
+                {/* Tag */}
+                <div>
+                  <span
+                    className="text-[11px] uppercase tracking-widest font-semibold"
+                    style={{ color: f.tagColor }}
+                  >
+                    {f.tag}
+                  </span>
+
+                  <h3
+                    className="text-xl sm:text-2xl text-white mt-3 mb-3 tracking-tight leading-snug"
+                    style={{ fontFamily: SERIF }}
+                  >
+                    {f.title}
+                  </h3>
+
+                  <p className="text-white/40 text-sm leading-relaxed">
+                    {f.body}
+                  </p>
+                </div>
+
+                {/* Image */}
+                <div className="mt-6 rounded-xl overflow-hidden border border-white/[0.06]">
+                  <img
+                    src={f.image}
+                    alt={f.tag}
+                    className="w-full h-44 sm:h-52 object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            7. INTERACTIVE SCORE PREDICTOR
+        ════════════════════════════════════════════════════════════ */}
+        <section id="puan" className="relative z-10 py-28 px-6 border-t border-white/[0.06]">
+          <div className="max-w-5xl mx-auto">
+
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <motion.h2
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="text-3xl sm:text-5xl tracking-[-1.5px]"
+                style={{ fontFamily: SERIF }}
+              >
+                Puanını <em className="not-italic text-white/35">şimdi</em> hesapla.
+              </motion.h2>
+              <p className="text-white/40 text-sm sm:text-base mt-4 max-w-xl mx-auto">
+                GY ve GK netlerini kaydır, tahmini KPSS puanını anında gör.
+                11 gerçek ÖSYM belgesiyle eğitilmiş model — R² = 0.983.
+              </p>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">Netlerinizi Kusursuz Şekilde Analiz Edin.</h2>
-            <p className="text-lg text-slate-500 font-medium leading-relaxed mb-6">
-              Hangi branşta yükseliyorsunuz, hangi konuda geriliyorsunuz? Dribbble kalitesindeki muazzam grafiklerle gelişiminizi bir bakışta anlayın.
-            </p>
-            <motion.img 
+
+            {/* Calculator Card */}
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              src="/landing_analytics.png" 
-              alt="Analytics Graph Mockup" 
-              className="w-full rounded-[2rem] shadow-2xl border-4 border-slate-50 hover:scale-[1.02] transition-transform duration-500" 
-            />
-          </div>
-          <div className="relative">
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative z-10"
+              transition={{ duration: 0.6 }}
+              className="liquid-glass rounded-[2rem] p-8 sm:p-12"
             >
-              <img src="/landing_mobile.png" alt="Mobile App Mockup" className="w-[85%] mx-auto rounded-[2.5rem] shadow-2xl border-8 border-slate-100 -rotate-3 hover:rotate-0 transition-transform duration-500" />
+              <div className="grid lg:grid-cols-12 gap-10 items-start">
+
+                {/* Sliders */}
+                <div className="lg:col-span-7 space-y-10">
+                  {/* GY */}
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <label className="text-white/60 text-sm font-medium flex items-center gap-2">
+                        <AppleEmoji emoji="📘" size={18} />
+                        Genel Yetenek (GY)
+                      </label>
+                      <span className="text-white text-lg font-semibold tabular-nums" style={{ fontFamily: SERIF }}>
+                        {gyNet}
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={60}
+                      step={0.25}
+                      value={gyNet}
+                      onChange={(e) => setGyNet(parseFloat(e.target.value))}
+                      className="landing-slider"
+                    />
+                    <div className="flex justify-between text-[10px] text-white/20 mt-2 tracking-wider uppercase">
+                      <span>0</span>
+                      <span>30</span>
+                      <span>60</span>
+                    </div>
+                  </div>
+
+                  {/* GK */}
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <label className="text-white/60 text-sm font-medium flex items-center gap-2">
+                        <AppleEmoji emoji="🌍" size={18} />
+                        Genel Kültür (GK)
+                      </label>
+                      <span className="text-white text-lg font-semibold tabular-nums" style={{ fontFamily: SERIF }}>
+                        {gkNet}
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={60}
+                      step={0.25}
+                      value={gkNet}
+                      onChange={(e) => setGkNet(parseFloat(e.target.value))}
+                      className="landing-slider"
+                    />
+                    <div className="flex justify-between text-[10px] text-white/20 mt-2 tracking-wider uppercase">
+                      <span>0</span>
+                      <span>30</span>
+                      <span>60</span>
+                    </div>
+                  </div>
+
+                  {/* Summary Bar */}
+                  <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+                    <div>
+                      <div className="text-[10px] text-white/30 uppercase tracking-widest">Toplam Net</div>
+                      <div className="text-white text-xl font-semibold tabular-nums" style={{ fontFamily: SERIF }}>
+                        {gyNet + gkNet} <span className="text-white/20">/ 120</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setGyNet(48); setGkNet(42); }}
+                      className="text-white/30 hover:text-white/60 text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" /> Sıfırla
+                    </button>
+                  </div>
+                </div>
+
+                {/* Score Output */}
+                <div className="lg:col-span-5 text-center lg:text-right space-y-6">
+                  <div>
+                    <div className="text-[10px] text-white/25 uppercase tracking-[0.2em] mb-2">
+                      Tahmini KPSS P3
+                    </div>
+                    <div
+                      className="text-6xl sm:text-7xl text-white tabular-nums leading-none"
+                      style={{ fontFamily: SERIF }}
+                    >
+                      {p3.toFixed(2)}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center lg:justify-end gap-6 pt-2">
+                    <div>
+                      <div className="text-[10px] text-white/25 uppercase tracking-widest">P1</div>
+                      <div className="text-xl text-white/70 tabular-nums" style={{ fontFamily: SERIF }}>
+                        {p1.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="w-px bg-white/[0.06]" />
+                    <div>
+                      <div className="text-[10px] text-white/25 uppercase tracking-widest">P2</div>
+                      <div className="text-xl text-white/70 tabular-nums" style={{ fontFamily: SERIF }}>
+                        {p2.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={signInWithGoogle}
+                    type="button"
+                    className="liquid-glass rounded-full px-8 py-3.5 text-sm text-white hover:scale-[1.03] transition-transform cursor-pointer mt-4"
+                  >
+                    Denemelerini Kaydet & Takip Et
+                  </button>
+                </div>
+
+              </div>
             </motion.div>
-            <div className="absolute top-1/2 right-0 bg-white p-6 rounded-3xl shadow-xl border border-slate-100 w-64 -translate-y-1/2 translate-x-12 hidden lg:block">
-              <h4 className="font-black text-slate-800 mb-2">Her Yerde Sizinle</h4>
-              <p className="text-sm text-slate-500 font-medium">Bulut senkronizasyonu sayesinde telefonda, tablette ve bilgisayarda kesintisiz deneyim.</p>
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            8. SUBJECT IDENTITY CARDS (Rule #3)
+        ════════════════════════════════════════════════════════════ */}
+        <section id="dersler" className="relative z-10 py-24 px-6 border-t border-white/[0.06]">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-14">
+              <h2
+                className="text-3xl sm:text-4xl tracking-[-1px]"
+                style={{ fontFamily: SERIF }}
+              >
+                120 soru. <em className="not-italic text-white/35">6 branş.</em>
+              </h2>
+              <p className="text-white/35 text-sm mt-3">
+                KPSS Lisans sınavındaki her branşı kendi kimlik rengiyle takip et.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {SUBJECTS.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.07 }}
+                  className="liquid-glass rounded-2xl p-5 sm:p-6 group cursor-default"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <AppleEmoji emoji={s.emoji} size={24} />
+                    <span
+                      className="text-[11px] font-semibold tabular-nums"
+                      style={{ color: s.color }}
+                    >
+                      {s.q} Soru
+                    </span>
+                  </div>
+                  <div className="text-white text-base font-medium">{s.title}</div>
+                  {/* Accent line */}
+                  <div
+                    className="h-[2px] rounded-full mt-3 w-8 group-hover:w-full transition-all duration-500"
+                    style={{ backgroundColor: s.color }}
+                  />
+                </motion.div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Badges Showcase Section */}
-      <section className="py-24 bg-slate-900 overflow-hidden relative text-white">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/20 blur-[120px] rounded-full pointer-events-none" />
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 relative">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="relative z-10"
-            >
-              <img src="/landing_badges.png" alt="3D Gamification Badges" className="w-full rounded-[2rem] shadow-2xl border-4 border-white/10 hover:scale-[1.05] transition-transform duration-500" />
-            </motion.div>
-          </div>
-          <div className="order-1 md:order-2 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-purple-500/20 border border-purple-400/30 text-purple-300 font-black text-sm">
-              <Sparkles className="w-4 h-4" /> Koleksiyonunu Tamamla
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">Emeklerinizin Karşılığı Olan 3D Rozetler.</h2>
-            <p className="text-lg text-slate-300 font-medium leading-relaxed">
-              Çalıştıkça XP kazanın. İlk 1000 soruyu çözdüğünüzde veya matematikte rekor kırdığınızda profilinize muazzam 3D rozetler eklensin.
-            </p>
-          </div>
-        </div>
-      </section>
+        {/* ════════════════════════════════════════════════════════════
+            9. FAQ
+        ════════════════════════════════════════════════════════════ */}
+        <FaqSection />
 
-      {/* Features Section */}
-      <section className="py-24 bg-slate-50 border-t border-slate-200/50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-3xl sm:text-5xl font-black text-slate-900 mb-4"
-            >
-              Neden Bizimle Çalışmalısın?
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-slate-500 font-medium text-lg"
-            >
-              Başarıya giden yolda ihtiyacın olan her şey tek bir ekranda.
-            </motion.p>
-          </div>
-
-          <motion.div 
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        {/* ════════════════════════════════════════════════════════════
+            10. FINAL CTA
+        ════════════════════════════════════════════════════════════ */}
+        <section className="relative z-10 py-32 sm:py-40 px-6 text-center border-t border-white/[0.06]">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="max-w-3xl mx-auto"
           >
-            <motion.div variants={itemAnim}>
-              <FeatureCard 
-                icon={<Target className="w-6 h-6 text-blue-500" />}
-                title="Detaylı İstatistikler"
-                desc="Çözdüğünüz denemelerin netlerini grafiklerle görün, eksik olduğunuz konuları anında tespit edin."
-                color="bg-blue-50"
-              />
-            </motion.div>
-            <motion.div variants={itemAnim}>
-              <FeatureCard 
-                icon={<Trophy className="w-6 h-6 text-amber-500" />}
-                title="Liderlik ve Rekabet"
-                desc="Türkiye genelindeki diğer KPSS öğrencileriyle yarışın, altın lige tırmanmak için daha çok çalışın."
-                color="bg-amber-50"
-              />
-            </motion.div>
-            <motion.div variants={itemAnim}>
-              <FeatureCard 
-                icon={<BookOpen className="w-6 h-6 text-purple-500" />}
-                title="Konu Takibi"
-                desc="Tüm KPSS müfredatını % ilerleme barlarıyla takip edin, biten konuları işaretleyip rahatlayın."
-                color="bg-purple-50"
-              />
-            </motion.div>
-            <motion.div variants={itemAnim}>
-              <FeatureCard 
-                icon={<Clock className="w-6 h-6 text-emerald-500" />}
-                title="Zaman Yönetimi"
-                desc="Kalan süreyi saniye saniye görün, günlük planlayıcı ile çalışma rutininizi düzene sokun."
-                color="bg-emerald-50"
-              />
-            </motion.div>
-            <motion.div variants={itemAnim}>
-              <FeatureCard 
-                icon={<ShieldCheck className="w-6 h-6 text-rose-500" />}
-                title="Bulut Senkronizasyonu"
-                desc="Verileriniz güvenle bulutta saklanır. Telefondan, tabletten veya bilgisayardan anında erişin."
-                color="bg-rose-50"
-              />
-            </motion.div>
-            <motion.div variants={itemAnim}>
-              <FeatureCard 
-                icon={<Users className="w-6 h-6 text-cyan-500" />}
-                title="Büyük Bir Topluluk"
-                desc="Gelişmiş kullanıcı profilleri sayesinde rakiplerinizin başarılarını inceleyin ve kıyaslama yapın."
-                color="bg-cyan-50"
-              />
-            </motion.div>
+            <h2
+              className="text-4xl sm:text-6xl md:text-7xl tracking-[-2px] leading-[0.95] mb-6"
+              style={{ fontFamily: SERIF }}
+            >
+              Her geçen gün{" "}
+              <em className="not-italic text-white/35">
+                daha az kalıyor.
+              </em>
+            </h2>
+            <p className="text-white/40 text-base sm:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
+              Stratejini bugün belirle. Hedefine adım adım ilerle.
+              İlk adım her zaman en zor olandır — ama ücretsiz.
+            </p>
+            <button
+              onClick={signInWithGoogle}
+              type="button"
+              className="liquid-glass rounded-full px-16 py-5 text-base text-white hover:scale-[1.03] transition-transform cursor-pointer"
+            >
+              Ücretsiz Başla
+            </button>
           </motion.div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer */}
-      <footer className="py-12 bg-slate-900 text-slate-400 text-center text-sm font-medium">
-        <p>© 2026 KPSS Komuta Merkezi. Sınav yolculuğunuzda başarılar dileriz.</p>
-      </footer>
-    </div>
+        {/* ════════════════════════════════════════════════════════════
+            11. FOOTER
+        ════════════════════════════════════════════════════════════ */}
+        <footer className="relative z-10 border-t border-white/[0.06] py-10 px-6">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-white/25 text-xs" style={{ fontFamily: SERIF }}>
+              KPSS 2026 Komuta Merkezi
+            </span>
+            <span className="text-white/15 text-[11px]">
+              © 2026 — Sınav yolculuğunuzda başarılar.
+            </span>
+          </div>
+        </footer>
+
+      </div>
+    </>
   );
 }
 
-function FeatureCard({ icon, title, desc, color }: any) {
+/* ══════════════════════════════════════════════════════════════════
+   FAQ Accordion — Separated for readability
+══════════════════════════════════════════════════════════════════ */
+function FaqSection() {
+  const [open, setOpen] = useState<number | null>(0);
+
+  const items = [
+    {
+      q: "KPSS P3 puanı nedir?",
+      a: "P3, Lisans mezunlarının Genel Yetenek ve Genel Kültür testlerinden hesaplanan puan türüdür. Mühendislik, avukatlık ve B Grubu kamu kadrolarına merkezi atamada kullanılır.",
+    },
+    {
+      q: "Puan tahmin modeli ne kadar güvenilir?",
+      a: "Modelimiz 11 onaylanmış ÖSYM Lisans Sınav Belgesi verileri üzerinden En Küçük Kareler Regresyonu (OLS) ile kalibre edilmiştir. R² = 0.983 doğruluğa sahiptir ve GY testinin P3 üzerindeki yüksek katsayı ağırlığını hesaba katar.",
+    },
+    {
+      q: "Platform tamamen ücretsiz mi?",
+      a: "Evet. Puan tahmini, ÖSYM simülatörü, konu takibi, Gemini AI koç ve lig sistemi dahil tüm özellikler ücretsizdir.",
+    },
+    {
+      q: "Verilerim güvende mi?",
+      a: "Google hesabınızla giriş yaparsınız. Verileriniz Firebase altyapısında şifreli olarak saklanır ve üçüncü taraflarla paylaşılmaz.",
+    },
+  ];
+
   return (
-    <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 border-b-4 hover:-translate-y-1 transition-transform cursor-default">
-      <div className={`w-14 h-14 rounded-2xl ${color} flex items-center justify-center mb-6`}>
-        {icon}
+    <section id="sss" className="relative z-10 py-24 px-6 border-t border-white/[0.06]">
+      <div className="max-w-3xl mx-auto">
+        <h2
+          className="text-3xl sm:text-4xl tracking-[-1px] text-center mb-12"
+          style={{ fontFamily: SERIF }}
+        >
+          Sıkça sorulan <em className="not-italic text-white/35">sorular.</em>
+        </h2>
+
+        <div className="space-y-3">
+          {items.map((item, i) => {
+            const isOpen = open === i;
+            return (
+              <div
+                key={i}
+                className="liquid-glass rounded-xl overflow-hidden"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 cursor-pointer"
+                >
+                  <span className="text-white text-sm font-medium">{item.q}</span>
+                  <span className={`text-white/30 text-xl transition-transform ${isOpen ? "rotate-45" : ""}`}>+</span>
+                </button>
+                {isOpen && (
+                  <div className="px-6 pb-5 text-white/40 text-sm leading-relaxed border-t border-white/[0.04] pt-4">
+                    {item.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <h3 className="text-xl font-black text-slate-800 mb-3">{title}</h3>
-      <p className="text-slate-500 font-medium leading-relaxed text-sm">{desc}</p>
-    </div>
+    </section>
   );
 }

@@ -7,7 +7,7 @@ export default function GlobalPomodoro() {
   const pathname = usePathname();
   
   return (
-    <div style={{ display: pathname === "/" ? "none" : "block" }}>
+    <div style={{ display: (pathname === "/" || pathname === "/simulator") ? "none" : "block" }}>
       <FloatingPomodoro />
     </div>
   );

@@ -521,3 +521,99 @@ textarea.deneme-input:focus {
     transform: translateY(0) scale(1);
   }
 }
+
+/* ====================================================================
+   Landing Page — Cinematic / Liquid-Glass System
+   ==================================================================== */
+
+/* Liquid Glass Effect */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.03);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.4) 0%,
+    rgba(255,255,255,0.12) 20%,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0) 60%,
+    rgba(255,255,255,0.12) 80%,
+    rgba(255,255,255,0.4) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Cinematic Fade-Rise Staggered Animations */
+@keyframes fadeRise {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.anim-rise      { animation: fadeRise 0.9s cubic-bezier(.16,1,.3,1) both; }
+.anim-rise-d1   { animation: fadeRise 0.9s cubic-bezier(.16,1,.3,1) 0.12s both; }
+.anim-rise-d2   { animation: fadeRise 0.9s cubic-bezier(.16,1,.3,1) 0.24s both; }
+.anim-rise-d3   { animation: fadeRise 0.9s cubic-bezier(.16,1,.3,1) 0.38s both; }
+.anim-rise-d4   { animation: fadeRise 0.9s cubic-bezier(.16,1,.3,1) 0.52s both; }
+
+/* Video Overlay Gradient */
+.landing-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(2, 12, 27, 0.55) 0%,
+    rgba(2, 12, 27, 0.35) 45%,
+    rgba(2, 12, 27, 0.75) 100%
+  );
+}
+
+/* Landing Page Score Slider */
+.landing-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+.landing-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 14px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease;
+}
+
+.landing-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.landing-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 14px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.3);
+}
