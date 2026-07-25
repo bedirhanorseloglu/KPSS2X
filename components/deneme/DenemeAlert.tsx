@@ -24,31 +24,31 @@ const config: Record<
 > = {
   error: {
     Icon: XCircle,
-    box: "bg-red-50 border-red-100",
-    iconColor: "text-red-600",
-    title: "text-red-900",
-    text: "text-red-800",
+    box: "bg-[#ffebeb] dark:bg-[#ff4b4b]/15 border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b]",
+    iconColor: "text-[#ff4b4b]",
+    title: "text-[#ff4b4b] dark:text-red-400 font-extrabold",
+    text: "text-[#ea2b2b] dark:text-red-300 font-bold",
   },
   warning: {
     Icon: AlertTriangle,
-    box: "bg-amber-50 border-amber-100",
-    iconColor: "text-amber-700",
-    title: "text-amber-900",
-    text: "text-amber-800",
+    box: "bg-[#fff7e6] dark:bg-amber-500/15 border-2 border-b-4 border-amber-400 border-b-amber-500",
+    iconColor: "text-amber-500",
+    title: "text-amber-700 dark:text-amber-300 font-extrabold",
+    text: "text-amber-800 dark:text-amber-200 font-bold",
   },
   info: {
     Icon: Info,
-    box: "bg-slate-50 border-slate-200",
-    iconColor: "text-slate-600",
-    title: "text-slate-900",
-    text: "text-slate-600",
+    box: "bg-[#ddf4ff] dark:bg-[#1cb0f6]/15 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6]",
+    iconColor: "text-[#1cb0f6]",
+    title: "text-[#1cb0f6] font-extrabold",
+    text: "text-[#1899d6] dark:text-blue-300 font-bold",
   },
   success: {
     Icon: CheckCircle2,
-    box: "bg-emerald-50 border-emerald-100",
-    iconColor: "text-emerald-600",
-    title: "text-emerald-900",
-    text: "text-emerald-800",
+    box: "bg-[#e5f9e7] dark:bg-[#58cc02]/15 border-2 border-b-4 border-[#58cc02] border-b-[#46a302]",
+    iconColor: "text-[#58cc02]",
+    title: "text-[#58cc02] font-extrabold",
+    text: "text-[#46a302] dark:text-emerald-300 font-bold",
   },
 };
 
@@ -64,25 +64,25 @@ export default function DenemeAlert({
   return (
     <div
       role="alert"
-      className={`flex gap-3 border rounded-xl ${box} ${
-        compact ? "p-3" : "p-4"
+      className={`flex gap-3 rounded-2xl ${box} ${
+        compact ? "p-3.5" : "p-4.5"
       } ${className}`}
     >
       <Icon
-        className={`shrink-0 ${iconColor} ${compact ? "w-4 h-4 mt-0.5" : "w-5 h-5"}`}
+        className={`shrink-0 ${iconColor} ${compact ? "w-5 h-5 mt-0.5" : "w-6 h-6"}`}
         aria-hidden
       />
       <div className="min-w-0 flex-1">
         {title && (
           <p
-            className={`font-bold ${titleClass} ${compact ? "text-xs mb-0.5" : "text-sm mb-1"}`}
+            className={`font-black tracking-tight ${titleClass} ${compact ? "text-xs mb-1" : "text-sm mb-1.5"}`}
           >
             {title}
           </p>
         )}
         <div
           className={`leading-relaxed ${text} ${
-            compact ? "text-[11px] font-medium" : "text-sm font-medium"
+            compact ? "text-xs" : "text-sm"
           }`}
         >
           {children}

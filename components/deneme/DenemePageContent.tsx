@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 
 const DenemeAnalytics = dynamic(() => import("./DenemeAnalytics"), { ssr: false });
 import DenemeAlert from "./DenemeAlert";
+import DenemeLoading from "./DenemeLoading";
 import AppleEmoji from "../AppleEmoji";
 import { DenemeRecord } from "@/lib/denemeUtils";
 import { loadDenemeYeniden, saveDenemeYeniden } from "@/lib/firebaseService";
@@ -38,6 +39,8 @@ export default function DenemePageContent() {
   const searchParams = useSearchParams();
   const initialMode = searchParams.get("mode");
   const initialSubject = searchParams.get("subject");
+  const initialDurationParam = searchParams.get("duration");
+  const initialDuration = initialDurationParam ? parseInt(initialDurationParam, 10) : undefined;
 
   const [denemeler, setDenemeler] = useState<DenemeRecord[]>([]);
   const [targetNet, setTargetNet] = useState(DEFAULT_TARGET_NET);
@@ -240,14 +243,7 @@ export default function DenemePageContent() {
   };
 
   if (!loaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0f1a]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-[3px] border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-medium text-gray-400">Yükleniyor...</p>
-        </div>
-      </div>
-    );
+    return <DenemeLoading />;
   }
 
   return (
@@ -278,22 +274,22 @@ export default function DenemePageContent() {
           transition={{ duration: 0.4, ease: "easeOut" }}
           className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10"
         >
-          <div className="flex items-center gap-6">
-            <div className="relative w-20 h-20 rounded-[2rem] shadow-sm overflow-hidden shrink-0 bg-white ring-4 ring-white dark:ring-[#1e293b]">
+          <div className="flex items-center gap-5">
+            <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md overflow-hidden shrink-0 flex items-center justify-center">
               {user?.photoURL ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={user.photoURL} alt="Profil" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-3xl font-black">
+                <div className="w-full h-full bg-gradient-to-br from-[#1cb0f6] to-[#0088cc] flex items-center justify-center text-white text-2xl font-black">
                   {user?.displayName?.charAt(0)?.toUpperCase() || "K"}
                 </div>
               )}
             </div>
             <div>
-              <p className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
+              <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-0.5">
                 Hoş Geldin, {user?.displayName?.split(" ")[0] || "Şampiyon"}
               </p>
-              <h1 className="text-4xl font-black text-slate-800 dark:text-white tracking-tight">
+              <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
                 {tab === "yeni" ? "Sınav Girişi" : tab === "gecmis" ? "Kayıt Defteri" : "Gelişim Analizi"}
               </h1>
               <div className="flex items-center gap-3 mt-2">
@@ -304,7 +300,7 @@ export default function DenemePageContent() {
                       const mocks: DenemeRecord[] = [];
                       for (let i = 1; i <= 3; i++) {
                         mocks.push({
-                          id: `mock-${i}`,
+                          id: crypto.randomUUID(),
                           name: `Mock Genel Deneme ${i}`,
                           date: new Date(Date.now() - i * 86400000).toISOString().split("T")[0],
                           examType: "genel",
@@ -338,7 +334,7 @@ export default function DenemePageContent() {
                       setDenemeler(prev => [...prev, ...mocks]);
                       toast.success("Test verileri başarıyla eklendi!");
                     }}
-                    className="px-3 py-1 bg-rose-100 text-rose-600 font-black rounded-xl text-[10px] uppercase tracking-wider border border-rose-200 hover:bg-rose-200 transition-colors"
+                    className="px-3.5 py-1.5 bg-[#ffebeb] dark:bg-rose-500/20 text-[#ff4b4b] dark:text-rose-400 font-extrabold rounded-xl text-xs uppercase tracking-wider border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b] hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
                   >
                     🧪 Test Verisi Yükle
                   </button>
@@ -347,7 +343,7 @@ export default function DenemePageContent() {
             </div>
           </div>
 
-          <div className="flex gap-1.5 p-1.5 bg-slate-200/60 dark:bg-slate-800/60 rounded-[1.5rem] w-full md:w-auto mt-6 md:mt-0 shadow-inner">
+          <div className="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 w-full md:w-auto mt-6 md:mt-0 shadow-xs gap-1">
             {TABS.map((t) => (
               <button
                 key={t.id}
@@ -356,19 +352,14 @@ export default function DenemePageContent() {
                   setTab(t.id);
                   if (t.id !== "yeni") setEditing(null);
                 }}
-                className="flex-1 md:flex-none px-6 py-2.5 rounded-xl text-[12px] font-bold transition-all relative flex items-center justify-center gap-2 cursor-pointer focus:outline-none"
+                className={`flex-1 md:flex-none px-5 py-2.5 rounded-xl text-xs font-black transition-all relative flex items-center justify-center gap-2 cursor-pointer focus:outline-none ${
+                  tab === t.id
+                    ? "bg-white dark:bg-slate-800 text-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white"
+                }`}
               >
-                {tab === t.id && (
-                  <motion.div
-                    layoutId="denemeTabBg"
-                    className="absolute inset-0 bg-white dark:bg-slate-700 rounded-xl shadow-sm"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <t.icon className={`w-4 h-4 relative z-10 transition-colors ${tab === t.id ? "text-blue-600 dark:text-blue-400" : "text-slate-400"}`} />
-                <span className={`relative z-10 transition-colors ${tab === t.id ? "text-slate-800 dark:text-white font-black" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 font-bold"}`}>
-                  {t.label}
-                </span>
+                <t.icon className={`w-4 h-4 transition-colors ${tab === t.id ? "text-[#1cb0f6]" : "text-slate-400"}`} />
+                <span>{t.label}</span>
               </button>
             ))}
           </div>
@@ -379,10 +370,10 @@ export default function DenemePageContent() {
           {tab === "yeni" && (
             <motion.div
               key="yeni"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 12, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.99 }}
+              transition={{ type: "spring", stiffness: 320, damping: 28 }}
             >
               {editing && (
                 <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
@@ -408,13 +399,15 @@ export default function DenemePageContent() {
                         date: editing.date,
                         publisher: editing.publisher,
                         note: editing.note,
+                        durationMinutes: editing.durationMinutes,
                         scores: editing.scores,
                         examType: editing.examType,
                         bransSubjectId: editing.bransSubjectId,
                       }
-                    : (initialMode || initialSubject) ? {
+                    : (initialMode || initialSubject || initialDuration) ? {
                         name: "",
                         date: format(getStudyDate(), 'yyyy-MM-dd'),
+                        durationMinutes: initialDuration,
                         scores: createEmptyScores(),
                         examType: (initialMode as "genel" | "brans") || "genel",
                         bransSubjectId: initialSubject || "",
@@ -429,19 +422,19 @@ export default function DenemePageContent() {
           {tab === "gecmis" && (
             <motion.div
               key="gecmis"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 12, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.99 }}
+              transition={{ type: "spring", stiffness: 320, damping: 28 }}
             >
               <ViewTypeSwitcher viewType={viewType} onChange={setViewType} />
               <AnimatePresence mode="wait">
                 <motion.div
                   key={viewType}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  initial={{ opacity: 0, x: viewType === "brans" ? 15 : -15, scale: 0.99 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: viewType === "brans" ? -15 : 15, scale: 0.99 }}
+                  transition={{ type: "spring", stiffness: 320, damping: 28 }}
                 >
                   <DenemeHistoryList
                     denemeler={filteredDenemeler}
@@ -461,19 +454,19 @@ export default function DenemePageContent() {
           {tab === "analiz" && (
             <motion.div
               key="analiz"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 12, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.99 }}
+              transition={{ type: "spring", stiffness: 320, damping: 28 }}
             >
               <ViewTypeSwitcher viewType={viewType} onChange={setViewType} />
               <AnimatePresence mode="wait">
                 <motion.div
                   key={viewType}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  initial={{ opacity: 0, x: viewType === "brans" ? 15 : -15, scale: 0.99 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: viewType === "brans" ? -15 : 15, scale: 0.99 }}
+                  transition={{ type: "spring", stiffness: 320, damping: 28 }}
                 >
                   <DenemeAnalytics
                     denemeler={filteredDenemeler}

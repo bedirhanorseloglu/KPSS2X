@@ -4,31 +4,18 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  LayoutDashboard, 
-  BarChart3, 
-  BookOpen, 
-  CheckSquare, 
-  Settings,
-  Bell,
-  Search,
-  LogOut,
-  Menu,
-  X
-} from "lucide-react";
+import { Bell, Settings, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
 import ProfileSettingsModal from "@/components/ProfileSettingsModal";
-
-import { Trophy, Timer, MapPin, Sparkles } from "lucide-react";
+import AppleEmoji from "@/components/AppleEmoji";
 
 const NAV_LINKS = [
-  { name: "Gösterge Paneli", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Deneme Merkezi", href: "/deneme", icon: BarChart3 },
-  { name: "Simülatör", href: "/simulator", icon: Timer },
-  { name: "Liderlik", href: "/liderlik", icon: Trophy },
-  { name: "Etkinlikler", href: "/etkinlik", icon: MapPin },
-
+  { name: "Gösterge Paneli", href: "/dashboard", emoji: "🌟" },
+  { name: "Deneme Merkezi", href: "/deneme", emoji: "📊" },
+  { name: "Simülatör", href: "/simulator", emoji: "⏱️" },
+  { name: "Liderlik", href: "/liderlik", emoji: "🏆" },
+  { name: "Etkinlikler", href: "/etkinlik", emoji: "🎮" },
 ];
 
 export default function FloatingNavbar() {
@@ -47,7 +34,6 @@ export default function FloatingNavbar() {
       const currentScrollY = window.scrollY;
       setIsScrolled(currentScrollY > 10);
       
-      // Hide on scroll down, show on scroll up
       if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
         setIsHidden(true);
       } else {
@@ -61,184 +47,191 @@ export default function FloatingNavbar() {
 
   return (
     <>
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: isHidden ? -150 : 0, opacity: 1 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 ${
-        isScrolled ? "py-2" : "py-4"
-      } px-4 md:px-8 flex justify-center pointer-events-none`}
-    >
-      <div 
-        className={`pointer-events-auto flex items-center justify-between w-full max-w-7xl mx-auto rounded-2xl md:rounded-full px-6 py-3 transition-all duration-300 ${
-          isScrolled 
-            ? "bg-white/70 dark:bg-[#1e293b]/70 backdrop-blur-xl shadow-lg border border-gray-200/50 dark:border-white/10" 
-            : "bg-white/40 dark:bg-[#1e293b]/40 backdrop-blur-md shadow-sm border border-transparent"
-        }`}
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: isHidden ? -150 : 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className={`fixed top-0 left-0 right-0 z-50 ${
+          isScrolled ? "py-2" : "py-3.5"
+        } px-4 md:px-8 flex justify-center pointer-events-none`}
       >
-        {/* Logo Area */}
-        <Link href="/dashboard" className="flex items-center gap-3 group focus:outline-none shrink-0">
-          <div className="relative flex items-center justify-center w-[38px] h-[38px] rounded-[12px] bg-[#1cb0f6] text-white shadow-sm border-b-[3px] border-[#1899d6] transition-all group-hover:-translate-y-0.5 group-hover:shadow-md group-active:translate-y-[2px] group-active:border-b-0 group-active:mb-[3px]">
-            <span className="font-black text-[22px] leading-none tracking-tighter">K</span>
-          </div>
-          <span className="font-black text-[22px] tracking-tighter text-slate-800 dark:text-white hidden sm:block">
-            KPSS<span className="text-[#1cb0f6]">26</span>
-          </span>
-        </Link>
-
-        {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((link) => {
-            const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
-              ? pathname === link.href 
-              : pathname?.startsWith(link.href.split('/')[1] ? `/${link.href.split('/')[1]}` : link.href);
-            const Icon = link.icon;
-            
-            return (
-              <Link 
-                key={link.name} 
-                href={link.href}
-                className="relative px-4 py-2 rounded-full group transition-colors"
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="navbar-indicator"
-                    className="absolute inset-0 bg-gray-100 dark:bg-white/10 rounded-full"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <div className="relative z-10 flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white transition-colors"}`} />
-                  <span className={`text-sm font-medium ${isActive ? "text-gray-900 dark:text-white" : "text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white transition-colors"}`}>
-                    {link.name}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Actions / Profile */}
-        <div className="flex items-center gap-3">
-          <button 
-            className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          >
-            {theme === 'dark' ? <span className="text-xl">☀️</span> : <span className="text-xl">🌙</span>}
-          </button>
-          
-          <button className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-gray-900"></span>
-          </button>
-          
-          <div className="h-6 w-px bg-gray-200 dark:bg-white/10 mx-1 hidden sm:block"></div>
-          
-          <div className="relative">
-            <button 
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center gap-2 cursor-pointer group focus:outline-none"
-            >
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold shadow-sm group-hover:scale-105 transition-transform overflow-hidden">
-                {user?.photoURL ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  user?.email?.charAt(0).toUpperCase() || "U"
-                )}
+        <div 
+          className={`pointer-events-auto flex items-center justify-between w-full max-w-[90rem] mx-auto rounded-2xl md:rounded-[2rem] px-4 md:px-6 py-2.5 transition-all duration-300 ${
+            isScrolled 
+              ? "bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl shadow-md border-2 border-b-4 border-slate-200 dark:border-slate-700" 
+              : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-xs border-2 border-b-4 border-slate-200/80 dark:border-slate-700/80"
+          }`}
+        >
+          {/* Left Side: Logo + Nav */}
+          <div className="flex items-center gap-4 lg:gap-8 shrink-0">
+            {/* 3D Logo */}
+            <Link href="/dashboard" className="flex items-center gap-3 group focus:outline-none shrink-0">
+              <div className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-[#1cb0f6] text-white shadow-xs border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] transition-all group-hover:scale-105 active:translate-y-0.5">
+                <span className="font-black text-xl leading-none">K</span>
               </div>
-            </button>
+              <span className="font-black text-xl tracking-tight text-slate-800 dark:text-white hidden sm:block">
+                KPSS<span className="text-[#1cb0f6]">26</span>
+              </span>
+            </Link>
 
-            {/* Profile Dropdown */}
-            {isProfileOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40 pointer-events-auto" 
-                  onClick={() => setIsProfileOpen(false)}
-                />
-                <motion.div 
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-3 w-56 bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 overflow-hidden z-50 pointer-events-auto"
-                >
-                  <div className="p-4 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5">
-                    <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user?.displayName || "Kullanıcı"}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{user?.email}</p>
-                  </div>
-                  <div className="p-2 space-y-1">
-                    <button 
-                      onClick={() => {
-                        setIsProfileOpen(false);
-                        setIsProfileSettingsOpen(true);
-                      }}
-                      className="w-full text-left px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl transition-colors flex items-center gap-3 font-medium"
-                    >
-                      <Settings className="w-4 h-4 text-gray-400" /> Profil Ayarları
-                    </button>
-                    <div className="h-px w-full bg-gray-100 dark:bg-white/5 my-1" />
-                    <button 
-                      onClick={() => { setIsProfileOpen(false); signOut(); }}
-                      className="w-full text-left px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors flex items-center gap-3 font-medium"
-                    >
-                      <LogOut className="w-4 h-4" /> Çıkış Yap
-                    </button>
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors ml-1 pointer-events-auto"
-          >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="absolute top-[110%] left-4 right-4 bg-white/95 dark:bg-[#1e293b]/95 backdrop-blur-xl border border-gray-200/50 dark:border-white/10 rounded-2xl shadow-xl p-4 flex flex-col gap-2 pointer-events-auto z-40 md:hidden"
-            >
+            {/* 3D Navigation Links */}
+            <nav className="hidden md:flex items-center gap-1.5 shrink-0">
               {NAV_LINKS.map((link) => {
                 const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
                   ? pathname === link.href 
                   : pathname?.startsWith(link.href.split('/')[1] ? `/${link.href.split('/')[1]}` : link.href);
-                const Icon = link.icon;
+                
+                return (
+                  <Link 
+                    key={link.name} 
+                    href={link.href}
+                    className={`relative flex items-center gap-2 px-3.5 xl:px-4 py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer ${
+                      isActive 
+                        ? "bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-xs" 
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent"
+                    }`}
+                  >
+                    <AppleEmoji emoji={link.emoji} size={18} />
+                    <span>{link.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Right Side: Actions & Profile */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            {/* Theme Toggle Button */}
+            <button 
+              type="button"
+              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              title="Tema Değiştir"
+            >
+              <AppleEmoji emoji={theme === 'dark' ? '☀️' : '🌙'} size={18} />
+            </button>
+            
+            {/* Notification Bell */}
+            <button 
+              type="button"
+              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all relative cursor-pointer"
+              title="Bildirimler"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ff4b4b] rounded-full border-2 border-white dark:border-slate-800" />
+            </button>
+            
+            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block" />
+            
+            {/* User Profile Avatar & Dropdown */}
+            <div className="relative">
+              <button 
+                type="button"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="w-10 h-10 rounded-xl border-2 border-b-4 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-2xs overflow-hidden flex items-center justify-center hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer"
+              >
+                {user?.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-[#1cb0f6] text-white flex items-center justify-center font-black text-sm">
+                    {user?.email?.charAt(0).toUpperCase() || "U"}
+                  </div>
+                )}
+              </button>
+
+              {/* Profile Dropdown */}
+              {isProfileOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40 pointer-events-auto" 
+                    onClick={() => setIsProfileOpen(false)}
+                  />
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className="absolute right-0 top-full mt-3 w-60 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border-2 border-b-4 border-slate-200 dark:border-slate-700 overflow-hidden z-50 pointer-events-auto p-2"
+                  >
+                    <div className="p-3 border-b-2 border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 rounded-xl mb-1">
+                      <p className="text-sm font-black text-slate-800 dark:text-white truncate">{user?.displayName || "Kullanıcı"}</p>
+                      <p className="text-xs font-semibold text-slate-400 truncate mt-0.5">{user?.email}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          setIsProfileOpen(false);
+                          setIsProfileSettingsOpen(true);
+                        }}
+                        className="w-full text-left px-3.5 py-2.5 text-xs font-black text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors flex items-center gap-3 cursor-pointer"
+                      >
+                        <Settings className="w-4 h-4 text-[#1cb0f6]" />
+                        <span>Profil Ayarları</span>
+                      </button>
+                      
+                      <button 
+                        type="button"
+                        onClick={() => { setIsProfileOpen(false); signOut(); }}
+                        className="w-full text-left px-3.5 py-2.5 text-xs font-black text-[#ff4b4b] hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors flex items-center gap-3 cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Çıkış Yap</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs active:translate-y-0.5 transition-all cursor-pointer"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </motion.header>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 left-4 right-4 z-40 bg-white dark:bg-slate-800 rounded-3xl border-2 border-b-4 border-slate-200 dark:border-slate-700 p-4 shadow-xl md:hidden"
+          >
+            <nav className="flex flex-col gap-2">
+              {NAV_LINKS.map((link) => {
+                const isActive = pathname === link.href;
                 return (
                   <Link
                     key={link.name}
                     href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                      isActive 
-                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold" 
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 font-medium"
+                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-black transition-all ${
+                      isActive
+                        ? "bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6]"
+                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
-                    {link.name}
+                    <AppleEmoji emoji={link.emoji} size={20} />
+                    <span>{link.name}</span>
                   </Link>
                 );
               })}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.header>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-    <ProfileSettingsModal 
-      isOpen={isProfileSettingsOpen} 
-      onClose={() => setIsProfileSettingsOpen(false)} 
-    />
+      <ProfileSettingsModal 
+        isOpen={isProfileSettingsOpen} 
+        onClose={() => setIsProfileSettingsOpen(false)} 
+      />
     </>
   );
 }

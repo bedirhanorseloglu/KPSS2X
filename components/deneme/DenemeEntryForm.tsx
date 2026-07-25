@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { getStudyDate } from "@/lib/dateUtils";
 import { tr } from "date-fns/locale";
-import { FileText, Brain, Compass, Calendar, Tag, Check, ArrowRight, ArrowLeft, ChevronDown, Globe, Target } from "lucide-react";
+import { FileText, Brain, Compass, Calendar, Tag, Check, ArrowRight, ArrowLeft, ChevronDown, Globe, Target, Clock, BarChart3, CheckCircle2, XCircle, MinusCircle, BookOpen, Landmark, Trophy } from "lucide-react";
 import SubjectScoreRow from "./SubjectScoreRow";
 import DenemeScoreRing from "./DenemeScoreRing";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/lib/denemeUtils";
 import { TOTAL_QUESTIONS, getSubjectConfig, DENEME_SUBJECTS } from "@/lib/denemeConfig";
 import DenemeAlert from "./DenemeAlert";
+import AppleEmoji from "../AppleEmoji";
 
 type Props = {
   targetNet: number;
@@ -26,6 +27,7 @@ type Props = {
     date: string;
     publisher?: string;
     note?: string;
+    durationMinutes?: number;
     scores: SubjectScoreInput[];
     examType?: "genel" | "brans";
     bransSubjectId?: string;
@@ -36,6 +38,7 @@ type Props = {
     date: string;
     publisher?: string;
     note?: string;
+    durationMinutes?: number;
     scores: SubjectScoreInput[];
     examType?: "genel" | "brans";
     bransSubjectId?: string;
@@ -52,6 +55,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const [name, setName] = useState(initial?.name ?? "");
   const [date, setDate] = useState(initial?.date ?? format(getStudyDate(), "yyyy-MM-dd"));
   const [publisher, setPublisher] = useState(initial?.publisher ?? "");
+  const [durationMinutes, setDurationMinutes] = useState<number | "">(initial?.durationMinutes ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
   const [scores, setScores] = useState<SubjectScoreInput[]>(initial?.scores ?? createEmptyScores());
 
@@ -93,6 +97,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
       date,
       publisher: publisher.trim() || undefined,
       note: note.trim() || undefined,
+      durationMinutes: durationMinutes !== "" ? Number(durationMinutes) : undefined,
       scores,
       examType,
       bransSubjectId: examType === "brans" ? bransSubjectId : undefined,
@@ -101,6 +106,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
     if (!initial) {
       setName("");
       setPublisher("");
+      setDurationMinutes("");
       setNote("");
       setScores(createEmptyScores());
       setStep(1);
@@ -116,7 +122,9 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const answeredPercentage = maxQuestions > 0 ? (totalAnswered / maxQuestions) * 100 : 0;
   
   const displayNet = examType === "genel" ? result.totalNet : (selectedBranchSubject?.net ?? 0);
-  const successRate = maxQuestions > 0 ? (displayNet / maxQuestions) * 100 : 0;
+  const totalCorrectCount = examType === "genel" ? result.totalCorrect : (selectedBranchSubject?.correct ?? 0);
+  const successRate = totalAnswered > 0 ? (totalCorrectCount / totalAnswered) * 100 : 0;
+  const activeColor = examType === "brans" ? (selectedBranchSubject?.color || "#1cb0f6") : "#1cb0f6";
 
   return (
     <form onSubmit={handleSubmit} className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8 xl:gap-10 items-start">
@@ -124,8 +132,8 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
       {/* ━━━ SOL PANEL: FORM YÜZEYİ ━━━ */}
       <div className="space-y-6 min-w-0">
         
-        {/* Apple Style Segmented Header */}
-        <div className="flex p-1 bg-slate-100/60 dark:bg-slate-800/40 backdrop-blur-xl rounded-[20px] shadow-sm border border-slate-200/50 dark:border-slate-700/50 mb-8 overflow-hidden">
+        {/* Site Style Segmented Header */}
+        <div className="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-[1.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 mb-8 overflow-hidden">
           {([
             { id: 1, label: "Giriş Bilgileri", icon: FileText },
             { id: 2, label: examType === "genel" ? "Genel Yetenek" : "Net Girişi", icon: Brain },
@@ -141,13 +149,13 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
               {step === tab.id && (
                 <motion.div
                   layoutId="stepTabBg"
-                  className="absolute inset-0 bg-white dark:bg-slate-700 rounded-[16px] shadow-[0_2px_10px_rgb(0,0,0,0.06)] border border-slate-200/40 dark:border-slate-600/40"
+                  className="absolute inset-0 bg-white dark:bg-slate-800 rounded-xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-sm"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
               <div className="relative z-10 flex items-center justify-center gap-2">
-                <tab.icon className={`w-4 h-4 transition-colors ${step === tab.id ? "text-accent dark:text-white" : "text-slate-400 dark:text-slate-500"}`} />
-                <span className={`text-xs font-bold transition-colors tracking-wide ${step === tab.id ? "text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400"}`}>
+                <tab.icon className={`w-4 h-4 transition-colors ${step === tab.id ? "text-[#1cb0f6]" : "text-slate-400 dark:text-slate-500"}`} />
+                <span className={`text-xs font-black transition-colors tracking-wide ${step === tab.id ? "text-slate-800 dark:text-white" : "text-slate-500 dark:text-slate-400"}`}>
                   {tab.label}
                 </span>
               </div>
@@ -155,8 +163,8 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
           ))}
         </div>
 
-        {/* Premium Form Card */}
-        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[32px] p-6 sm:p-10 relative overflow-hidden">
+        {/* Site Style Form Card */}
+        <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 sm:p-10 shadow-sm relative overflow-hidden">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.section
@@ -172,10 +180,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                   <p className="text-sm font-bold text-slate-400 mt-1">Deneme türünü ve detaylarını belirleyin.</p>
                 </div>
 
-                {/* Clean Apple Style Exam Type Cards using Site Palette */}
+                {/* Awwward Grade Apple & Duolingo Style Exam Type Cards */}
                 <div className="space-y-3">
                   <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Deneme Türü</span>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                     {/* Genel Deneme Kartı */}
                     <button
                       type="button"
@@ -183,41 +191,48 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         setExamType("genel");
                         window.history.replaceState(null, '', "?mode=genel");
                       }}
-                      className={`relative group flex flex-col items-start gap-3 p-4 rounded-2xl border-2 transition-all duration-200 text-left focus:outline-none
-                        ${examType === "genel"
-                          ? "border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 shadow-[0_0_0_4px_rgba(59,130,246,0.12)]"
-                          : "border-slate-200/70 bg-slate-50/80 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800"
-                        }`}
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-[1.5rem] border-2 transition-all duration-300 text-left focus:outline-none ${
+                        examType === "genel"
+                          ? "border-[#1cb0f6] bg-gradient-to-br from-[#1cb0f6]/10 to-[#1cb0f6]/5 dark:from-[#1cb0f6]/20 dark:to-[#1cb0f6]/5 shadow-[0_8px_25px_rgba(28,176,246,0.18)] scale-[1.02]"
+                          : "border-slate-200/70 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 hover:border-slate-300 hover:bg-white dark:hover:bg-white/10"
+                      }`}
                     >
                       {/* Seçili işareti */}
-                      <div className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
-                        ${examType === "genel" ? "border-blue-500 bg-blue-500" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-700"}`}>
+                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${
+                        examType === "genel" ? "border-[#1cb0f6] bg-[#1cb0f6]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
+                      }`}>
                         {examType === "genel" && (
-                          <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="10" height="10" viewBox="0 0 10 10" fill="none">
-                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                          <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="12" height="12" viewBox="0 0 10 10" fill="none">
+                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </motion.svg>
                         )}
                       </div>
 
-                      {/* İkon */}
-                      <div className={`w-11 h-11 rounded-[14px] flex items-center justify-center transition-all shadow-sm
-                        ${examType === "genel" ? "bg-blue-500 text-white shadow-blue-500/30" : "bg-white text-slate-400 border border-slate-200 dark:bg-slate-800 dark:border-slate-700"}`}>
-                        <Globe className="w-5 h-5" />
+                      {/* Apple 3D Emoji Icon */}
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-md ${
+                        examType === "genel" ? "bg-white dark:bg-slate-800 shadow-[#1cb0f6]/20" : "bg-white/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10"
+                      }`}>
+                        <AppleEmoji emoji="🌍" size={34} />
                       </div>
 
                       {/* Başlık + Açıklama */}
                       <div>
-                        <p className={`text-sm font-black tracking-tight transition-colors ${examType === "genel" ? "text-blue-600 dark:text-blue-400" : "text-slate-700 dark:text-slate-300"}`}>
+                        <p className={`text-base font-black tracking-tight transition-colors ${
+                          examType === "genel" ? "text-[#1cb0f6] dark:text-[#1cb0f6]" : "text-slate-800 dark:text-white"
+                        }`}>
                           Genel Deneme
                         </p>
-                        <p className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug">
+                        <p className="text-xs font-bold text-slate-400 mt-0.5 leading-snug">
                           120 Soru • GY + GK
                         </p>
                       </div>
 
                       {/* Alt etiket */}
-                      <div className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full transition-all
-                        ${examType === "genel" ? "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300" : "bg-slate-200/60 text-slate-400 dark:bg-slate-800"}`}>
+                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full transition-all ${
+                        examType === "genel"
+                          ? "bg-[#1cb0f6]/20 text-[#1cb0f6] dark:bg-[#1cb0f6]/30 dark:text-blue-300 border border-[#1cb0f6]/30"
+                          : "bg-slate-200/60 text-slate-500 dark:bg-white/10 dark:text-slate-400"
+                      }`}>
                         Türkiye Geneli
                       </div>
                     </button>
@@ -230,41 +245,48 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         setStep(1); 
                         window.history.replaceState(null, '', `?mode=brans${bransSubjectId ? `&subject=${bransSubjectId}` : ""}`);
                       }}
-                      className={`relative group flex flex-col items-start gap-3 p-4 rounded-2xl border-2 transition-all duration-200 text-left focus:outline-none
-                        ${examType === "brans"
-                          ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-[0_0_0_4px_rgba(99,102,241,0.12)]"
-                          : "border-slate-200/70 bg-slate-50/80 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800"
-                        }`}
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-[1.5rem] border-2 transition-all duration-300 text-left focus:outline-none ${
+                        examType === "brans"
+                          ? "border-[#af52de] bg-gradient-to-br from-[#af52de]/10 to-[#af52de]/5 dark:from-[#af52de]/20 dark:to-[#af52de]/5 shadow-[0_8px_25px_rgba(175,82,222,0.18)] scale-[1.02]"
+                          : "border-slate-200/70 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 hover:border-slate-300 hover:bg-white dark:hover:bg-white/10"
+                      }`}
                     >
                       {/* Seçili işareti */}
-                      <div className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
-                        ${examType === "brans" ? "border-indigo-500 bg-indigo-500" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-700"}`}>
+                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${
+                        examType === "brans" ? "border-[#af52de] bg-[#af52de]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
+                      }`}>
                         {examType === "brans" && (
-                          <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="10" height="10" viewBox="0 0 10 10" fill="none">
-                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                          <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="12" height="12" viewBox="0 0 10 10" fill="none">
+                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </motion.svg>
                         )}
                       </div>
 
-                      {/* İkon */}
-                      <div className={`w-11 h-11 rounded-[14px] flex items-center justify-center transition-all shadow-sm
-                        ${examType === "brans" ? "bg-indigo-500 text-white shadow-indigo-500/30" : "bg-white text-slate-400 border border-slate-200 dark:bg-slate-800 dark:border-slate-700"}`}>
-                        <Target className="w-5 h-5" />
+                      {/* Apple 3D Emoji Icon */}
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-md ${
+                        examType === "brans" ? "bg-white dark:bg-slate-800 shadow-[#af52de]/20" : "bg-white/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10"
+                      }`}>
+                        <AppleEmoji emoji="🎯" size={34} />
                       </div>
 
                       {/* Başlık + Açıklama */}
                       <div>
-                        <p className={`text-sm font-black tracking-tight transition-colors ${examType === "brans" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-700 dark:text-slate-300"}`}>
+                        <p className={`text-base font-black tracking-tight transition-colors ${
+                          examType === "brans" ? "text-[#af52de] dark:text-[#af52de]" : "text-slate-800 dark:text-white"
+                        }`}>
                           Branş Denemesi
                         </p>
-                        <p className="text-[11px] font-semibold text-slate-400 mt-0.5 leading-snug">
+                        <p className="text-xs font-bold text-slate-400 mt-0.5 leading-snug">
                           Tek ders odaklı
                         </p>
                       </div>
 
                       {/* Alt etiket */}
-                      <div className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full transition-all
-                        ${examType === "brans" ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300" : "bg-slate-200/60 text-slate-400 dark:bg-slate-800"}`}>
+                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full transition-all ${
+                        examType === "brans"
+                          ? "bg-[#af52de]/20 text-[#af52de] dark:bg-[#af52de]/30 dark:text-purple-300 border border-[#af52de]/30"
+                          : "bg-slate-200/60 text-slate-500 dark:bg-white/10 dark:text-slate-400"
+                      }`}>
                         Ders Bazlı
                       </div>
                     </button>
@@ -339,39 +361,43 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                   )}
 
                   <div className="sm:col-span-2 space-y-2">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Deneme Adı *</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
+                      <AppleEmoji emoji="📝" size={16} /> Deneme Adı *
+                    </span>
                     <input
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Örn: Pegem 5. Türkiye Geneli"
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-slate-200 placeholder:text-slate-400 outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all"
+                      className="w-full bg-slate-100/70 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:bg-white dark:focus:bg-[#1e293b] focus:ring-4 focus:ring-[#1cb0f6]/20 focus:border-[#1cb0f6] transition-all shadow-xs"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5"/> Tarih *</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
+                      <AppleEmoji emoji="📅" size={16} /> Tarih *
+                    </span>
                     <input
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all"
+                      className="w-full bg-slate-100/70 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white outline-none focus:bg-white dark:focus:bg-[#1e293b] focus:ring-4 focus:ring-[#1cb0f6]/20 focus:border-[#1cb0f6] transition-all shadow-xs"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5"><Tag className="w-3.5 h-3.5"/> Yayınevi *</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
+                      <AppleEmoji emoji="🏷️" size={16} /> Yayınevi *
+                    </span>
                     <input
                       value={publisher}
                       onChange={(e) => setPublisher(e.target.value)}
                       placeholder="Örn: Yargı, Yediiklim"
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-slate-200 placeholder:text-slate-400 outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all"
+                      className="w-full bg-slate-100/70 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:bg-white dark:focus:bg-[#1e293b] focus:ring-4 focus:ring-[#1cb0f6]/20 focus:border-[#1cb0f6] transition-all shadow-xs"
                       required
                     />
                   </div>
-
-
                 </div>
               </motion.section>
             )}
@@ -386,7 +412,8 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 className="space-y-8"
               >
                 <div className="pb-4 border-b border-slate-100/50 dark:border-slate-700/50">
-                  <h3 className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                  <h3 className="text-2xl font-black tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
+                    <AppleEmoji emoji="🧠" size={28} />
                     {examType === "genel" ? "Genel Yetenek" : "Net Girişi"}
                   </h3>
                   <p className="text-sm font-bold text-slate-400 mt-1">Doğru, yanlış ve boş sayılarınızı girin.</p>
@@ -415,7 +442,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 className="space-y-8"
               >
                 <div className="pb-4 border-b border-slate-100/50 dark:border-slate-700/50">
-                  <h3 className="text-2xl font-black tracking-tight text-slate-800 dark:text-white">Genel Kültür</h3>
+                  <h3 className="text-2xl font-black tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
+                    <AppleEmoji emoji="🏛️" size={28} />
+                    Genel Kültür
+                  </h3>
                   <p className="text-sm font-bold text-slate-400 mt-1">Genel kültür testinin doğru ve yanlışlarını girin.</p>
                 </div>
                 
@@ -434,12 +464,12 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
           </AnimatePresence>
 
           {/* Footer Controls */}
-          <div className="mt-10 pt-6 border-t border-slate-100/60 flex items-center justify-between">
+          <div className="mt-10 pt-6 border-t border-slate-100/60 dark:border-white/10 flex items-center justify-between">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={() => setStep((s) => (s - 1) as any)}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl text-[15px] font-black text-slate-500 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 border-b-4 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-800 active:border-b-2 active:translate-y-0.5 transition-all"
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl text-[15px] font-black text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 border-b-4 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-800 active:border-b-2 active:translate-y-0.5 transition-all"
               >
                 <ArrowLeft className="w-4 h-4" /> Geri
               </button>
@@ -452,7 +482,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 type="button"
                 disabled={!name.trim() || !publisher.trim() || (examType === "brans" && !bransSubjectId)}
                 onClick={() => setStep((s) => (s + 1) as any)}
-                className="flex items-center gap-2 px-7 py-3 rounded-2xl text-[15px] font-black text-white bg-slate-800 hover:bg-slate-700 active:bg-slate-900 border-b-4 border-slate-950 hover:border-slate-800 active:border-b-0 active:translate-y-1 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:border-b-0 disabled:translate-y-1 shadow-sm"
+                className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-[15px] font-black text-white bg-[#1cb0f6] hover:bg-[#1cb0f6]/90 active:bg-[#1cb0f6] border-b-4 border-[#1899d6] active:border-b-0 active:translate-y-1 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:border-b-0 disabled:translate-y-1 shadow-md shadow-[#1cb0f6]/20"
               >
                 İleri <ArrowRight className="w-4 h-4" />
               </button>
@@ -461,7 +491,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 type="submit"
                 disabled={!name.trim() || !publisher.trim() || !result.isValid}
                 whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-[15px] font-black text-white bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 border-b-4 border-emerald-700 hover:border-emerald-500 active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:border-b-0 disabled:translate-y-1 shadow-sm"
+                className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-[15px] font-black text-white bg-[#58cc02] hover:bg-[#58cc02]/90 active:bg-[#58cc02] border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:border-b-0 disabled:translate-y-1 shadow-md shadow-[#58cc02]/20"
               >
                 <Check className="w-4 h-4" />
                 {initial ? "Değişiklikleri Kaydet" : "Denemeyi Kaydet"}
@@ -473,23 +503,48 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
 
       {/* ━━━ SAĞ PANEL: CANLI SKOR WIDGETLARI ━━━ */}
       <aside className="lg:sticky lg:top-28 h-fit space-y-6">
-        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[32px] p-8 relative overflow-hidden">
-          {/* Subtle glow background */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-accent/10 to-transparent rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-
-          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center mb-8 relative z-10">Canlı Skor Paneli</h4>
+        <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-7 shadow-sm relative overflow-hidden">
           
-          <div className="flex justify-center mb-8 relative z-10">
-            <DenemeScoreRing
-              value={displayNet}
-              max={maxQuestions}
-              size={200}
-              label={examType === "genel" ? "Toplam Net" : "Ders Neti"}
-              color={examType === "brans" ? selectedBranchSubject?.color : undefined}
-            />
+          {/* Clean Header Bar */}
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700/60 mb-6">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: activeColor }} />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: activeColor }} />
+              </span>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-slate-800 dark:text-white">Canlı Skor Paneli</h4>
+            </div>
+            <BarChart3 className="w-5 h-5" style={{ color: activeColor }} />
           </div>
 
-          <div className="space-y-3 mb-8 relative z-10">
+          {/* ━━━ CANLI SKOR GÖSTERGE KARTI ━━━ */}
+          <div className="bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2rem] p-6 text-center relative overflow-hidden mb-6">
+            <div 
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-white text-[11px] font-extrabold uppercase tracking-wider mb-3 shadow-xs"
+              style={{
+                backgroundColor: activeColor,
+                borderBottomWidth: "3px",
+                borderBottomColor: "rgba(0, 0, 0, 0.25)"
+              }}
+            >
+              <AppleEmoji emoji={examType === "genel" ? "🎯" : (selectedBranchSubject?.icon || "📘")} size={14} />
+              <span>{examType === "genel" ? "Toplam Canlı Net" : `${selectedBranchSubject?.title || "Ders"} Neti`}</span>
+            </div>
+
+            <div className="flex items-baseline justify-center gap-2 my-1">
+              <span className="text-5xl sm:text-6xl font-extrabold font-mono tracking-tight text-slate-800 dark:text-white leading-none">
+                {displayNet.toFixed(2).replace(/\.?0+$/, "")}
+              </span>
+              <span className="text-base font-extrabold uppercase tracking-wider" style={{ color: activeColor }}>NET</span>
+            </div>
+
+            <p className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
+              {maxQuestions > 0 ? `${maxQuestions} soru üzerinden` : "Soru girişi bekleniyor"}
+            </p>
+          </div>
+
+          {/* ━━━ CEVAPLANAN / KALAN BARI ━━━ */}
+          <div className="space-y-2.5 mb-6">
             {(() => {
               const correctCount = examType === "genel" ? result.totalCorrect : (selectedBranchSubject?.correct ?? 0);
               const wrongCount = examType === "genel" ? result.totalWrong : (selectedBranchSubject?.wrong ?? 0);
@@ -498,42 +553,30 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
               
               return (
                 <>
-                  <div className="flex justify-between items-center text-[11px] font-black uppercase tracking-widest">
+                  <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
                     <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                      <div className="flex gap-0.5">
-                        <span className="w-2 h-2 rounded-l-full bg-[#34c759]"></span>
-                        <span className="w-2 h-2 rounded-r-full bg-[#ff3b30]"></span>
-                      </div>
-                      Cevaplanan <span className="text-slate-800 dark:text-white">{totalAnswered}</span>
+                      <span className="w-2 h-2 rounded-full bg-[#58cc02]"></span>
+                      Cevaplanan <span className="text-slate-800 dark:text-white font-mono">{totalAnswered}</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                      Kalan <span className="text-slate-800 dark:text-white">{maxQuestions - totalAnswered}</span>
-                      <span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700"></span>
+                      Kalan <span className="text-slate-800 dark:text-white font-mono">{maxQuestions - totalAnswered}</span>
+                      <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                     </div>
                   </div>
-                  <div className="h-4 sm:h-5 w-full bg-slate-100 dark:bg-slate-800/80 rounded-full shadow-inner border border-slate-200/60 dark:border-slate-700 p-0.5 sm:p-1 relative">
-                    <div className="w-full h-full rounded-full overflow-hidden flex relative">
+                  <div className="h-3.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[2px] relative overflow-hidden shadow-inner">
+                    <div className="w-full h-full rounded-full overflow-hidden flex">
                       <motion.div 
-                        className="h-full bg-[#34c759]"
+                        className="h-full bg-[#58cc02]"
                         initial={{ width: 0 }}
                         animate={{ width: `${correctPct}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
                       />
                       <motion.div 
-                        className="h-full bg-[#ff3b30]"
+                        className="h-full bg-[#ff4b4b]"
                         initial={{ width: 0 }}
                         animate={{ width: `${wrongPct}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
                       />
-                      {/* Duolingo style 3D highlight */}
-                      {totalAnswered > 0 && (
-                        <motion.div 
-                          className="absolute top-0 left-0 h-[3px] bg-white/30 rounded-full z-10 pointer-events-none mt-[2px] mx-[2px]"
-                          initial={{ width: 0 }}
-                          animate={{ width: `calc(${correctPct + wrongPct}% - 4px)` }}
-                          transition={{ duration: 0.6, ease: "easeOut" }}
-                        />
-                      )}
                     </div>
                   </div>
                 </>
@@ -541,51 +584,56 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
             })()}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 relative z-10">
+          {/* ━━━ 4 MİNİ İSTATİSTİK KARTI ━━━ */}
+          <div className="grid grid-cols-2 gap-3">
             {examType === "genel" ? (
               <>
-                <PremiumWidget label="G. Yetenek" value={formatNet(result.gyNet)} color="blue" />
-                <PremiumWidget label="G. Kültür" value={formatNet(result.gkNet)} color="purple" />
-                <PremiumWidget label="Doğru" value={String(result.totalCorrect)} color="emerald" />
-                <PremiumWidget label="Yanlış" value={String(result.totalWrong)} color="red" />
+                <SiteStatCard label="G. Yetenek" value={formatNet(result.gyNet)} icon={<BookOpen className="w-4 h-4 text-[#1cb0f6]" />} valueColor="text-[#1cb0f6]" />
+                <SiteStatCard label="G. Kültür" value={formatNet(result.gkNet)} icon={<Landmark className="w-4 h-4 text-[#af52de]" />} valueColor="text-[#af52de]" />
+                <SiteStatCard label="Doğru" value={String(result.totalCorrect)} icon={<CheckCircle2 className="w-4 h-4 text-[#58cc02]" />} valueColor="text-[#58cc02]" />
+                <SiteStatCard label="Yanlış" value={String(result.totalWrong)} icon={<XCircle className="w-4 h-4 text-[#ff4b4b]" />} valueColor="text-[#ff4b4b]" />
                 
-                <div className="col-span-2 rounded-[20px] p-5 text-center bg-gradient-to-br from-amber-50 to-orange-50/50 dark:from-amber-500/10 dark:to-orange-500/5 border border-amber-200/50 dark:border-amber-500/20 shadow-sm mt-2">
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-amber-600 dark:text-amber-500/80 mb-1">P3 Puan Tahmini</p>
-                  <p className="text-3xl font-black font-mono text-amber-800 dark:text-amber-400 tracking-tight">
+                {/* P3 Puan Tahmini Kartı */}
+                <div className="col-span-2 rounded-[1.25rem] p-4 bg-amber-500/10 dark:bg-amber-500/15 border-2 border-b-4 border-amber-200 dark:border-amber-500/30 flex items-center justify-between mt-1">
+                  <div className="flex items-center gap-2.5">
+                    <Trophy className="w-5 h-5 text-amber-500" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">P3 Puan Tahmini</span>
+                  </div>
+                  <span className="text-2xl font-extrabold font-mono text-amber-600 dark:text-amber-400">
                     {estimateP3Score(result.gyNet, result.gkNet).toFixed(3)}
-                  </p>
+                  </span>
                 </div>
               </>
             ) : (
               <>
-                <PremiumWidget label="Doğru" value={String(selectedBranchSubject?.correct ?? 0)} color="emerald" />
-                <PremiumWidget label="Yanlış" value={String(selectedBranchSubject?.wrong ?? 0)} color="red" />
-                <PremiumWidget label="Boş" value={String(selectedBranchSubject?.empty ?? 0)} color="slate" />
-                <PremiumWidget label="İsabet Oranı" value={`%${Math.round(successRate)}`} color="blue" />
+                <SiteStatCard label="Doğru" value={String(selectedBranchSubject?.correct ?? 0)} icon={<CheckCircle2 className="w-4 h-4 text-[#58cc02]" />} valueColor="text-[#58cc02]" />
+                <SiteStatCard label="Yanlış" value={String(selectedBranchSubject?.wrong ?? 0)} icon={<XCircle className="w-4 h-4 text-[#ff4b4b]" />} valueColor="text-[#ff4b4b]" />
+                <SiteStatCard label="Boş" value={String(selectedBranchSubject?.empty ?? 0)} icon={<MinusCircle className="w-4 h-4 text-slate-400" />} valueColor="text-slate-700 dark:text-slate-200" />
+                <SiteStatCard label="İsabet Oranı" value={`%${Math.round(successRate)}`} icon={<Target className="w-4 h-4" style={{ color: activeColor }} />} style={{ color: activeColor }} />
               </>
             )}
           </div>
 
           {examType === "genel" && (
-            <div className="mt-6 pt-5 border-t border-slate-100 text-center relative z-10">
-              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Hedef Net: {targetNet}</p>
+            <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60 text-center">
+              <div className="flex items-center justify-center gap-1.5 mb-2">
+                <Target className="w-4 h-4 text-slate-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Hedef Net: {targetNet}</span>
+              </div>
               <div className="text-xs font-bold">
                 {result.totalNet >= targetNet ? (
-                  <span className="text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg inline-block">🎉 Hedef aşıldı! (+{(result.totalNet - targetNet).toFixed(1)} Net)</span>
+                  <span className="text-[#58cc02] bg-[#58cc02]/10 border border-[#58cc02]/20 px-3 py-1 rounded-full inline-flex items-center gap-1 font-bold">
+                    🎉 Hedef aşıldı! (+{(result.totalNet - targetNet).toFixed(1)} Net)
+                  </span>
                 ) : (
-                  <span className="text-slate-500">Hedefe <strong className="text-accent font-mono text-sm px-1">{(targetNet - result.totalNet).toFixed(1)}</strong> net kaldı.</span>
+                  <span className="text-slate-500 dark:text-slate-400">
+                    Hedefe <strong className="text-[#1cb0f6] font-mono text-sm px-1.5 py-0.5 rounded-md bg-[#1cb0f6]/10 font-bold">{(targetNet - result.totalNet).toFixed(1)}</strong> net kaldı.
+                  </span>
                 )}
               </div>
             </div>
           )}
         </div>
-
-        {!result.isValid && (
-          <DenemeAlert variant="error" title="Girdi doğrulanamadı">
-            Bir veya daha fazla derste soru limiti aşıldı. Doğru, yanlış ve boş sayılarının
-            toplamı, o dersin soru sayısını geçmemelidir.
-          </DenemeAlert>
-        )}
 
         {examType === "brans" && !bransSubjectId && step > 1 && (
           <DenemeAlert variant="warning" title="Branş seçimi gerekli">
@@ -597,19 +645,14 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   );
 }
 
-function PremiumWidget({ label, value, color }: { label: string; value: string; color: "blue"|"purple"|"emerald"|"red"|"slate" }) {
-  const colorStyles = {
-    blue: "bg-blue-50/50 dark:bg-blue-500/10 border-blue-100/50 dark:border-blue-500/20 text-blue-600 dark:text-blue-400",
-    purple: "bg-purple-50/50 dark:bg-purple-500/10 border-purple-100/50 dark:border-purple-500/20 text-purple-600 dark:text-purple-400",
-    emerald: "bg-emerald-50/50 dark:bg-emerald-500/10 border-emerald-100/50 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400",
-    red: "bg-red-50/50 dark:bg-red-500/10 border-red-100/50 dark:border-red-500/20 text-red-600 dark:text-red-400",
-    slate: "bg-slate-50 dark:bg-slate-800 border-slate-200/50 dark:border-slate-500/20 text-slate-600 dark:text-slate-400"
-  };
-
+function SiteStatCard({ label, value, icon, valueColor, style }: { label: string; value: string; icon: React.ReactNode; valueColor?: string; style?: React.CSSProperties }) {
   return (
-    <div className={`rounded-[20px] p-4 text-center border ${colorStyles[color]} transition-transform hover:scale-105 duration-200`}>
-      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 opacity-80 mb-0.5">{label}</p>
-      <p className="text-xl font-black font-mono tracking-tight">{value}</p>
+    <div className="bg-white dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-center flex flex-col items-center justify-center shadow-xs">
+      <div className="flex items-center justify-center gap-1.5 mb-1">
+        {icon}
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</span>
+      </div>
+      <p className={`text-2xl font-extrabold font-mono leading-none ${valueColor || ""}`} style={style}>{value}</p>
     </div>
   );
 }

@@ -2,23 +2,24 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, AlertTriangle, Shield, CheckCircle2, Moon, Sun, Target, Layers, ArrowLeft, Play } from "lucide-react";
+import { AlertTriangle, Shield, CheckCircle2, Moon, Sun, ArrowLeft, Play } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadPlannerYeniden } from "@/lib/firebaseService";
 import { format } from "date-fns";
 import { getStudyDate } from "@/lib/dateUtils";
+import AppleEmoji from "@/components/AppleEmoji";
 
 type SetupStep = "mode" | "duration";
 type ExamMode = "genel" | "brans" | null;
-type Subject = { id: string; name: string; defaultDuration: number };
+type Subject = { id: string; name: string; emoji: string; defaultDuration: number; color: string };
 
 const SUBJECTS: Subject[] = [
-  { id: "tarih", name: "Tarih", defaultDuration: 30 },
-  { id: "cografya", name: "Coğrafya", defaultDuration: 20 },
-  { id: "vatandaslik", name: "Vatandaşlık", defaultDuration: 15 },
-  { id: "turkce", name: "Türkçe", defaultDuration: 40 },
-  { id: "matematik", name: "Matematik", defaultDuration: 40 },
+  { id: "turkce", name: "Türkçe", emoji: "📘", defaultDuration: 40, color: "border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] bg-[#e8f7ff]" },
+  { id: "matematik", name: "Matematik", emoji: "🔢", defaultDuration: 40, color: "border-[#af52de] border-b-[#963ec7] text-[#af52de] bg-[#f8f0fc]" },
+  { id: "tarih", name: "Tarih", emoji: "🏛️", defaultDuration: 30, color: "border-[#ff9500] border-b-[#e08400] text-[#ff9500] bg-[#fff8ed]" },
+  { id: "cografya", name: "Coğrafya", emoji: "🗺️", defaultDuration: 20, color: "border-[#58cc02] border-b-[#46a302] text-[#58cc02] bg-[#e5f9e7]" },
+  { id: "vatandaslik", name: "Vatandaşlık", emoji: "⚖️", defaultDuration: 15, color: "border-[#5856d6] border-b-[#4744b8] text-[#5856d6] bg-[#f0f0ff]" },
 ];
 
 export default function ExamSimulatorPage() {
@@ -39,8 +40,8 @@ export default function ExamSimulatorPage() {
   const [realStartTimeSeconds, setRealStartTimeSeconds] = useState(36900); // 10:15 default
 
   const { user } = useAuth();
-  const [dailyGoalTarget, setDailyGoalTarget] = useState(0);
-  const [todaySolved, setTodaySolved] = useState(0);
+  const [, setDailyGoalTarget] = useState(0);
+  const [, setTodaySolved] = useState(0);
   
   const today = format(getStudyDate(), "yyyy-MM-dd");
 
@@ -58,7 +59,6 @@ export default function ExamSimulatorPage() {
   }, [user, today]);
 
   useEffect(() => {
-    // Prevent default exit behavior
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasStarted && !isFinished) {
         e.preventDefault();
@@ -138,42 +138,40 @@ export default function ExamSimulatorPage() {
   const totalExamSeconds = customDuration * 60;
   const elapsedSeconds = totalExamSeconds - timeLeft;
   const currentSimulatedSeconds = realStartTimeSeconds + elapsedSeconds;
-  
-  const simulatedHour = Math.floor((currentSimulatedSeconds / 3600) % 24);
-  const simulatedMin = Math.floor((currentSimulatedSeconds % 3600) / 60);
-  const simulatedSec = currentSimulatedSeconds % 60;
 
   const progressPercentage = (elapsedSeconds / totalExamSeconds) * 100;
-  const circleRadius = 120;
-  const circleCircumference = 2 * Math.PI * circleRadius;
-  const strokeDashoffset = circleCircumference - (progressPercentage / 100) * circleCircumference;
 
+  // Finished Screen
   if (isFinished) {
     return (
       <div className="min-h-screen bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-6 fixed inset-0 z-50">
         <motion.div 
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", bounce: 0.5, duration: 0.5 }}
-          className="bg-white dark:bg-slate-800 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-md w-full text-center border-4 border-white/50 dark:border-white/10"
+          transition={{ type: "spring", bounce: 0.4, duration: 0.5 }}
+          className="bg-white dark:bg-slate-800 p-8 sm:p-10 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl max-w-md w-full text-center"
         >
-          <div className="w-24 h-24 bg-[#58cc02]/10 text-[#58cc02] rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-inner relative">
-            <div className="absolute inset-0 bg-[#58cc02]/20 rounded-[1.5rem] animate-ping opacity-50" />
-            <CheckCircle2 className="w-12 h-12 relative z-10" />
+          <div className="w-20 h-20 bg-[#58cc02] text-white border-2 border-b-4 border-[#58cc02] border-b-[#46a302] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xs">
+            <CheckCircle2 className="w-10 h-10" />
           </div>
-          <h2 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight mb-4">Süre Doldu!</h2>
-          <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed text-lg">
+          <h2 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight mb-3">Süre Doldu!</h2>
+          <p className="text-slate-500 dark:text-slate-400 font-semibold mb-8 leading-relaxed text-sm">
             Harika bir odaklanmaydı! Gerçek bir sınav deneyimi yaşadın. Şimdi derin bir nefes al ve sonuçlarını deneme merkezine kaydet.
           </p>
           <button 
-            onClick={() => router.push(examMode === "brans" ? `/deneme?mode=brans&subject=${selectedSubject?.id}` : "/deneme?mode=genel")} 
-            className="w-full bg-[#58cc02] border-b-4 border-[#46a302] hover:bg-[#46a302] text-white font-black py-4 rounded-2xl transition-all active:translate-y-1 active:border-b-0 active:mb-1 text-lg"
+            type="button"
+            onClick={() => {
+              const elapsedMinutes = Math.max(1, Math.round(elapsedSeconds / 60));
+              router.push(examMode === "brans" ? `/deneme?mode=brans&subject=${selectedSubject?.id}&duration=${elapsedMinutes}` : `/deneme?mode=genel&duration=${elapsedMinutes}`);
+            }} 
+            className="w-full bg-[#58cc02] text-white border-2 border-b-4 border-[#58cc02] border-b-[#46a302] hover:bg-[#4ecc00] font-black py-4 rounded-2xl shadow-xs transition-all active:translate-y-0.5 text-base cursor-pointer"
           >
             Sonuçları Kaydet
           </button>
           <button 
+            type="button"
             onClick={() => router.push("/")} 
-            className="w-full mt-4 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95 text-lg"
+            className="w-full mt-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-white border-2 border-b-4 border-slate-200 dark:border-slate-600 hover:bg-slate-200 font-black py-3.5 rounded-2xl transition-all active:translate-y-0.5 text-base cursor-pointer"
           >
             Anasayfaya Dön
           </button>
@@ -200,24 +198,26 @@ export default function ExamSimulatorPage() {
     );
   }
 
+  // Setup Screen (Ne Çözeceksin?)
   if (!hasStarted) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] flex flex-col items-center p-6 text-slate-900 dark:text-white relative overflow-hidden transition-colors duration-500">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/10 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center p-6 text-slate-900 dark:text-white relative overflow-hidden transition-colors duration-500 pt-24">
         
-        {/* Header */}
-        <div className="w-full max-w-4xl flex items-center justify-between z-10 mb-12 mt-4">
+        {/* Header Bar */}
+        <div className="w-full max-w-4xl flex items-center justify-between z-10 mb-8">
            <button 
+             type="button"
              onClick={() => setupStep === "mode" ? router.back() : setSetupStep("mode")}
-             className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors font-bold"
+             className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-2.5 font-black text-xs text-slate-700 dark:text-slate-200 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
            >
-             <ArrowLeft className="w-5 h-5" /> Geri
+             <ArrowLeft className="w-4 h-4 text-[#1cb0f6]" />
+             <span>Geri</span>
            </button>
-           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 rounded-xl flex items-center justify-center border border-blue-200 dark:border-blue-500/30">
-               <Shield className="w-5 h-5" />
-             </div>
-             <span className="font-black tracking-widest text-sm text-slate-500 dark:text-slate-300 uppercase">ÖSYM Odak Modu</span>
+
+           {/* 3D ÖSYM Odak Modu Badge */}
+           <div className="bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] rounded-2xl px-5 py-2.5 font-black text-xs text-[#1cb0f6] flex items-center gap-2 shadow-2xs">
+             <AppleEmoji emoji="🛡️" size={18} />
+             <span>ÖSYM ODAK MODU</span>
            </div>
         </div>
 
@@ -229,42 +229,78 @@ export default function ExamSimulatorPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="flex flex-col items-center text-center mt-12"
+                className="flex flex-col items-center text-center mt-6"
               >
-                <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-800 dark:text-white">Ne Çözeceksin?</h1>
-                <p className="text-lg text-slate-500 dark:text-slate-400 mb-12 max-w-2xl font-medium">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <AppleEmoji emoji="⏱️" size={40} />
+                  <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-800 dark:text-white">
+                    Ne Çözeceksin?
+                  </h1>
+                </div>
+                <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mb-10 max-w-xl font-semibold leading-relaxed">
                   Odaklanmak istediğin sınav tipini seç. Simülatör seni dış dünyadan soyutlayarak gerçek bir sınav atmosferi yaşatacak.
                 </p>
 
+                {/* 3D Selection Cards Grid */}
                 <div className="grid md:grid-cols-2 gap-6 w-full max-w-3xl">
+                  {/* Genel Deneme Card */}
                   <button 
+                    type="button"
                     onClick={() => {
                       setExamMode("genel");
                       setCustomDuration(130);
                       setSetupStep("duration");
                     }}
-                    className="group bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800 border-2 border-slate-200 dark:border-slate-700/50 hover:border-[#58cc02] dark:hover:border-[#58cc02] rounded-3xl p-8 text-left transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-[#58cc02]/10"
+                    className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#58cc02] transition-all text-left flex flex-col justify-between h-full cursor-pointer block"
                   >
-                    <div className="w-16 h-16 bg-[#58cc02]/10 text-[#58cc02] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#58cc02] group-hover:text-white transition-colors">
-                      <Target className="w-8 h-8" />
+                    <div className="flex flex-col items-start gap-5">
+                      <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-[#58cc02] text-white border-2 border-b-4 border-[#58cc02] border-b-[#46a302] flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+                        <AppleEmoji emoji="🎯" size={38} className="text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-black mb-2 text-slate-800 dark:text-white group-hover:text-[#58cc02] transition-colors">
+                          Genel Deneme
+                        </h3>
+                        <p className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
+                          120 soru, 130 dakika. Tam teşekküllü GY-GK KPSS provası.
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="text-2xl font-black mb-2 text-slate-800 dark:text-white">Genel Deneme</h3>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">120 soru, 130 dakika. Tam teşekküllü GY-GK KPSS provası.</p>
+
+                    <div className="inline-flex items-center gap-2 bg-[#e5f9e7] text-[#58cc02] dark:bg-[#58cc02]/10 font-black px-5 py-2.5 rounded-xl text-xs border-2 border-b-4 border-[#58cc02] border-b-[#46a302] shadow-2xs self-start group-active:translate-y-0.5 transition-transform mt-6">
+                      <span>Seç & Başlat</span>
+                      <AppleEmoji emoji="🚀" size={14} className="text-[#58cc02]" />
+                    </div>
                   </button>
 
+                  {/* Branş Denemesi Card */}
                   <button 
+                    type="button"
                     onClick={() => {
                       setExamMode("brans");
                       setCustomDuration(0);
                       setSetupStep("duration");
                     }}
-                    className="group bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800 border-2 border-slate-200 dark:border-slate-700/50 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] rounded-3xl p-8 text-left transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-[#1cb0f6]/10"
+                    className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] transition-all text-left flex flex-col justify-between h-full cursor-pointer block"
                   >
-                    <div className="w-16 h-16 bg-[#1cb0f6]/10 text-[#1cb0f6] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#1cb0f6] group-hover:text-white transition-colors">
-                      <Layers className="w-8 h-8" />
+                    <div className="flex flex-col items-start gap-5">
+                      <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+                        <AppleEmoji emoji="📚" size={38} className="text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-black mb-2 text-slate-800 dark:text-white group-hover:text-[#1cb0f6] transition-colors">
+                          Branş Denemesi
+                        </h3>
+                        <p className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
+                          Spesifik bir derse odaklan. Süreni konuya göre sen belirle.
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="text-2xl font-black mb-2 text-slate-800 dark:text-white">Branş Denemesi</h3>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">Spesifik bir derse odaklan. Süreni konuya göre sen belirle.</p>
+
+                    <div className="inline-flex items-center gap-2 bg-[#e8f7ff] text-[#1cb0f6] dark:bg-[#1cb0f6]/10 font-black px-5 py-2.5 rounded-xl text-xs border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs self-start group-active:translate-y-0.5 transition-transform mt-6">
+                      <span>Dersi Seç</span>
+                      <AppleEmoji emoji="🚀" size={14} className="text-[#1cb0f6]" />
+                    </div>
                   </button>
                 </div>
               </motion.div>
@@ -276,75 +312,90 @@ export default function ExamSimulatorPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="flex flex-col items-center mt-12 w-full max-w-3xl mx-auto"
+                className="flex flex-col items-center mt-6 w-full max-w-3xl mx-auto"
               >
-                <div className="text-center mb-12">
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-800 dark:text-white">Süreni Belirle</h1>
-                  <p className="text-lg text-slate-500 dark:text-slate-400 font-medium">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3 text-slate-800 dark:text-white flex items-center justify-center gap-3">
+                    <AppleEmoji emoji="⏱️" size={32} />
+                    <span>Süreni Belirle</span>
+                  </h1>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-semibold">
                     {examMode === "genel" ? "Genel deneme için varsayılan süre 130 dakikadır. İstersen değiştirebilirsin." : "Çözeceğin branşı seç veya doğrudan süreni gir."}
                   </p>
                 </div>
 
+                {/* 3D Subject Selector Pills */}
                 {examMode === "brans" && (
-                  <div className="flex flex-wrap justify-center gap-3 mb-10 w-full">
+                  <div className="flex flex-wrap justify-center gap-3 mb-8 w-full">
                     {SUBJECTS.map((sub) => {
-                      // Apple/Duolingo colors mapping
-                      const colorMap: Record<string, string> = {
-                        "tarih": "#ff9500",
-                        "cografya": "#58cc02",
-                        "vatandaslik": "#5856d6",
-                        "turkce": "#1cb0f6",
-                        "matematik": "#af52de"
-                      };
-                      const color = colorMap[sub.id] || "#1cb0f6";
                       const isSelected = selectedSubject?.id === sub.id;
 
                       return (
                         <button
                           key={sub.id}
+                          type="button"
                           onClick={() => {
                             setSelectedSubject(sub);
                             setCustomDuration(sub.defaultDuration);
                           }}
-                          style={isSelected ? { backgroundColor: color, borderColor: color, color: "white" } : {}}
-                          className={`px-6 py-3 rounded-2xl font-black border-2 transition-all hover:-translate-y-0.5 ${isSelected ? "shadow-lg" : "bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"}`}
+                          className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl font-black text-xs transition-all cursor-pointer border-2 border-b-4 active:translate-y-0.5 ${
+                            isSelected
+                              ? `${sub.color} shadow-xs scale-105`
+                              : "bg-white dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#1cb0f6] shadow-2xs"
+                          }`}
                         >
-                          {sub.name} ({sub.defaultDuration} Dk)
+                          <AppleEmoji emoji={sub.emoji} size={18} />
+                          <span>{sub.name} ({sub.defaultDuration} Dk)</span>
                         </button>
                       );
                     })}
                   </div>
                 )}
 
-                <div className="bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-[2rem] p-8 w-full max-w-md mx-auto text-center mb-10 shadow-sm">
-                  <label className="block text-slate-400 dark:text-slate-500 font-black mb-6 text-sm uppercase tracking-widest">{examMode === "genel" ? "Sabit Süre" : "Özel Süre (Dakika)"}</label>
+                {/* 3D Counter Card */}
+                <div className="bg-white dark:bg-slate-800 rounded-[2.25rem] p-8 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs w-full max-w-md mx-auto text-center mb-8">
+                  <label className="block text-slate-400 dark:text-slate-500 font-black mb-6 text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                    <AppleEmoji emoji="⚡" size={14} />
+                    <span>{examMode === "genel" ? "Sabit Süre" : "Özel Süre (Dakika)"}</span>
+                  </label>
                   <div className="flex items-center justify-center gap-6">
                     <button 
+                      type="button"
                       onClick={() => setCustomDuration(Math.max(1, customDuration - 5))}
                       disabled={examMode === "genel"}
-                      className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white font-black text-3xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                    >-</button>
-                    <div className="text-6xl font-black text-slate-800 dark:text-white w-32 tabular-nums">
+                      className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-700 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 text-slate-700 dark:text-white font-black text-2xl hover:bg-slate-200 active:translate-y-0.5 transition-all flex items-center justify-center shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      -
+                    </button>
+                    <div className="text-5xl font-black text-slate-800 dark:text-white w-32 tabular-nums">
                       {customDuration}
                     </div>
                     <button 
+                      type="button"
                       onClick={() => setCustomDuration(customDuration + 5)}
                       disabled={examMode === "genel"}
-                      className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white font-black text-3xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                    >+</button>
+                      className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-700 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 text-slate-700 dark:text-white font-black text-2xl hover:bg-slate-200 active:translate-y-0.5 transition-all flex items-center justify-center shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      +
+                    </button>
                   </div>
                   {examMode === "genel" && (
-                     <p className="mt-6 text-[#58cc02] text-sm font-bold">Genel deneme süresi gerçek sınavla aynıdır ve değiştirilemez.</p>
+                    <p className="mt-6 text-[#58cc02] text-xs font-bold flex items-center justify-center gap-1.5">
+                      <AppleEmoji emoji="💡" size={14} />
+                      <span>Genel deneme süresi gerçek sınavla aynıdır.</span>
+                    </p>
                   )}
                 </div>
 
+                {/* 3D Start Button */}
                 <button 
+                  type="button"
                   onClick={startExam}
                   disabled={customDuration <= 0}
-                  className="bg-[#1cb0f6] border-b-4 border-[#1899d6] w-full max-w-md text-white font-black text-xl py-5 rounded-2xl flex items-center justify-center gap-3 hover:bg-[#1899d6] active:translate-y-1 active:border-b-0 active:mb-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:border-b-0 disabled:translate-y-0"
+                  className="bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] hover:bg-[#159ee0] text-white font-black text-lg py-4 px-8 rounded-2xl w-full max-w-md shadow-md active:translate-y-0.5 transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Play className="w-6 h-6 fill-current" />
-                  Sınavı Başlat
+                  <Play className="w-5 h-5 fill-current" />
+                  <span>Sınavı Başlat</span>
                 </button>
               </motion.div>
             )}
@@ -354,31 +405,35 @@ export default function ExamSimulatorPage() {
     );
   }
 
+  // Active Simulator Room Screen
   return (
-    <div className={`min-h-screen flex flex-col relative select-none transition-colors duration-700 font-sans ${isDarkMode ? 'bg-[#0b0f19] text-white' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`min-h-screen flex flex-col relative select-none transition-colors duration-700 font-sans ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
       
       {/* Minimal Header */}
-      <header className={`w-full p-6 flex items-center justify-between z-10 transition-colors duration-700 ${isDarkMode ? '' : ''}`}>
-        <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-           <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center text-accent">
-             <Target className="w-5 h-5" />
+      <header className="w-full p-6 flex items-center justify-between z-10">
+        <div className="flex items-center gap-3">
+           <div className="w-10 h-10 rounded-2xl bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center shadow-xs">
+             <AppleEmoji emoji="⏱️" size={20} className="text-white" />
            </div>
            <div>
-             <div className="font-bold tracking-widest text-xs uppercase">Odak Odası</div>
-             <div className="text-sm font-medium">{examMode === "genel" ? "Genel Deneme" : selectedSubject?.name + " Denemesi"}</div>
+             <div className="font-black tracking-widest text-[10px] uppercase text-slate-400">Odak Odası</div>
+             <div className="text-sm font-black">{examMode === "genel" ? "Genel Deneme" : selectedSubject?.name + " Denemesi"}</div>
            </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isDarkMode ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700' : 'bg-white shadow-sm text-slate-400 hover:text-slate-600 hover:shadow-md'}`}
+            className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-2xs hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer"
           >
-            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <AppleEmoji emoji={isDarkMode ? '☀️' : '🌙'} size={18} />
           </button>
+          
           <button 
+            type="button"
             onClick={() => setShowExitWarning(true)}
-            className={`font-bold px-6 py-3 rounded-full text-sm transition-all ${isDarkMode ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-red-50 text-red-500 hover:bg-red-100'}`}
+            className="font-black px-5 py-2.5 rounded-2xl text-xs bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-4 border-[#ff4b4b] border-b-[#e03030] shadow-2xs active:translate-y-0.5 transition-all cursor-pointer"
           >
             Sınavı Bitir
           </button>
@@ -388,14 +443,13 @@ export default function ExamSimulatorPage() {
       {/* Main Focus Area */}
       <main className="flex-1 flex flex-col items-center justify-center w-full px-6 pb-20 z-10">
         
-        {/* EdTech Style Analog Clock */}
-        <div className="relative flex items-center justify-center mb-12">
-           <div className={`relative w-64 h-64 sm:w-80 sm:h-80 rounded-full border-[12px] flex items-center justify-center shadow-2xl transition-all duration-700 ${isDarkMode ? 'border-slate-800 bg-slate-900 shadow-[0_0_80px_rgba(30,41,59,0.5)]' : 'border-slate-100 bg-white shadow-[0_0_80px_rgba(226,232,240,0.5)]'}`}>
+        {/* Analog Clock */}
+        <div className="relative flex items-center justify-center mb-10">
+           <div className={`relative w-64 h-64 sm:w-80 sm:h-80 rounded-full border-[10px] flex items-center justify-center shadow-2xl transition-all duration-700 ${isDarkMode ? 'border-slate-800 bg-slate-900 shadow-[0_0_80px_rgba(30,41,59,0.5)]' : 'border-slate-200 bg-white shadow-xl'}`}>
              
-             {/* Subtle Inner Ring */}
-             <div className={`absolute inset-2 rounded-full border-2 ${isDarkMode ? 'border-slate-800/50' : 'border-slate-50'}`} />
+             <div className={`absolute inset-2 rounded-full border-2 ${isDarkMode ? 'border-slate-800/50' : 'border-slate-100'}`} />
 
-             {/* Clock Face Markers */}
+             {/* Clock Markers */}
              {[...Array(60)].map((_, i) => (
                <div
                  key={i}
@@ -426,53 +480,52 @@ export default function ExamSimulatorPage() {
 
              {/* Second Hand */}
              <motion.div
-               className="absolute w-1 sm:w-1.5 bg-red-500 rounded-full origin-bottom"
+               className="absolute w-1 sm:w-1.5 bg-[#ff4b4b] rounded-full origin-bottom"
                style={{ bottom: '50%', height: '42%' }}
                initial={{ rotate: currentSimulatedSeconds * 6 }}
                animate={{ rotate: currentSimulatedSeconds * 6 }}
                transition={{ type: "spring", stiffness: 300, damping: 20 }}
              />
 
-             {/* Center Dot */}
-             <div className="absolute w-5 h-5 bg-red-500 rounded-full border-4 z-10 transition-colors duration-700" style={{ borderColor: isDarkMode ? '#0f172a' : '#ffffff' }} />
+             <div className="absolute w-5 h-5 bg-[#ff4b4b] rounded-full border-4 z-10 transition-colors duration-700" style={{ borderColor: isDarkMode ? '#0f172a' : '#ffffff' }} />
            </div>
         </div>
 
         {/* Digital Clock */}
-        <div className="flex flex-col items-center justify-center text-center mb-10">
-          <span className={`text-sm font-bold uppercase tracking-[0.2em] mb-2 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+        <div className="flex flex-col items-center justify-center text-center mb-8">
+          <span className="text-xs font-black uppercase tracking-[0.2em] mb-2 text-slate-400">
             Kalan Süre
           </span>
-          <div className={`text-6xl sm:text-7xl font-black font-mono tracking-tighter tabular-nums ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
+          <div className="text-6xl sm:text-7xl font-black font-mono tracking-tighter tabular-nums text-slate-800 dark:text-white">
             {hours > 0 && `${formatDigit(hours)}:`}{formatDigit(mins)}:{formatDigit(secs)}
           </div>
           
-          <div className={`mt-6 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
-            {Math.floor(progressPercentage)}% Tamamlandı
+          <div className="mt-4 px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs">
+            %{Math.floor(progressPercentage)} Tamamlandı
           </div>
         </div>
 
-        {/* Real Exam Timeline Minimalist */}
-        <div className={`w-full max-w-md p-6 rounded-3xl flex items-center justify-between transition-colors duration-700 ${isDarkMode ? 'bg-slate-800/50' : 'bg-white shadow-xl shadow-slate-200/40'}`}>
+        {/* Real Exam Timeline Card */}
+        <div className="w-full max-w-md p-6 rounded-3xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs flex items-center justify-between">
           <div className="text-center">
-            <div className={`text-[10px] uppercase tracking-widest font-bold mb-1 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Başlangıç</div>
-            <div className={`text-lg font-black ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+            <div className="text-[10px] uppercase tracking-widest font-black mb-1 text-slate-400">Başlangıç</div>
+            <div className="text-base font-black text-slate-800 dark:text-slate-200">
               {formatDigit(Math.floor(realStartTimeSeconds / 3600) % 24)}:{formatDigit(Math.floor(realStartTimeSeconds % 3600 / 60))}
             </div>
           </div>
           
           <div className="flex-1 flex items-center px-4">
-            <div className={`h-1 w-full rounded-full relative overflow-hidden ${isDarkMode ? 'bg-slate-700' : 'bg-slate-100'}`}>
+            <div className="h-2 w-full rounded-full relative overflow-hidden bg-slate-100 dark:bg-slate-700">
               <div 
-                className="absolute top-0 left-0 h-full bg-accent transition-all duration-1000"
+                className="absolute top-0 left-0 h-full bg-[#1cb0f6] transition-all duration-1000"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
           </div>
 
           <div className="text-center">
-            <div className={`text-[10px] uppercase tracking-widest font-bold mb-1 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Bitiş</div>
-            <div className={`text-lg font-black ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+            <div className="text-[10px] uppercase tracking-widest font-black mb-1 text-slate-400">Bitiş</div>
+            <div className="text-base font-black text-slate-800 dark:text-slate-200">
               {formatDigit(Math.floor((realStartTimeSeconds + customDuration * 60) / 3600) % 24)}:{formatDigit(Math.floor((realStartTimeSeconds + customDuration * 60) % 3600 / 60))}
             </div>
           </div>
@@ -480,47 +533,46 @@ export default function ExamSimulatorPage() {
         
       </main>
 
-      {/* Decorative Background Elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center">
-        <div className={`absolute w-[1000px] h-[1000px] rounded-full blur-[150px] opacity-20 transition-colors duration-700 ${isDarkMode ? 'bg-accent/20' : 'bg-accent/10'}`} />
-      </div>
-
+      {/* Exit Warning Dialog */}
       <AnimatePresence>
         {showExitWarning && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
             <motion.div 
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", bounce: 0.5, duration: 0.5 }}
-              className="bg-white dark:bg-slate-800 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full text-center border-4 border-white/50 dark:border-white/10"
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", bounce: 0.4, duration: 0.5 }}
+              className="bg-white dark:bg-slate-800 p-8 sm:p-10 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl max-w-sm w-full text-center"
             >
-              <div className="w-20 h-20 bg-[#ff2d55]/10 text-[#ff2d55] rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-4 border-[#ff4b4b] border-b-[#e03030] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xs">
                 <AlertTriangle className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-3 tracking-tight">Pes mi ediyorsun?</h3>
-              <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
-                Odaklanmayı şimdi bırakırsanız sınav atmosferinden kopacaksınız.<br/>
-                <span className="block mt-4 text-sm uppercase tracking-widest font-bold">Kalan Süreniz</span>
+              <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Pes mi ediyorsun?</h3>
+              <p className="text-slate-500 dark:text-slate-400 font-semibold mb-6 leading-relaxed text-xs">
+                Odaklanmayı şimdi bırakırsan sınav atmosferinden kopacaksın.<br/>
+                <span className="block mt-3 text-[10px] uppercase tracking-widest font-black text-slate-400">Kalan Süreniz</span>
                 <strong className="text-slate-800 dark:text-white text-3xl block mt-1 font-mono tracking-tighter tabular-nums">{hours > 0 ? `${formatDigit(hours)}:` : ''}{formatDigit(mins)}:{formatDigit(secs)}</strong>
               </p>
               
               <div className="flex flex-col gap-3">
                 <button 
+                  type="button"
                   onClick={() => setShowExitWarning(false)}
-                  className="w-full bg-[#1cb0f6] border-b-4 border-[#1899d6] hover:bg-[#1899d6] text-white font-black py-4 rounded-2xl transition-all active:translate-y-1 active:border-b-0 active:mb-1"
+                  className="w-full bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] hover:bg-[#1899d6] text-white font-black py-3.5 rounded-2xl shadow-xs transition-all active:translate-y-0.5 text-sm cursor-pointer"
                 >
                   Odaklanmaya Devam Et
                 </button>
                 <button 
+                  type="button"
                   onClick={finishExam}
-                  className="w-full bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95"
+                  className="w-full bg-white dark:bg-slate-700 text-slate-700 dark:text-white border-2 border-b-4 border-slate-200 dark:border-slate-600 hover:bg-slate-50 font-black py-3 rounded-2xl transition-all active:translate-y-0.5 text-sm cursor-pointer"
                 >
                   Sınavı Erken Bitir
                 </button>
                 <button 
+                  type="button"
                   onClick={forceExit}
-                  className="w-full text-slate-400 hover:text-[#ff2d55] font-bold py-2 mt-2 text-sm transition-colors"
+                  className="w-full text-slate-400 hover:text-[#ff4b4b] font-black py-2 mt-1 text-xs transition-colors cursor-pointer"
                 >
                   Anasayfaya Dön
                 </button>

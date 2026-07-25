@@ -20,7 +20,18 @@ export type DenemeRecord = {
   note?: string;
   examType?: "genel" | "brans";
   bransSubjectId?: string;
+  durationMinutes?: number;
 };
+
+export function formatDuration(minutes?: number): string {
+  if (minutes === undefined || minutes === null || minutes <= 0) return "";
+  if (minutes >= 60) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m > 0 ? `${h} sa ${m} dk` : `${h} sa`;
+  }
+  return `${minutes} dk`;
+}
 
 export type SubjectScoreResult = SubjectScoreInput & {
   title: string;

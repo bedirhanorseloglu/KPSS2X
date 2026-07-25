@@ -5,6 +5,8 @@ import { SubjectScoreResult, formatNet } from "@/lib/denemeUtils";
 import ScoreStepper from "./ScoreStepper";
 import DenemeAlert from "./DenemeAlert";
 
+import AppleEmoji from "../AppleEmoji";
+
 type Props = {
   subject: SubjectScoreResult;
   onChange: (
@@ -43,22 +45,11 @@ export default function SubjectScoreRow({
               color: subject.color,
             }}
           >
-            {subject.icon}
+            <AppleEmoji emoji={subject.icon} size={24} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h4 className="font-black text-[#1d1d1f] dark:text-white text-base tracking-tight truncate">{subject.title}</h4>
-              {answered > 0 && (
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                  accuracy >= 70 
-                    ? "bg-[#e2f1e7] text-[#137333]" 
-                    : accuracy >= 40 
-                      ? "bg-[#fef3d6] text-[#b06000]" 
-                      : "bg-[#fce8e6] text-[#c5221f]"
-                }`}>
-                  %{accuracy} İsabet
-                </span>
-              )}
             </div>
             <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mt-0.5">
               Toplam Soru: <span className="font-sans text-slate-500 font-black">{subject.questionCount}</span>
@@ -77,36 +68,27 @@ export default function SubjectScoreRow({
         </div>
       </div>
 
-      {/* Stacked D/Y/B Ratio Progress Bar (Apple/Duolingo Style) */}
-      <div className="mt-4 h-3.5 sm:h-4 w-full bg-slate-100 dark:bg-slate-900/60 rounded-full shadow-inner border border-slate-200/60 dark:border-slate-700/60 p-[2px] relative">
-        <div className="w-full h-full rounded-full overflow-hidden flex relative bg-slate-200/50 dark:bg-slate-700/50">
+      {/* Stacked D/Y/B Ratio Progress Bar */}
+      <div className="mt-4 h-3.5 sm:h-4 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[2px] relative overflow-hidden shadow-inner">
+        <div className="w-full h-full rounded-full overflow-hidden flex relative">
           {correctPct > 0 && (
             <motion.div 
-              className="h-full bg-emerald-500"
+              className="h-full bg-[#58cc02]"
               style={{ width: `${correctPct}%` }}
               transition={{ duration: 0.4, ease: "easeOut" }}
             />
           )}
           {wrongPct > 0 && (
             <motion.div 
-              className="h-full bg-red-500"
+              className="h-full bg-[#ff4b4b]"
               style={{ width: `${wrongPct}%` }}
               transition={{ duration: 0.4, ease: "easeOut" }}
             />
           )}
           {emptyPct > 0 && (
             <motion.div 
-              className="h-full bg-slate-400 dark:bg-slate-500"
+              className="h-full bg-slate-300 dark:bg-slate-600"
               style={{ width: `${emptyPct}%` }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-          )}
-          
-          {/* Duolingo style 3D highlight over answered portion */}
-          {(correctPct > 0 || wrongPct > 0 || emptyPct > 0) && (
-            <motion.div 
-              className="absolute top-0 left-0 h-[2px] bg-white/30 rounded-full z-10 pointer-events-none mt-[1px] mx-[2px]"
-              style={{ width: `calc(${correctPct + wrongPct + emptyPct}% - 4px)` }}
               transition={{ duration: 0.4, ease: "easeOut" }}
             />
           )}
@@ -138,8 +120,13 @@ export default function SubjectScoreRow({
       </div>
 
       {subject.error && (
-        <DenemeAlert variant="error" compact className="mt-3">
-          {subject.error} — lütfen doğru, yanlış ve boş toplamını kontrol edin.
+        <DenemeAlert 
+          variant="error" 
+          title="Soru Limiti Aşıldı!" 
+          compact 
+          className="mt-3.5"
+        >
+          Girdiğiniz toplam soru sayısı <strong className="font-mono text-sm underline">{subject.totalEntered}</strong>, bu dersin soru limitini (<strong className="font-mono text-sm">{subject.questionCount}</strong>) geçemez. Lütfen sayıları kontrol edin.
         </DenemeAlert>
       )}
     </motion.div>

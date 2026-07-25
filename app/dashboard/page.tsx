@@ -24,6 +24,8 @@ import { toast } from "sonner"
 import { useAuth } from "@/contexts/AuthContext"
 import { useTheme } from "@/components/ThemeProvider"
 import { getStudyDate } from "@/lib/dateUtils"
+import AppleEmoji from "@/components/AppleEmoji"
+import GlobalLoading from "@/components/GlobalLoading"
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { Suspense } from 'react'
@@ -183,10 +185,11 @@ function HomeContent() {
   }, [data, user])
 
   if (!data) return (
-    <div className="min-h-screen bg-bg text-text-main flex flex-col items-center justify-center gap-6">
-       <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(0,168,132,0.1)]" />
-       <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Sistem Hazırlanıyor...</span>
-    </div>
+    <GlobalLoading
+      title="Sistem Hazırlanıyor..."
+      description="Kişiselleştirilmiş KPSS çalışma verileriniz yükleniyor, lütfen bekleyin."
+      emoji="🚀"
+    />
   )
 
   const safeSubjects = data.subjects || initialData
@@ -430,12 +433,12 @@ function HomeContent() {
                 className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 mb-4"
               >
                 <div className="flex items-center gap-5">
-                  <div className="relative w-16 h-16 rounded-full border-[3px] border-white dark:border-slate-800 shadow-sm overflow-hidden shrink-0 bg-white dark:bg-slate-800">
+                  <div className="relative w-16 h-16 rounded-2xl border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs overflow-hidden shrink-0 bg-white dark:bg-slate-800">
                     {user?.photoURL ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={user.photoURL} alt="Profil" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-black">
+                      <div className="w-full h-full bg-[#1cb0f6] text-white flex items-center justify-center text-2xl font-black">
                         {user?.displayName?.charAt(0)?.toUpperCase() || "K"}
                       </div>
                     )}
@@ -444,12 +447,12 @@ function HomeContent() {
                     <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
                       Merhaba, {user?.displayName?.split(" ")[0] || "Şampiyon"}!
                     </h1>
-                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                      <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-400">
+                    <div className="flex items-center gap-3 mt-2 flex-wrap">
+                      <p className="text-xs font-black uppercase tracking-widest text-slate-400">
                         Sınava Hazırlık Merkezi
                       </p>
-                      <div className="flex items-center gap-1.5 px-2 py-0.5 bg-rose-50 dark:bg-rose-500/10 rounded-lg border border-rose-100 dark:border-rose-500/20">
-                         <span className="text-[9px] font-black uppercase tracking-widest text-rose-500">Busis ❤️</span>
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 dark:bg-rose-500/10 rounded-xl border-2 border-b-2 border-rose-200 dark:border-rose-500/30 shadow-2xs">
+                         <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">Busis ❤️</span>
                       </div>
                       <AnimatePresence mode="wait">
                         {isSaving ? (
@@ -458,9 +461,9 @@ function HomeContent() {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-100 dark:border-emerald-500/20"
+                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-xl border-2 border-b-2 border-emerald-200 dark:border-emerald-500/30 shadow-2xs"
                           >
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <div className="w-2 h-2 rounded-full bg-[#58cc02] animate-pulse" />
                             Senkronize ediliyor...
                           </motion.div>
                         ) : (
@@ -469,9 +472,9 @@ function HomeContent() {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-100 dark:border-emerald-500/20"
+                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-xl border-2 border-b-2 border-emerald-200 dark:border-emerald-500/30 shadow-2xs"
                           >
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            <div className="w-2 h-2 rounded-full bg-[#58cc02]" />
                             Bulutla Eşitlendi ✓
                           </motion.div>
                         )}
@@ -482,18 +485,16 @@ function HomeContent() {
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 mt-4 xl:mt-0">
                   <div 
-                    className="flex items-center gap-3.5 bg-white dark:bg-[#1e293b] backdrop-blur-xl pl-2.5 pr-6 py-2.5 rounded-[2rem] shadow-md border-2 transition-colors"
-                    style={{ borderColor: `${activeSubject?.color || "#3b82f6"}30` }}
+                    className="flex items-center gap-3.5 bg-white dark:bg-slate-800 pl-3 pr-6 py-3 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md transition-colors"
                   >
-                    <div className="w-11 h-11 rounded-full flex items-center justify-center text-white shadow-[inset_0_-2px_6px_rgba(0,0,0,0.2)] shrink-0" style={{ backgroundImage: `linear-gradient(135deg, ${activeSubject?.color || "#3b82f6"}, ${activeSubject?.color ? activeSubject.color + 'dd' : "#60a5fa"})` }}>
+                    <div className="w-12 h-12 rounded-xl bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center text-white shadow-2xs shrink-0">
                       <span className="text-xs font-black tracking-tight">%{Math.round(totalPercent)}</span>
                     </div>
                     <div className="flex flex-col w-36">
-                      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-slate-300 mb-1.5">Müfredat İlerlemesi</span>
-                      <div className="h-2 w-full bg-slate-100 dark:bg-slate-700/80 rounded-full overflow-hidden shadow-inner border border-black/5 dark:border-white/5">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">Müfredat İlerlemesi</span>
+                      <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-700/80 rounded-full overflow-hidden border border-slate-200 dark:border-slate-600">
                         <motion.div 
-                          className="h-full rounded-full"
-                          style={{ backgroundColor: activeSubject?.color || "#3b82f6", boxShadow: `0 0 10px ${activeSubject?.color || "#3b82f6"}80` }}
+                          className="h-full rounded-full bg-[#1cb0f6]"
                           initial={{ width: 0 }}
                           animate={{ width: `${totalPercent}%` }}
                           transition={{ duration: 1.2, ease: "easeOut" }}
@@ -526,15 +527,19 @@ function HomeContent() {
 
               {/* Strategy Details (Collapsible) */}
               <section>
-                <details className="group bg-white dark:bg-[#1e293b]/80 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-100 dark:border-white/5 shadow-sm">
-                  <summary className="list-none cursor-pointer p-6 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors">
+                <details className="group bg-white dark:bg-slate-800 rounded-[2.5rem] overflow-hidden border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md">
+                  <summary className="list-none cursor-pointer p-6 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500">💡</div>
-                      <span className="text-sm font-semibold uppercase tracking-widest text-gray-900 dark:text-white">Sınav Stratejileri & Bilgi Kartları</span>
+                      <div className="w-12 h-12 rounded-2xl bg-[#ff9500] border-2 border-b-4 border-[#ff9500] border-b-[#e08400] text-white flex items-center justify-center shadow-xs shrink-0">
+                        <AppleEmoji emoji="💡" size={24} className="text-white" />
+                      </div>
+                      <span className="text-sm font-black uppercase tracking-widest text-slate-800 dark:text-white">
+                        Sınav Stratejileri & Bilgi Kartları
+                      </span>
                     </div>
-                    <span className="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform text-xs font-black">▼</span>
                   </summary>
-                  <div className="p-6 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+                  <div className="p-6 sm:p-8 border-t-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                     <KPSSInfoCards />
                   </div>
                 </details>
@@ -546,8 +551,10 @@ function HomeContent() {
                 {/* Left Col: Knowledge Base */}
                 <div className="xl:col-span-4 flex flex-col gap-6 xl:sticky xl:top-24">
                   <div className="flex items-center justify-between px-2">
-                     <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted opacity-60">Müfredat Havuzu</h3>
-                     <span className="text-[10px] font-bold text-accent bg-accent/5 px-2 py-0.5 rounded-full ring-1 ring-accent/20">Sürüklenebilir</span>
+                     <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">MÜFREDAT HAVUZU</h3>
+                     <span className="text-[10px] font-black uppercase tracking-widest text-[#1cb0f6] bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 px-3 py-1 rounded-xl border-2 border-b-2 border-[#1cb0f6]/30 shadow-2xs">
+                       Sürüklenebilir
+                     </span>
                   </div>
                   <TopicList 
                     subjects={safeSubjects} 
@@ -561,43 +568,31 @@ function HomeContent() {
                 
                 {/* Right Col: Timeline & Context */}
                 <div className="xl:col-span-8 flex flex-col gap-6">
-                  {/* View Switcher Tabs */}
-                  <div className="bg-white dark:bg-[#1e293b]/80 backdrop-blur-sm border-2 border-slate-100 dark:border-white/5 rounded-3xl p-1.5 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5">
+                  {/* 3D View Switcher Tabs */}
+                  <div className="bg-slate-100 dark:bg-slate-900 p-2 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <button 
+                      type="button"
                       onClick={() => setActiveView('daily')}
-                      className={`flex-1 py-3.5 sm:py-4 rounded-[1.25rem] text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 relative overflow-hidden ${
+                      className={`flex-1 py-3 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-200 flex items-center justify-center gap-3 relative cursor-pointer ${
                         activeView === 'daily' 
-                          ? 'text-white shadow-md' 
-                          : 'text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5'
+                          ? 'bg-white dark:bg-slate-800 text-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs' 
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent'
                       }`}
                     >
-                      {activeView === 'daily' && (
-                        <motion.div 
-                          layoutId="activeTabBg"
-                          className="absolute inset-0 bg-[#1cb0f6] border-b-[3px] border-[#1899d6]"
-                          transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                        />
-                      )}
-                      <span className={`relative z-10 ${activeView === 'daily' ? 'mt-[3px]' : ''}`}>Günlük Operasyon</span>
-                      {activeView === 'daily' && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-1.5 h-1.5 rounded-full bg-white relative z-10 mt-[3px]" />}
+                      <span>Günlük Operasyon</span>
+                      {activeView === 'daily' && <div className="w-2 h-2 rounded-full bg-[#1cb0f6]" />}
                     </button>
                     <button 
+                      type="button"
                       onClick={() => setActiveView('monthly')}
-                      className={`flex-1 py-3.5 sm:py-4 rounded-[1.25rem] text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 relative overflow-hidden ${
+                      className={`flex-1 py-3 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-200 flex items-center justify-center gap-3 relative cursor-pointer ${
                         activeView === 'monthly' 
-                          ? 'text-white shadow-md' 
-                          : 'text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5'
+                          ? 'bg-white dark:bg-slate-800 text-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs' 
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent'
                       }`}
                     >
-                      {activeView === 'monthly' && (
-                        <motion.div 
-                          layoutId="activeTabBg"
-                          className="absolute inset-0 bg-[#1cb0f6] border-b-[3px] border-[#1899d6]"
-                          transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                        />
-                      )}
-                      <span className={`relative z-10 ${activeView === 'monthly' ? 'mt-[3px]' : ''}`}>Aylık Projeksiyon</span>
-                      {activeView === 'monthly' && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-1.5 h-1.5 rounded-full bg-white relative z-10 mt-[3px]" />}
+                      <span>Aylık Projeksiyon</span>
+                      {activeView === 'monthly' && <div className="w-2 h-2 rounded-full bg-[#1cb0f6]" />}
                     </button>
                   </div>
 
@@ -659,13 +654,13 @@ function HomeContent() {
         {/* Drag Overlay Redesign */}
         <DragOverlay>
           {activeTopic ? (
-            <div className="glass p-4 rounded-2xl border-2 border-accent shadow-2xl cursor-grabbing w-72 z-[100] flex items-center gap-4 rotate-2">
-               <div className="w-12 h-12 rounded-xl bg-accent text-bg flex items-center justify-center text-xl font-black">
-                  {safeSubjects.find(s => s.topics.some(t => t.id === activeTopic.id))?.icon || '📚'}
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xl cursor-grabbing w-80 z-[100] flex items-center gap-4 rotate-2">
+               <div className="w-12 h-12 rounded-xl bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-white flex items-center justify-center shadow-xs shrink-0">
+                  <AppleEmoji emoji={safeSubjects.find(s => s.topics.some(t => t.id === activeTopic.id))?.icon || '📚'} size={28} className="text-white" />
                </div>
-               <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-accent">Yerleştiriliyor</span>
-                  <span className="text-sm font-bold text-text-main truncate">{activeTopic.title}</span>
+               <div className="flex flex-col min-w-0 flex-1">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#1cb0f6]">Yerleştiriliyor</span>
+                  <span className="text-sm font-black text-slate-800 dark:text-white truncate">{activeTopic.title}</span>
                </div>
             </div>
           ) : null}

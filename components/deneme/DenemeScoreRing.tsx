@@ -19,96 +19,51 @@ export default function DenemeScoreRing({
   sublabel,
   color,
 }: Props) {
-  const stroke = size * 0.11; // Proportional thickness matching Apple Watch rings (~11%)
+  const stroke = size * 0.1; // Clean 10% thickness
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const pct = Math.min(100, Math.max(0, (value / max) * 100));
   const offset = circumference - (pct / 100) * circumference;
 
-  // Unique IDs for SVG defs to avoid collisions
-  const gradientId = `appleRingGradient-${label.replace(/\s+/g, "-")}`;
-  const shadowId = `appleRingShadow-${label.replace(/\s+/g, "-")}`;
-
-  // Saturated Apple Watch gradients
-  const gradientColors = color
-    ? { start: color, end: color }
-    : label.toLowerCase().includes("net")
-    ? { start: "#ff2d55", end: "#ff1493" } // Saturated Activity Ring Red/Pink
-    : { start: "#00f576", end: "#00d0fc" }; // Saturated Cyan/Green
-
-  // Calculate coordinates for the tip shadow to make the circle overlap 3D-style
-  const angle = (pct / 100) * 2 * Math.PI - Math.PI / 2;
-  const tipX = size / 2 + radius * Math.cos(angle);
-  const tipY = size / 2 + radius * Math.sin(angle);
+  const ringColor = color || "#1cb0f6"; // Primary Duolingo Blue or selected subject color
 
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="relative group" style={{ width: size, height: size }}>
-        {/* Apple watch ambient glow behind the ring */}
-        <div
-          className="absolute inset-0 rounded-full scale-90 blur-2xl opacity-10 group-hover:opacity-20 transition-all duration-700 pointer-events-none"
-          style={{
-            background: `radial-gradient(circle, ${gradientColors.start} 0%, transparent 70%)`,
-          }}
-        />
+        {/* Soft Ambient Glow */}
+        {pct > 0 && (
+          <div
+            className="absolute inset-0 rounded-full scale-90 blur-xl opacity-20 transition-all duration-500 pointer-events-none"
+            style={{ backgroundColor: ringColor }}
+          />
+        )}
 
         <svg width={size} height={size} className="-rotate-90 relative z-10 overflow-visible">
-          <defs>
-            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={gradientColors.start} />
-              <stop offset="100%" stopColor={gradientColors.end} />
-            </linearGradient>
-
-            {/* Soft, dark drop shadow filter for the overlap cap */}
-            <filter id={shadowId} x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow
-                dx="1"
-                dy="2"
-                stdDeviation="2.5"
-                floodColor="#000000"
-                floodOpacity="0.35"
-              />
-            </filter>
-          </defs>
-
-          {/* Base Track (Apple style has 12% opacity saturated color track) */}
+          {/* Base Neutral Track Circle */}
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke={gradientColors.start}
+            stroke="currentColor"
+            className="text-slate-200/80 dark:text-slate-800/80"
             strokeWidth={stroke}
-            opacity="0.12"
           />
 
-          {/* Active Progress Path */}
-          <motion.circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke={`url(#${gradientId})`}
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
-          />
-
-          {/* Overlapping cap shadow */}
-          {pct > 100 && (
+          {/* Active Progress Ring */}
+          {pct > 0 && (
             <motion.circle
-              cx={tipX}
-              cy={tipY}
-              r={stroke / 2}
-              fill={gradientColors.end}
-              filter={`url(#${shadowId})`}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.3 }}
-              style={{ transformOrigin: `${tipX}px ${tipY}px` }}
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke={ringColor}
+              strokeWidth={stroke}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              initial={{ strokeDashoffset: circumference }}
+              animate={{ strokeDashoffset: offset }}
+              transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
             />
           )}
         </svg>
@@ -120,22 +75,23 @@ export default function DenemeScoreRing({
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-[#1d1d1f] dark:text-white leading-none"
+            className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-slate-800 dark:text-white leading-none"
           >
             {value.toFixed(2).replace(/\.?0+$/, "")}
           </motion.span>
           {sublabel && (
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1.5">
+            <span className="text-[11px] font-extrabold text-slate-400 mt-1 uppercase tracking-wider">
               {sublabel}
             </span>
           )}
         </div>
       </div>
 
-      <span className="text-[11px] font-semibold text-slate-400 tracking-wide mt-1.5">
-        {label}
-      </span>
+      {label && (
+        <span className="text-xs font-black text-slate-500 dark:text-slate-400 tracking-wide mt-1">
+          {label}
+        </span>
+      )}
     </div>
   );
 }
-
