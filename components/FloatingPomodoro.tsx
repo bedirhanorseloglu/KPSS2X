@@ -441,11 +441,15 @@ export default function FloatingPomodoro() {
                     className="absolute inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4"
                   >
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl w-full transform transition-all">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#ffebeb] dark:bg-[#ff4b4b]/20 border-2 border-b-4 border-[#ff4b4b] text-[#ff4b4b] flex items-center justify-center shrink-0 shadow-2xs">
+                      <div className="flex items-start gap-3.5">
+                        <div className={`w-12 h-12 rounded-2xl border-2 border-b-4 flex items-center justify-center shrink-0 shadow-2xs ${
+                          mode === "stopwatch" 
+                            ? "bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 border-[#1cb0f6] border-b-[#1899d6]" 
+                            : "bg-[#fff7e6] dark:bg-[#ff9500]/20 border-[#ff9500] border-b-[#e08400]"
+                        }`}>
                           <AppleEmoji emoji={mode === "stopwatch" ? "⏱️" : "☕"} size={24} />
                         </div>
-                        <div className="pt-0.5">
+                        <div className="pt-0.5 min-w-0">
                           <h4 className="text-base font-black text-slate-800 dark:text-white mb-1 tracking-tight leading-tight">
                              {mode === "stopwatch" ? "Dersi bitirmek ister misin?" : "Seansı İptal Et?"}
                           </h4>
@@ -454,14 +458,14 @@ export default function FloatingPomodoro() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 mt-6">
+                      <div className="flex items-center gap-2.5 mt-6">
                         <button 
                           type="button"
                           onClick={() => setPendingMode(null)}
-                          className="flex-1 py-3.5 px-3 bg-white dark:bg-slate-700 text-slate-700 dark:text-white font-black text-xs uppercase tracking-wider rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 dark:border-b-slate-700 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                          className="flex-1 py-3 px-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-white font-black text-[11px] uppercase tracking-wider rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 dark:border-b-slate-700 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
                         >
-                          <span>{mode === "stopwatch" ? "Derse Devam Et" : "Vazgeç"}</span>
-                          {mode === "stopwatch" && <AppleEmoji emoji="🚀" size={16} />}
+                          <span>{mode === "stopwatch" ? "Devam Et" : "Vazgeç"}</span>
+                          {mode === "stopwatch" && <AppleEmoji emoji="🚀" size={15} />}
                         </button>
                         <button 
                           type="button"
@@ -478,10 +482,10 @@ export default function FloatingPomodoro() {
                             if (pendingMode) changeMode(pendingMode);
                             setPendingMode(null);
                           }}
-                          className="flex-1 py-3.5 px-3 bg-[#ff9500] hover:bg-[#e08400] text-white font-black text-xs uppercase tracking-wider rounded-2xl border-2 border-b-4 border-[#ff9500] border-b-[#e08400] shadow-xs active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                          className="flex-1 py-3 px-2 bg-[#ff9500] hover:bg-[#e08400] text-white font-black text-[11px] uppercase tracking-wider rounded-2xl border-2 border-b-4 border-[#ff9500] border-b-[#e08400] shadow-xs active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
                         >
                           <span>{mode === "stopwatch" ? "Molaya Çık" : "Yine de Geç"}</span>
-                          {mode === "stopwatch" && <AppleEmoji emoji="☕" size={16} />}
+                          {mode === "stopwatch" && <AppleEmoji emoji="☕" size={15} />}
                         </button>
                       </div>
                     </div>
