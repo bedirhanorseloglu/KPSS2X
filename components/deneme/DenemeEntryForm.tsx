@@ -609,7 +609,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 <SiteStatCard label="Doğru" value={String(selectedBranchSubject?.correct ?? 0)} icon={<CheckCircle2 className="w-4 h-4 text-[#58cc02]" />} valueColor="text-[#58cc02]" />
                 <SiteStatCard label="Yanlış" value={String(selectedBranchSubject?.wrong ?? 0)} icon={<XCircle className="w-4 h-4 text-[#ff4b4b]" />} valueColor="text-[#ff4b4b]" />
                 <SiteStatCard label="Boş" value={String(selectedBranchSubject?.empty ?? 0)} icon={<MinusCircle className="w-4 h-4 text-slate-400" />} valueColor="text-slate-700 dark:text-slate-200" />
-                <SiteStatCard label="İsabet Oranı" value={`%${Math.round(successRate)}`} icon={<Target className="w-4 h-4" style={{ color: activeColor }} />} style={{ color: activeColor }} />
+                <SiteStatCard label="İsabet Oranı" value={totalAnswered > 0 ? `%${(successRate % 1 === 0 ? successRate.toFixed(0) : successRate.toFixed(1))}` : "%0"} icon={<Target className="w-4 h-4" style={{ color: activeColor }} />} style={{ color: activeColor }} />
               </>
             )}
           </div>
