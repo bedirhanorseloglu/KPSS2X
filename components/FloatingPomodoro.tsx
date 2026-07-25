@@ -165,7 +165,7 @@ export default function FloatingPomodoro() {
     };
     
     trackPresence();
-    const interval = setInterval(trackPresence, 60000);
+    const interval = setInterval(trackPresence, 240000); // Kota dostu: 4 dakikada bir güncelle
     return () => clearInterval(interval);
   }, [user]);
 

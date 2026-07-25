@@ -11,7 +11,10 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "**/*.map",
+      "**/*.md",
+      "**/.next/cache/**"
     ],
     "headers": [
       {
