@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { PlusCircle, ClipboardList, BarChart3, BookOpen, TrendingUp, Zap, GraduationCap, Globe } from "lucide-react";
 import DenemeNav from "./DenemeNav";
@@ -201,14 +199,29 @@ export default function DenemePageContent() {
         setDenemeler(updated);
         setEditing(null);
         setTab("gecmis");
-        confetti({ particleCount: 80, spread: 50, origin: { y: 0.7 } });
       });
 
-      toast.promise(savePromise, {
-        loading: 'Buluta kaydediliyor...',
-        success: 'Deneme sınavı başarıyla güncellendi',
-        error: 'Kayıt sırasında bir hata oluştu'
-      });
+      toast.custom(() => (
+        <div className="flex items-center justify-center w-full mt-2 pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="bg-white dark:bg-slate-800 text-slate-800 dark:text-white px-5 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xl flex items-center gap-3.5 min-w-[340px] max-w-sm">
+            <div className="w-10 h-10 rounded-xl bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 border-2 border-b-2 border-[#1cb0f6] flex items-center justify-center shrink-0 shadow-2xs">
+              <AppleEmoji emoji="📝" size={22} />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-[11px] font-black uppercase tracking-widest text-[#1cb0f6] mb-0.5 truncate">
+                Deneme Güncellendi
+              </span>
+              <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-tight truncate">
+                {payload.name || "Deneme Sınavı"}
+              </span>
+              <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-0.5">
+                <span>Sonuçlar veritabanında güncellendi</span>
+                <AppleEmoji emoji="✨" size={13} />
+              </span>
+            </div>
+          </div>
+        </div>
+      ), { position: 'top-center', duration: 3500 });
       return;
     }
     
@@ -221,11 +234,27 @@ export default function DenemePageContent() {
       setTab("gecmis");
     });
 
-    toast.promise(savePromise, {
-      loading: 'Sunucuya güvenle kaydediliyor, lütfen bekleyin...',
-      success: 'Yeni deneme sınav sonucu buluta kaydedildi! 🎉',
-      error: 'İnternet bağlantınızı kontrol edin.'
-    });
+    toast.custom(() => (
+      <div className="flex items-center justify-center w-full mt-2 pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="bg-white dark:bg-slate-800 text-slate-800 dark:text-white px-5 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xl flex items-center gap-3.5 min-w-[340px] max-w-sm">
+          <div className="w-10 h-10 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-2 border-[#58cc02] flex items-center justify-center shrink-0 shadow-2xs">
+            <AppleEmoji emoji="🎯" size={22} />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[11px] font-black uppercase tracking-widest text-[#58cc02] mb-0.5 truncate">
+              Başarıyla Kaydedildi
+            </span>
+            <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-tight truncate">
+              {payload.name || "Yeni Deneme Sınavı"}
+            </span>
+            <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-0.5">
+              <span>Analizlerin ve sıralaman güncellendi</span>
+              <AppleEmoji emoji="🚀" size={13} />
+            </span>
+          </div>
+        </div>
+      </div>
+    ), { position: 'top-center', duration: 4000 });
   };
 
   const handleDelete = (id: string) => {
@@ -234,11 +263,23 @@ export default function DenemePageContent() {
       setDenemeler(updated);
     });
 
-    toast.promise(delPromise, {
-      loading: 'Siliniyor...',
-      success: 'Deneme kaydı buluttan silindi',
-      error: 'Silinirken hata oluştu'
-    });
+    toast.custom(() => (
+      <div className="flex items-center justify-center w-full mt-2 pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="bg-white dark:bg-slate-800 text-slate-800 dark:text-white px-5 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xl flex items-center gap-3.5 min-w-[320px] max-w-sm">
+          <div className="w-10 h-10 rounded-xl bg-[#ffebeb] dark:bg-[#ff4b4b]/20 border-2 border-b-2 border-[#ff4b4b] flex items-center justify-center shrink-0 shadow-2xs">
+            <AppleEmoji emoji="🗑️" size={22} />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[11px] font-black uppercase tracking-widest text-[#ff4b4b] mb-0.5 truncate">
+              Deneme Silindi
+            </span>
+            <span className="text-xs font-bold text-slate-400 mt-0.5">
+              Sınav kaydı veritabanından kaldırıldı
+            </span>
+          </div>
+        </div>
+      </div>
+    ), { position: 'top-center', duration: 3000 });
   };
 
   if (!loaded) {
