@@ -212,19 +212,24 @@ function HomeContent() {
     })
     setData({ ...data, subjects: newSubjects })
     if (wasCompleted) {
-      toast.custom((t) => (
-        <div className="flex items-center justify-center w-full mt-2">
-          <div className="bg-slate-900/80 dark:bg-white/80 backdrop-blur-xl text-white dark:text-slate-900 flex items-center gap-4 px-6 py-4 rounded-full shadow-2xl shadow-black/20 border border-slate-700/50 dark:border-white/50 min-w-[340px]">
-            <div className="w-10 h-10 bg-[#1cb0f6] rounded-full flex items-center justify-center shrink-0 shadow-inner">
-              <span className="text-xl">📘</span>
+      toast.custom(() => (
+        <div className="flex items-center justify-center w-full mt-2 pointer-events-auto">
+          <div className="bg-white dark:bg-slate-800 text-slate-800 dark:text-white px-5 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xl flex items-center gap-3.5 min-w-[320px]">
+            <div className="w-10 h-10 rounded-xl bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 border-2 border-b-2 border-[#1cb0f6] flex items-center justify-center shrink-0 shadow-2xs">
+              <AppleEmoji emoji="📘" size={22} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15px] font-black tracking-tight leading-tight">Müfredat Konusu Tamamlandı!</span>
-              <span className="text-sm text-slate-200 dark:text-slate-600 font-bold mt-0.5">Başarılar! 🚀</span>
+              <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-tight">
+                Müfredat Konusu Tamamlandı!
+              </span>
+              <span className="text-xs font-black text-[#1cb0f6] flex items-center gap-1 mt-0.5">
+                <span>Tebrikler!</span>
+                <AppleEmoji emoji="🚀" size={14} />
+              </span>
             </div>
           </div>
         </div>
-      ), { position: 'top-center', duration: 3000 })
+      ), { position: 'top-center', duration: 3000 });
     }
   }
 
@@ -336,19 +341,24 @@ function HomeContent() {
     const newCompletedNotes = { ...currentCompleted, [slotId]: isNowCompleted }
     setData({ ...data, completedNotes: newCompletedNotes })
     if (isNowCompleted) {
-      toast.custom((t) => (
-        <div className="flex items-center justify-center w-full mt-2">
-          <div className="bg-slate-900/80 dark:bg-white/80 backdrop-blur-xl text-white dark:text-slate-900 flex items-center gap-4 px-6 py-4 rounded-full shadow-2xl shadow-black/20 border border-slate-700/50 dark:border-white/50 min-w-[340px]">
-            <div className="w-10 h-10 bg-[#58cc02] rounded-full flex items-center justify-center shrink-0 shadow-inner">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      toast.custom(() => (
+        <div className="flex items-center justify-center w-full mt-2 pointer-events-auto">
+          <div className="bg-white dark:bg-slate-800 text-slate-800 dark:text-white px-5 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xl flex items-center gap-3.5 min-w-[320px]">
+            <div className="w-10 h-10 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-2 border-[#58cc02] flex items-center justify-center shrink-0 shadow-2xs">
+              <AppleEmoji emoji="✅" size={22} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15px] font-black tracking-tight leading-tight">Günlük görev tamamlandı!</span>
-              <span className="text-sm text-slate-200 dark:text-slate-600 font-bold mt-0.5">Harika gidiyorsun! 🚀</span>
+              <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-tight">
+                Günlük Görev Tamamlandı!
+              </span>
+              <span className="text-xs font-black text-[#58cc02] flex items-center gap-1 mt-0.5">
+                <span>Harika gidiyorsun!</span>
+                <AppleEmoji emoji="🚀" size={14} />
+              </span>
             </div>
           </div>
         </div>
-      ), { position: 'top-center', duration: 4000 })
+      ), { position: 'top-center', duration: 3500 });
     }
   }
 

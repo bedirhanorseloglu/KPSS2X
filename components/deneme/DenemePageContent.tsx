@@ -219,7 +219,6 @@ export default function DenemePageContent() {
     const savePromise = persistData(updated, targetNet).then(() => {
       setDenemeler(updated);
       setTab("gecmis");
-      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
     });
 
     toast.promise(savePromise, {
