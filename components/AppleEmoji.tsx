@@ -9,11 +9,13 @@ import {
   Star, Pin, Lightbulb, AlertTriangle, PartyPopper, Mountain,
   Droplets, Waves, Layers, Gamepad2, Key, Lock, Sprout, Compass,
   User, Mail, Shield, Trash2, BookOpen, Sun, Moon, Ruler, HelpCircle,
-  Building2, Hourglass, Coffee
+  Building2, Hourglass, Coffee, Swords
 } from "lucide-react";
 
 // Duolingo 3D Vector Icon Mapping for Clean Seamless Rendering
 const EMOJI_VECTOR_MAP: Record<string, { icon: React.ElementType; defaultColor: string }> = {
+  "⚔️": { icon: Swords, defaultColor: "#ff4b4b" },
+  "⚔": { icon: Swords, defaultColor: "#ff4b4b" },
   "☕": { icon: Coffee, defaultColor: "#ff9500" },
   "👩‍💻": { icon: User, defaultColor: "#af52de" },
   "💻": { icon: User, defaultColor: "#1cb0f6" },
