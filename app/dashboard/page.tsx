@@ -196,6 +196,8 @@ function HomeContent() {
   const toggleTopic = (topicId: string, subjectId?: string) => {
     if (!data) return
     let wasCompleted = false
+    let completedTopicTitle = ""
+    let completedSubjectTitle = ""
     const newSubjects = safeSubjects.map(subject => {
       if (subjectId && subject.id !== subjectId) return subject
       return {
@@ -203,6 +205,10 @@ function HomeContent() {
         topics: subject.topics.map(t => {
           if (t.id === topicId) {
             wasCompleted = !t.done
+            if (wasCompleted) {
+              completedTopicTitle = t.title
+              completedSubjectTitle = subject.title
+            }
             return { ...t, done: wasCompleted }
           }
           return t
@@ -213,17 +219,20 @@ function HomeContent() {
     if (wasCompleted) {
       toast.custom(() => (
         <div className="flex items-center justify-center w-full mt-2 pointer-events-auto">
-          <div className="bg-white dark:bg-slate-800 text-slate-800 dark:text-white px-5 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xl flex items-center gap-3.5 min-w-[320px]">
+          <div className="bg-white dark:bg-slate-800 px-5 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xl flex items-center gap-3.5 min-w-[320px] max-w-sm">
             <div className="w-10 h-10 rounded-xl bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 border-2 border-b-2 border-[#1cb0f6] flex items-center justify-center shrink-0 shadow-2xs">
               <AppleEmoji emoji="📘" size={22} />
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-tight">
-                Müfredat Konusu Tamamlandı!
+            <div className="flex flex-col min-w-0">
+              <span className="text-[11px] font-black uppercase tracking-widest text-[#1cb0f6] mb-0.5 truncate">
+                {completedSubjectTitle} · Konu Tamamlandı
               </span>
-              <span className="text-xs font-black text-[#1cb0f6] flex items-center gap-1 mt-0.5">
-                <span>Tebrikler!</span>
-                <AppleEmoji emoji="🚀" size={14} />
+              <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-tight truncate">
+                {completedTopicTitle}
+              </span>
+              <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-0.5">
+                <span>Bir adım daha attın!</span>
+                <AppleEmoji emoji="🚀" size={13} />
               </span>
             </div>
           </div>
@@ -400,7 +409,6 @@ function HomeContent() {
     if (solved >= target && (currentGoals[dateStr] || 0) < target) {
       newStreak += 1
       toast.success(`Hedefe Ulaşıldı! Seri +1 🔥`)
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } })
     }
     
     setData({ ...data, dailyGoals: newGoals, streak: newStreak, lastActiveDate: format(getStudyDate(), "yyyy-MM-dd") })
