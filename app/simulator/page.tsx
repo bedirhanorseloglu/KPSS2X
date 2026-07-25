@@ -425,7 +425,7 @@ export default function ExamSimulatorPage() {
           <button
             type="button"
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-2xs hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer"
+            className={`w-10 h-10 rounded-2xl border-2 border-b-4 flex items-center justify-center shadow-2xs hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer ${isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'}`}
           >
             <AppleEmoji emoji={isDarkMode ? '☀️' : '🌙'} size={18} />
           </button>
@@ -496,7 +496,7 @@ export default function ExamSimulatorPage() {
           <span className="text-xs font-black uppercase tracking-[0.2em] mb-2 text-slate-400">
             Kalan Süre
           </span>
-          <div className="text-6xl sm:text-7xl font-black font-mono tracking-tighter tabular-nums text-slate-800 dark:text-white">
+          <div className={`text-6xl sm:text-7xl font-black font-mono tracking-tighter tabular-nums ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
             {hours > 0 && `${formatDigit(hours)}:`}{formatDigit(mins)}:{formatDigit(secs)}
           </div>
           
