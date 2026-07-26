@@ -15,11 +15,11 @@ type ExamMode = "genel" | "brans" | null;
 type Subject = { id: string; name: string; emoji: string; defaultDuration: number; color: string };
 
 const SUBJECTS: Subject[] = [
-  { id: "turkce", name: "Türkçe", emoji: "📘", defaultDuration: 40, color: "border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] bg-[#e8f7ff]" },
-  { id: "matematik", name: "Matematik", emoji: "🔢", defaultDuration: 40, color: "border-[#af52de] border-b-[#963ec7] text-[#af52de] bg-[#f8f0fc]" },
-  { id: "tarih", name: "Tarih", emoji: "🏛️", defaultDuration: 30, color: "border-[#ff9500] border-b-[#e08400] text-[#ff9500] bg-[#fff8ed]" },
-  { id: "cografya", name: "Coğrafya", emoji: "🗺️", defaultDuration: 20, color: "border-[#58cc02] border-b-[#46a302] text-[#58cc02] bg-[#e5f9e7]" },
-  { id: "vatandaslik", name: "Vatandaşlık", emoji: "⚖️", defaultDuration: 15, color: "border-[#5856d6] border-b-[#4744b8] text-[#5856d6] bg-[#f0f0ff]" },
+  { id: "turkce", name: "Türkçe", emoji: "📘", defaultDuration: 45, color: "border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] bg-[#e8f7ff]" },
+  { id: "matematik", name: "Matematik", emoji: "🔢", defaultDuration: 50, color: "border-[#af52de] border-b-[#963ec7] text-[#af52de] bg-[#f8f0fc]" },
+  { id: "tarih", name: "Tarih", emoji: "🏛️", defaultDuration: 15, color: "border-[#ff9500] border-b-[#e08400] text-[#ff9500] bg-[#fff8ed]" },
+  { id: "cografya", name: "Coğrafya", emoji: "🗺️", defaultDuration: 10, color: "border-[#58cc02] border-b-[#46a302] text-[#58cc02] bg-[#e5f9e7]" },
+  { id: "vatandaslik", name: "Vatandaşlık", emoji: "⚖️", defaultDuration: 5, color: "border-[#5856d6] border-b-[#4744b8] text-[#5856d6] bg-[#f0f0ff]" },
 ];
 
 export default function ExamSimulatorPage() {
@@ -278,7 +278,8 @@ export default function ExamSimulatorPage() {
                     type="button"
                     onClick={() => {
                       setExamMode("brans");
-                      setCustomDuration(0);
+                      setSelectedSubject(SUBJECTS[0]);
+                      setCustomDuration(SUBJECTS[0].defaultDuration);
                       setSetupStep("duration");
                     }}
                     className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] transition-all text-left flex flex-col justify-between h-full cursor-pointer block"
