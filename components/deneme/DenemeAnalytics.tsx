@@ -228,11 +228,23 @@ export default function DenemeAnalytics({
 
   /* ── Publisher Performance Stats Computation ── */
   const publisherStats = useMemo(() => {
-    if (active.length === 0) return [];
+    let listToProcess = active;
+
+    if (viewType === "brans") {
+      if (!selectedBransSubjectId) return [];
+      listToProcess = denemeler.filter(
+        (d) => d.examType === "brans" && d.bransSubjectId === selectedBransSubjectId
+      );
+      if (range !== "all") {
+        listToProcess = listToProcess.slice(0, parseInt(range, 10));
+      }
+    }
+
+    if (listToProcess.length === 0) return [];
 
     const map: Record<string, { count: number; totalNet: number; bestNet: number; totalCorrect: number; totalWrong: number; totalEmpty: number; totalDuration: number; durationCount: number }> = {};
 
-    active.forEach(d => {
+    listToProcess.forEach(d => {
       const pub = d.publisher?.trim() || "Diğer";
       const res = evaluateDeneme(d.scores, d.examType);
       
@@ -290,7 +302,7 @@ export default function DenemeAnalytics({
         avgDuration,
       };
     }).sort((a, b) => b.avgNet - a.avgNet);
-  }, [active]);
+  }, [active, denemeler, selectedBransSubjectId, viewType, range]);
 
   /* ═══ Empty States ═══ */
   if (viewType === "genel" && !stats) {
