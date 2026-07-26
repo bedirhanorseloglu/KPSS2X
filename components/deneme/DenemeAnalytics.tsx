@@ -657,7 +657,14 @@ export default function DenemeAnalytics({
                             padding: 10,
                             cornerRadius: 12,
                             callbacks: {
-                              label: (ctx) => ` ${ctx.label}: ${ctx.raw === 0.0001 ? 0 : ctx.raw} soru`,
+                              label: (ctx) => {
+                                const rawVal = typeof ctx.raw === "number" ? ctx.raw : 0;
+                                if (rawVal === 0.0001) return ` ${ctx.label}: 0 Soru`;
+                                const formatted = Number.isInteger(rawVal) 
+                                  ? rawVal.toString() 
+                                  : (Math.round(rawVal * 10) / 10).toFixed(1);
+                                return ` ${ctx.label}: ${formatted} Soru`;
+                              },
                             },
                           },
                         },
@@ -884,6 +891,45 @@ function CustomRechartsTooltip({ active, payload, mainColor }: any) {
   return null;
 }
 
+function renderRefLabel(text: string, color: string, align: 'right' | 'left' = 'right') {
+  return (props: any) => {
+    const { viewBox } = props;
+    if (!viewBox) return null;
+    const { x, y, width } = viewBox;
+    const isRight = align === 'right';
+    const posX = isRight ? x + width - 15 : x + 25;
+    const textAnchor = isRight ? 'end' : 'start';
+
+    return (
+      <g transform={`translate(${posX}, ${y - 8})`}>
+        <text
+          x={0}
+          y={0}
+          fill="none"
+          stroke="rgba(15, 23, 42, 0.95)"
+          strokeWidth={6}
+          strokeLinejoin="round"
+          fontSize={12}
+          fontWeight={900}
+          textAnchor={textAnchor}
+        >
+          {text}
+        </text>
+        <text
+          x={0}
+          y={0}
+          fill={color}
+          fontSize={12}
+          fontWeight={900}
+          textAnchor={textAnchor}
+        >
+          {text}
+        </text>
+      </g>
+    );
+  };
+}
+
 function GenelRechartsTrend({ stats, activeMetric, targetNet }: { stats: any; activeMetric: "total" | "gy" | "gk"; targetNet: number }) {
   const mainColor = activeMetric === "total" ? "#1cb0f6" : activeMetric === "gy" ? "#af52de" : "#ce82ff";
   const [chartView, setChartView] = useState<"net" | "breakdown">("net");
@@ -1030,8 +1076,8 @@ function GenelRechartsTrend({ stats, activeMetric, targetNet }: { stats: any; ac
               y={avgNet} 
               stroke={mainColor} 
               strokeDasharray="4 4" 
-              strokeOpacity={0.5} 
-              label={{ value: `Ort: ${formatNet(avgNet)}`, fill: mainColor, fontSize: 11, fontWeight: 900, position: 'insideTopRight', dy: -12 }} 
+              strokeOpacity={0.6} 
+              label={renderRefLabel(`Ort: ${formatNet(avgNet)}`, mainColor, 'right')} 
             />
 
             {activeMetric === "total" && targetNet && (
@@ -1040,7 +1086,7 @@ function GenelRechartsTrend({ stats, activeMetric, targetNet }: { stats: any; ac
                 stroke="#58cc02" 
                 strokeDasharray="5 5" 
                 strokeWidth={2}
-                label={{ value: `🎯 Hedef: ${targetNet}`, fill: '#58cc02', fontSize: 11, fontWeight: 900, position: 'insideTopLeft', dy: -12, dx: 15 }} 
+                label={renderRefLabel(`🎯 Hedef: ${targetNet}`, '#58cc02', 'left')} 
               />
             )}
 
@@ -1195,8 +1241,8 @@ function BransRechartsTrend({ bransStats }: { bransStats: any }) {
               y={avgNet} 
               stroke={mainColor} 
               strokeDasharray="4 4" 
-              strokeOpacity={0.5} 
-              label={{ value: `Ort: ${formatNet(avgNet)}`, fill: mainColor, fontSize: 11, fontWeight: 900, position: 'insideTopRight', dy: -12 }} 
+              strokeOpacity={0.6} 
+              label={renderRefLabel(`Ort: ${formatNet(avgNet)}`, mainColor, 'right')} 
             />
 
             {chartView === "net" ? (
