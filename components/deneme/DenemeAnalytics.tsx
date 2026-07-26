@@ -226,6 +226,72 @@ export default function DenemeAnalytics({
     };
   }, [denemeler, selectedBransSubjectId, viewType, range]);
 
+  /* ── Publisher Performance Stats Computation ── */
+  const publisherStats = useMemo(() => {
+    if (active.length === 0) return [];
+
+    const map: Record<string, { count: number; totalNet: number; bestNet: number; totalCorrect: number; totalWrong: number; totalEmpty: number; totalDuration: number; durationCount: number }> = {};
+
+    active.forEach(d => {
+      const pub = d.publisher?.trim() || "Diğer";
+      const res = evaluateDeneme(d.scores, d.examType);
+      
+      let net = res.totalNet;
+      let correct = res.totalCorrect;
+      let wrong = res.totalWrong;
+      let empty = res.totalEmpty;
+
+      if (d.examType === "brans" && d.bransSubjectId) {
+        const subRes = res.subjects.find(s => s.subjectId === d.bransSubjectId);
+        if (subRes) {
+          net = subRes.net;
+          correct = subRes.correct;
+          wrong = subRes.wrong;
+          empty = subRes.empty;
+        }
+      }
+
+      if (!map[pub]) {
+        map[pub] = {
+          count: 0,
+          totalNet: 0,
+          bestNet: net,
+          totalCorrect: 0,
+          totalWrong: 0,
+          totalEmpty: 0,
+          totalDuration: 0,
+          durationCount: 0,
+        };
+      }
+
+      map[pub].count += 1;
+      map[pub].totalNet += net;
+      if (net > map[pub].bestNet) map[pub].bestNet = net;
+      map[pub].totalCorrect += correct;
+      map[pub].totalWrong += wrong;
+      map[pub].totalEmpty += empty;
+      if (d.durationMinutes && d.durationMinutes > 0) {
+        map[pub].totalDuration += d.durationMinutes;
+        map[pub].durationCount += 1;
+      }
+    });
+
+    return Object.entries(map).map(([name, data]) => {
+      const avgNet = data.totalNet / data.count;
+      const avgDuration = data.durationCount > 0 ? data.totalDuration / data.durationCount : null;
+      const totalQuestions = data.totalCorrect + data.totalWrong + data.totalEmpty;
+      const accuracy = totalQuestions > 0 ? (data.totalCorrect / totalQuestions) * 100 : 0;
+      return {
+        name,
+        count: data.count,
+        avgNet,
+        bestNet: data.bestNet,
+        accuracy,
+        avgDuration,
+      };
+    }).sort((a, b) => b.avgNet - a.avgNet);
+  }, [active]);
+
   /* ═══ Empty States ═══ */
   if (viewType === "genel" && !stats) {
     return (
@@ -519,6 +585,79 @@ export default function DenemeAnalytics({
             </div>
           </Section>
 
+          {/* ━━━ Yayınevi Bazlı Başarı & Performans Analizi ━━━ */}
+          {publisherStats.length > 0 && (
+            <Section 
+              title="Yayınevi Bazlı Performans Analizi" 
+              desc="Çözdüğünüz yayınlara göre net ortalamalarınız ve başarı karşılaştırmanız." 
+              icon={<AppleEmoji emoji="🏷️" size={32} />}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {publisherStats.map((pub, idx) => (
+                  <motion.div
+                    key={pub.name}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
+                      idx === 0 
+                        ? "bg-gradient-to-br from-amber-500/10 via-white to-amber-500/5 dark:from-amber-500/20 dark:via-slate-800 dark:to-amber-500/10 border-amber-400 border-b-amber-500 text-slate-800 dark:text-white" 
+                        : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
+                          idx === 0 ? "bg-amber-500 text-white border-amber-600" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
+                        }`}>
+                          #{idx + 1}
+                        </span>
+                        <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
+                          {pub.name}
+                        </h4>
+                      </div>
+
+                      {idx === 0 && (
+                        <span className="px-3 py-1 bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1">
+                          <AppleEmoji emoji="👑" size={12} /> En Yüksek Başarı
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-3 mb-4">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
+                        <span className="text-2xl font-black font-mono text-[#1cb0f6]">{formatNet(pub.avgNet)}</span>
+                      </div>
+
+                      <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
+                        <div 
+                          className="h-full bg-[#1cb0f6] rounded-full transition-all duration-700" 
+                          style={{ width: `${Math.min(100, (pub.avgNet / 120) * 100)}%` }} 
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
+                      <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
+                        <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
+                        <span className="text-xs font-black text-[#58cc02]">{formatNet(pub.bestNet)}</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
+                        <span className="text-xs font-black text-[#af52de]">%{Math.round(pub.accuracy)}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </Section>
+          )}
+
           {/* ━━━ 5 · Tavsiyeler ━━━ */}
           <Section title="Akıllı Tavsiyeler" desc="Sonuçlarına göre oluşturulan kişisel koçluk notların." icon={<AppleEmoji emoji="💡" size={32} />}>
             <div className="grid md:grid-cols-2 gap-5">
@@ -753,6 +892,81 @@ export default function DenemeAnalytics({
 
           {/* ━━━ Gelişim Eğrisi (Recharts Ultra Modern Interaktif Trend Grafiği) ━━━ */}
           <BransRechartsTrend bransStats={bransStats} />
+
+          {/* ━━━ Yayınevi Bazlı Başarı & Performans Analizi ━━━ */}
+          {publisherStats.length > 0 && (
+            <div className="mt-14">
+              <Section 
+                title={`${bransStats.config?.title} - Yayınevi Bazlı Analiz`} 
+                desc="Seçili branşta çözdüğünüz yayınlara göre net ortalamalarınız." 
+                icon={<AppleEmoji emoji="🏷️" size={32} />}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {publisherStats.map((pub, idx) => (
+                    <motion.div
+                      key={pub.name}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
+                        idx === 0 
+                          ? "bg-gradient-to-br from-amber-500/10 via-white to-amber-500/5 dark:from-amber-500/20 dark:via-slate-800 dark:to-amber-500/10 border-amber-400 border-b-amber-500 text-slate-800 dark:text-white" 
+                          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
+                            idx === 0 ? "bg-amber-500 text-white border-amber-600" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
+                          }`}>
+                            #{idx + 1}
+                          </span>
+                          <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
+                            {pub.name}
+                          </h4>
+                        </div>
+
+                        {idx === 0 && (
+                          <span className="px-3 py-1 bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1">
+                            <AppleEmoji emoji="👑" size={12} /> En Yüksek Başarı
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-3 mb-4">
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
+                          <span className="text-2xl font-black font-mono text-[#1cb0f6]">{formatNet(pub.avgNet)}</span>
+                        </div>
+
+                        <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
+                          <div 
+                            className="h-full bg-[#1cb0f6] rounded-full transition-all duration-700" 
+                            style={{ width: `${Math.min(100, (pub.avgNet / bransStats.maxQuestions) * 100)}%` }} 
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
+                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
+                          <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
+                          <span className="text-xs font-black text-[#58cc02]">{formatNet(pub.bestNet)}</span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
+                          <span className="text-xs font-black text-[#af52de]">%{Math.round(pub.accuracy)}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </Section>
+            </div>
+          )}
         </>
       )}
     </div>

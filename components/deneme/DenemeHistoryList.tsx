@@ -51,20 +51,39 @@ export default function DenemeHistoryList({
     />
   );
 
-  const isAllBrans = useMemo(() => {
-    return denemeler.length > 0 && denemeler.every((d) => d.examType === "brans");
+  const [selectedPublisher, setSelectedPublisher] = useState<string>("all");
+
+  const publisherList = useMemo(() => {
+    const counts: Record<string, number> = {};
+    denemeler.forEach((d) => {
+      const pub = d.publisher?.trim() || "Diğer";
+      counts[pub] = (counts[pub] || 0) + 1;
+    });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]);
   }, [denemeler]);
+
+  const filteredDenemeler = useMemo(() => {
+    if (selectedPublisher === "all") return denemeler;
+    return denemeler.filter((d) => {
+      const pub = d.publisher?.trim() || "Diğer";
+      return pub === selectedPublisher;
+    });
+  }, [denemeler, selectedPublisher]);
+
+  const isAllBrans = useMemo(() => {
+    return filteredDenemeler.length > 0 && filteredDenemeler.every((d) => d.examType === "brans");
+  }, [filteredDenemeler]);
 
   const groupedBrans = useMemo(() => {
     if (!isAllBrans) return null;
     const groups: Record<string, DenemeRecord[]> = {};
-    denemeler.forEach((d) => {
+    filteredDenemeler.forEach((d) => {
       const subId = d.bransSubjectId || "unknown";
       if (!groups[subId]) groups[subId] = [];
       groups[subId].push(d);
     });
     return groups;
-  }, [denemeler, isAllBrans]);
+  }, [filteredDenemeler, isAllBrans]);
 
   if (denemeler.length === 0) {
     return (
@@ -89,11 +108,61 @@ export default function DenemeHistoryList({
     );
   }
 
+  const publisherFilterUI = publisherList.length > 1 && (
+    <div className="mb-6 p-5 bg-white dark:bg-slate-800 rounded-[2rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs font-black text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+          <AppleEmoji emoji="🏷️" size={18} />
+          <span>Yayınevi Sınıflandırması & Filtre</span>
+        </div>
+        {selectedPublisher !== "all" && (
+          <button
+            type="button"
+            onClick={() => setSelectedPublisher("all")}
+            className="text-xs font-black text-[#1cb0f6] hover:underline cursor-pointer flex items-center gap-1"
+          >
+            <span>Filtreyi Sıfırla</span>
+          </button>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setSelectedPublisher("all")}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer border-2 border-b-4 active:translate-y-0.5 ${
+            selectedPublisher === "all"
+              ? "bg-[#1cb0f6] border-[#1cb0f6] border-b-[#1899d6] text-white shadow-xs"
+              : "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-[#1cb0f6]"
+          }`}
+        >
+          Tüm Yayınevleri ({denemeler.length})
+        </button>
+
+        {publisherList.map(([pubName, count]) => (
+          <button
+            key={pubName}
+            type="button"
+            onClick={() => setSelectedPublisher(pubName)}
+            className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer border-2 border-b-4 active:translate-y-0.5 ${
+              selectedPublisher === pubName
+                ? "bg-[#1cb0f6] border-[#1cb0f6] border-b-[#1899d6] text-white shadow-xs"
+                : "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-[#1cb0f6]"
+            }`}
+          >
+            {pubName} ({count})
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   // BRANŞ GÖRÜNÜMÜ
   if (isAllBrans && groupedBrans) {
     return (
       <>
         {deleteDialog}
+        {publisherFilterUI}
         <div className="space-y-10">
           {Object.entries(groupedBrans).map(([subId, list]) => {
             const subConfig = DENEME_SUBJECTS.find((s) => s.id === subId);
@@ -210,12 +279,13 @@ export default function DenemeHistoryList({
   return (
     <>
       {deleteDialog}
+      {publisherFilterUI}
       <div className="space-y-5">
-        {denemeler.map((deneme, index) => {
+        {filteredDenemeler.map((deneme, index) => {
           const result = evaluateDeneme(deneme.scores, deneme.examType);
           const expanded = expandedId === deneme.id;
           
-          const prevDeneme = denemeler[index + 1];
+          const prevDeneme = filteredDenemeler[index + 1];
           let trend: "up" | "down" | "flat" = "flat";
           if (prevDeneme) {
             const prevResult = evaluateDeneme(prevDeneme.scores, prevDeneme.examType);
