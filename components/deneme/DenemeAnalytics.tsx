@@ -605,67 +605,82 @@ export default function DenemeAnalytics({
               icon={<AppleEmoji emoji="🏷️" size={32} />}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {publisherStats.map((pub, idx) => (
-                  <motion.div
-                    key={pub.name}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
-                      idx === 0 
-                        ? "bg-gradient-to-br from-amber-500/10 via-white to-amber-500/5 dark:from-amber-500/20 dark:via-slate-800 dark:to-amber-500/10 border-amber-400 border-b-amber-500 text-slate-800 dark:text-white" 
-                        : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <span className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
-                          idx === 0 ? "bg-amber-500 text-white border-amber-600" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
-                        }`}>
-                          #{idx + 1}
-                        </span>
-                        <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
-                          {pub.name}
-                        </h4>
+                {publisherStats.map((pub, idx) => {
+                  const themeColor = "#1cb0f6";
+
+                  return (
+                    <motion.div
+                      key={pub.name}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
+                        idx === 0 
+                          ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-white" 
+                          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
+                      }`}
+                      style={
+                        idx === 0
+                          ? { borderColor: themeColor, borderBottomColor: themeColor }
+                          : {}
+                      }
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span 
+                            className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
+                              idx === 0 ? "text-white shadow-xs" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
+                            }`}
+                            style={idx === 0 ? { backgroundColor: themeColor, borderColor: themeColor } : {}}
+                          >
+                            #{idx + 1}
+                          </span>
+                          <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
+                            {pub.name}
+                          </h4>
+                        </div>
+
+                        {idx === 0 && (
+                          <span 
+                            className="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1 border"
+                            style={{ backgroundColor: `${themeColor}18`, borderColor: `${themeColor}40`, color: themeColor }}
+                          >
+                            <AppleEmoji emoji="👑" size={12} color={themeColor} /> En Yüksek Başarı
+                          </span>
+                        )}
                       </div>
 
-                      {idx === 0 && (
-                        <span className="px-3 py-1 bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1">
-                          <AppleEmoji emoji="👑" size={12} /> En Yüksek Başarı
-                        </span>
-                      )}
-                    </div>
+                      <div className="space-y-3 mb-4">
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
+                          <span className="text-2xl font-black font-mono leading-none" style={{ color: themeColor }}>{formatNet(pub.avgNet)}</span>
+                        </div>
 
-                    <div className="space-y-3 mb-4">
-                      <div className="flex justify-between items-baseline">
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
-                        <span className="text-2xl font-black font-mono text-[#1cb0f6]">{formatNet(pub.avgNet)}</span>
+                        <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
+                          <div 
+                            className="h-full rounded-full transition-all duration-700" 
+                            style={{ width: `${Math.min(100, (pub.avgNet / 120) * 100)}%`, backgroundColor: themeColor }} 
+                          />
+                        </div>
                       </div>
 
-                      <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
-                        <div 
-                          className="h-full bg-[#1cb0f6] rounded-full transition-all duration-700" 
-                          style={{ width: `${Math.min(100, (pub.avgNet / 120) * 100)}%` }} 
-                        />
+                      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
+                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
+                          <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
+                          <span className="text-xs font-black" style={{ color: themeColor }}>{formatNet(pub.bestNet)}</span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
+                          <span className="text-xs font-black text-slate-700 dark:text-slate-200">%{Math.round(pub.accuracy)}</span>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
-                      <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
-                        <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
-                      </div>
-                      <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
-                        <span className="text-xs font-black text-[#58cc02]">{formatNet(pub.bestNet)}</span>
-                      </div>
-                      <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
-                        <span className="text-xs font-black text-[#af52de]">%{Math.round(pub.accuracy)}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             </Section>
           )}
@@ -914,67 +929,82 @@ export default function DenemeAnalytics({
                 icon={<AppleEmoji emoji="🏷️" size={32} />}
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {publisherStats.map((pub, idx) => (
-                    <motion.div
-                      key={pub.name}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
-                        idx === 0 
-                          ? "bg-gradient-to-br from-amber-500/10 via-white to-amber-500/5 dark:from-amber-500/20 dark:via-slate-800 dark:to-amber-500/10 border-amber-400 border-b-amber-500 text-slate-800 dark:text-white" 
-                          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <span className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
-                            idx === 0 ? "bg-amber-500 text-white border-amber-600" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
-                          }`}>
-                            #{idx + 1}
-                          </span>
-                          <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
-                            {pub.name}
-                          </h4>
+                  {publisherStats.map((pub, idx) => {
+                    const subColor = bransStats.config?.color || "#1cb0f6";
+
+                    return (
+                      <motion.div
+                        key={pub.name}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
+                          idx === 0 
+                            ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-white" 
+                            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
+                        }`}
+                        style={
+                          idx === 0
+                            ? { borderColor: subColor, borderBottomColor: subColor }
+                            : {}
+                        }
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <span 
+                              className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
+                                idx === 0 ? "text-white shadow-xs" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
+                              }`}
+                              style={idx === 0 ? { backgroundColor: subColor, borderColor: subColor } : {}}
+                            >
+                              #{idx + 1}
+                            </span>
+                            <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
+                              {pub.name}
+                            </h4>
+                          </div>
+
+                          {idx === 0 && (
+                            <span 
+                              className="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1 border"
+                              style={{ backgroundColor: `${subColor}18`, borderColor: `${subColor}40`, color: subColor }}
+                            >
+                              <AppleEmoji emoji="👑" size={12} color={subColor} /> En Yüksek Başarı
+                            </span>
+                          )}
                         </div>
 
-                        {idx === 0 && (
-                          <span className="px-3 py-1 bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1">
-                            <AppleEmoji emoji="👑" size={12} /> En Yüksek Başarı
-                          </span>
-                        )}
-                      </div>
+                        <div className="space-y-3 mb-4">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
+                            <span className="text-2xl font-black font-mono leading-none" style={{ color: subColor }}>{formatNet(pub.avgNet)}</span>
+                          </div>
 
-                      <div className="space-y-3 mb-4">
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
-                          <span className="text-2xl font-black font-mono text-[#1cb0f6]">{formatNet(pub.avgNet)}</span>
+                          <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
+                            <div 
+                              className="h-full rounded-full transition-all duration-700" 
+                              style={{ width: `${Math.min(100, (pub.avgNet / bransStats.maxQuestions) * 100)}%`, backgroundColor: subColor }} 
+                            />
+                          </div>
                         </div>
 
-                        <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
-                          <div 
-                            className="h-full bg-[#1cb0f6] rounded-full transition-all duration-700" 
-                            style={{ width: `${Math.min(100, (pub.avgNet / bransStats.maxQuestions) * 100)}%` }} 
-                          />
+                        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
+                          <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
+                            <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
+                            <span className="text-xs font-black" style={{ color: subColor }}>{formatNet(pub.bestNet)}</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
+                            <span className="text-xs font-black text-slate-700 dark:text-slate-200">%{Math.round(pub.accuracy)}</span>
+                          </div>
                         </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
-                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
-                          <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
-                        </div>
-                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
-                          <span className="text-xs font-black text-[#58cc02]">{formatNet(pub.bestNet)}</span>
-                        </div>
-                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
-                          <span className="text-xs font-black text-[#af52de]">%{Math.round(pub.accuracy)}</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </Section>
             </div>
