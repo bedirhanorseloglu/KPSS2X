@@ -797,7 +797,14 @@ function SummaryCard({ label, value, sub, accent, highlight, emoji }: { label: s
     }`}>
       <div className="flex justify-between items-start gap-2 mb-4 relative z-10 min-w-0">
         <p className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider min-w-0 flex-1 leading-snug ${accent || highlight ? "text-white/90" : "text-slate-400"}`}>{label}</p>
-        {emoji && <AppleEmoji emoji={emoji} size={24} className="relative z-10 shrink-0 drop-shadow-sm hover:scale-110 transition-transform" />}
+        {emoji && (
+          <AppleEmoji 
+            emoji={emoji} 
+            size={24} 
+            color={accent || highlight ? "#ffffff" : undefined}
+            className="relative z-10 shrink-0 drop-shadow-sm hover:scale-110 transition-transform" 
+          />
+        )}
       </div>
       <div className="relative z-10 min-w-0">
         <p className={`text-3xl sm:text-4xl leading-none font-black tracking-tight font-mono ${accent || highlight ? "text-white" : "text-slate-800 dark:text-white"}`}>{value}</p>
