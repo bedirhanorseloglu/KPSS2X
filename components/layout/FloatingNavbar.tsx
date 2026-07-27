@@ -75,7 +75,7 @@ export default function FloatingNavbar() {
             </Link>
 
             {/* 3D Navigation Links */}
-            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2">
+            <nav className="hidden md:flex items-center gap-1.5 xl:gap-2">
               {NAV_LINKS.map((link) => {
                 const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
                   ? pathname === link.href 
@@ -85,14 +85,14 @@ export default function FloatingNavbar() {
                   <Link 
                     key={link.name} 
                     href={link.href}
-                    className={`relative flex items-center gap-1.5 px-2 sm:px-3 xl:px-4 py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap ${
+                    className={`relative flex items-center gap-2 px-3 xl:px-4 py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap active:translate-y-0.5 ${
                       isActive 
-                        ? "bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-xs" 
-                        : "text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                        ? "bg-white dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-sm" 
+                        : "bg-slate-100/90 dark:bg-slate-700/70 border-2 border-b-2 border-slate-200 border-b-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-[#1cb0f6] hover:text-[#1cb0f6] hover:bg-white dark:hover:bg-slate-700 shadow-2xs"
                     }`}
                   >
                     <AppleEmoji emoji={link.emoji} size={18} />
-                    <span className="hidden min-[540px]:inline">{link.name}</span>
+                    <span>{link.name}</span>
                   </Link>
                 );
               })}
@@ -187,7 +187,7 @@ export default function FloatingNavbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="min-[540px]:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs active:translate-y-0.5 transition-all cursor-pointer"
+              className="md:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs active:translate-y-0.5 transition-all cursor-pointer"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -202,7 +202,7 @@ export default function FloatingNavbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-20 left-4 right-4 z-40 bg-white dark:bg-slate-800 rounded-3xl border-2 border-b-4 border-slate-200 dark:border-slate-700 p-4 shadow-xl min-[540px]:hidden"
+            className="fixed top-20 left-4 right-4 z-40 bg-white dark:bg-slate-800 rounded-3xl border-2 border-b-4 border-slate-200 dark:border-slate-700 p-4 shadow-xl md:hidden"
           >
             <nav className="flex flex-col gap-2">
               {NAV_LINKS.map((link) => {
