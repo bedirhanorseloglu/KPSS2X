@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { PlusCircle, ClipboardList, BarChart3, BookOpen, TrendingUp, Zap, GraduationCap, Globe } from "lucide-react";
-import DenemeNav from "./DenemeNav";
 import DenemeEntryForm from "./DenemeEntryForm";
 import DenemeHistoryList from "./DenemeHistoryList";
 import { useSearchParams } from "next/navigation";
@@ -294,18 +293,6 @@ export default function DenemePageContent() {
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-500/[0.04] via-purple-500/[0.02] to-transparent rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-emerald-500/[0.03] to-transparent rounded-full blur-3xl" />
       </div>
-
-      <DenemeNav>
-        {stats && (
-          <div className="flex items-center gap-1 p-1.5 rounded-full bg-white/40 dark:bg-[#1e293b]/40 border border-gray-200/50 dark:border-white/10 backdrop-blur-sm shadow-sm">
-            <HeaderStat label="Ortalama" value={formatNet(stats.avg)} />
-            <div className="w-px h-6 bg-gray-200 dark:bg-white/10 self-center" />
-            <HeaderStat label="En İyi" value={formatNet(stats.best)} highlight />
-            <div className="w-px h-6 bg-gray-200 dark:bg-white/10 self-center" />
-            <HeaderStat label="Son" value={formatNet(stats.latest)} />
-          </div>
-        )}
-      </DenemeNav>
 
       <main className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-12">
         {/* Unified EdTech Header & Tabs */}
