@@ -63,19 +63,19 @@ export default function FloatingNavbar() {
           }`}
         >
           {/* Left Side: Logo + Nav */}
-          <div className="flex items-center gap-4 lg:gap-8 shrink-0">
+          <div className="flex items-center gap-3 lg:gap-6 min-w-0">
             {/* 3D Logo */}
-            <Link href="/dashboard" className="flex items-center gap-3 group focus:outline-none shrink-0">
+            <Link href="/dashboard" className="flex items-center gap-2.5 group focus:outline-none shrink-0">
               <div className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-[#1cb0f6] text-white shadow-xs border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] transition-all group-hover:scale-105 active:translate-y-0.5">
                 <span className="font-black text-xl leading-none">K</span>
               </div>
-              <span className="font-black text-xl tracking-tight text-slate-800 dark:text-white hidden sm:block">
+              <span className="font-black text-xl tracking-tight text-slate-800 dark:text-white hidden sm:inline-block">
                 KPSS<span className="text-[#1cb0f6]">26</span>
               </span>
             </Link>
 
             {/* 3D Navigation Links */}
-            <nav className="hidden md:flex items-center gap-1.5 shrink-0">
+            <nav className="hidden md:flex items-center gap-1 lg:gap-1.5 xl:gap-2">
               {NAV_LINKS.map((link) => {
                 const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
                   ? pathname === link.href 
@@ -85,10 +85,10 @@ export default function FloatingNavbar() {
                   <Link 
                     key={link.name} 
                     href={link.href}
-                    className={`relative flex items-center gap-2 px-3.5 xl:px-4 py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer ${
+                    className={`relative flex items-center gap-1.5 px-2.5 lg:px-3.5 xl:px-4 py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap ${
                       isActive 
                         ? "bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-xs" 
-                        : "text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     }`}
                   >
                     <AppleEmoji emoji={link.emoji} size={18} />
