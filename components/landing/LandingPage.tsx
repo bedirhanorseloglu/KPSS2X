@@ -102,18 +102,23 @@ export default function LandingPage() {
         <nav className="relative z-10 flex items-center justify-between px-6 sm:px-8 py-5 max-w-7xl mx-auto anim-rise">
           {/* Logo */}
           <div
-            className="flex items-center gap-2.5 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer group"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            {/* 3D Speed Icon */}
-            <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#1cb0f6] text-white shadow-[0_3px_0_0_#1899d6] shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="transform translate-x-0.5">
-                <polyline points="13 17 18 12 13 7" />
-                <polyline points="6 17 11 12 6 7" />
+            {/* 3D Lightning Tile */}
+            <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] transition-transform group-hover:scale-105 active:translate-y-0.5 shrink-0 shadow-2xs">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-white drop-shadow-2xs">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
             </div>
-            <span className="text-[26px] sm:text-[30px] tracking-tight text-white font-black flex items-center">
-              KPSS<span className="text-[#1cb0f6] ml-0.5">2</span><span className="text-[#58cc02]">X</span><sup className="text-[10px] ml-0.5 opacity-50 font-normal">®</sup>
+            
+            {/* Wordmark: KPSS + 3D 2X Badge */}
+            <span className="font-black text-xl sm:text-2xl tracking-tight text-white flex items-center gap-1.5">
+              KPSS
+              <span className="inline-flex items-center px-2 py-0.5 text-xs sm:text-sm rounded-xl bg-[#1cb0f6] text-white font-black border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs">
+                2<span className="text-[#58cc02] ml-0.5">X</span>
+              </span>
+              <sup className="text-[10px] ml-0.5 opacity-50 font-normal">®</sup>
             </span>
           </div>
 
