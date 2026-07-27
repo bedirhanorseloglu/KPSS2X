@@ -83,13 +83,21 @@ export default function FloatingNavbar() {
           <div className="flex items-center gap-3 lg:gap-6 min-w-0">
             {/* 3D Logo */}
             <Link href="/dashboard" className="flex items-center gap-2.5 group focus:outline-none shrink-0">
-              <div className="relative flex flex-col items-center justify-center w-10 h-10 rounded-2xl bg-[#1cb0f6] text-white shadow-xs border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] transition-all group-hover:scale-105 active:translate-y-0.5">
-                <span className="font-black text-[10px] leading-none tracking-tighter opacity-90">KPSS</span>
-                <span className="font-black text-[14px] leading-none tracking-tighter mt-0.5">2<span className="text-[#58cc02]">X</span></span>
+              {/* Icon Tile */}
+              <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#1cb0f6] text-white shadow-[0_3px_0_0_#1899d6] sm:shadow-[0_4px_0_0_#1899d6] transition-transform group-hover:scale-105 active:translate-y-0.5 shrink-0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="transform translate-x-0.5">
+                  <polyline points="13 17 18 12 13 7" />
+                  <polyline points="6 17 11 12 6 7" />
+                </svg>
               </div>
-              <span className="font-black text-xl tracking-tight text-slate-800 dark:text-white hidden sm:inline-flex items-center gap-1">
-                KPSS<span className="inline-flex items-center px-1.5 py-0.5 text-sm rounded-lg bg-[#1cb0f6] text-white font-black border-b-2 border-[#1899d6]">2<span className="text-[#58cc02]">X</span></span>
-              </span>
+              
+              {/* Wordmark: Visible on all screens, adaptive for dark/light themes */}
+              <div className="flex items-center gap-1.5 font-black text-lg sm:text-xl tracking-tight text-slate-800 dark:text-white">
+                <span>KPSS</span>
+                <span className="inline-flex items-center px-2 py-0.5 text-xs sm:text-sm rounded-lg sm:rounded-xl bg-[#1cb0f6] text-white font-black shadow-[0_2px_0_0_#1899d6]">
+                  2<span className="text-[#58cc02] ml-0.5">X</span>
+                </span>
+              </div>
             </Link>
 
             {/* 3D Navigation Links - Always Visible */}

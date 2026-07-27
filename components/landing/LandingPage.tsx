@@ -105,10 +105,15 @@ export default function LandingPage() {
             className="flex items-center gap-2.5 cursor-pointer"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <span
-              className="text-[28px] tracking-tight text-white font-bold flex items-center gap-1.5"
-            >
-              KPSS<span className="inline-flex items-center px-2 py-0.5 text-lg rounded-xl bg-[#1cb0f6] text-white font-black border-b-2 border-[#1899d6]">2<span className="text-[#58cc02]">X</span></span><sup className="text-[10px] ml-0.5 opacity-50">®</sup>
+            {/* 3D Speed Icon */}
+            <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#1cb0f6] text-white shadow-[0_3px_0_0_#1899d6] shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="transform translate-x-0.5">
+                <polyline points="13 17 18 12 13 7" />
+                <polyline points="6 17 11 12 6 7" />
+              </svg>
+            </div>
+            <span className="text-[26px] sm:text-[28px] tracking-tight text-white font-black flex items-center gap-1.5">
+              KPSS<span className="inline-flex items-center px-2 py-0.5 text-base sm:text-lg rounded-xl bg-[#1cb0f6] text-white font-black shadow-[0_2.5px_0_0_#1899d6]">2<span className="text-[#58cc02] ml-0.5">X</span></span><sup className="text-[10px] ml-0.5 opacity-50 font-normal">®</sup>
             </span>
           </div>
 

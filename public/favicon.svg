@@ -5,25 +5,23 @@
     </filter>
   </defs>
 
-  <!-- 3D Physical Push Button Outer Shape (Dark Bottom Rim #1899d6) -->
+  <!-- 3D Base (Darker Blue Rim #1899d6) -->
   <rect x="32" y="32" width="448" height="448" rx="112" fill="#1899d6" filter="url(#drop-shadow)" />
   
-  <!-- Main Button Surface (#1cb0f6) -->
-  <rect x="32" y="32" width="448" height="412" rx="112" fill="#1cb0f6" />
+  <!-- 3D Top Surface (#1cb0f6) -->
+  <rect x="32" y="32" width="448" height="416" rx="112" fill="#1cb0f6" />
 
-  <!-- Inner Highlight Rim -->
-  <rect x="40" y="40" width="432" height="396" rx="104" fill="none" stroke="#ffffff" stroke-width="6" stroke-opacity="0.25" />
+  <!-- Inner Subtle Specular Highlight -->
+  <rect x="40" y="40" width="432" height="400" rx="104" fill="none" stroke="#ffffff" stroke-width="6" stroke-opacity="0.2" />
 
-  <!-- Encompassing Typographic Layout -->
-  <g font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Poppins', 'Segoe UI', sans-serif" font-weight="900" text-anchor="middle">
-    
-    <!-- Top Line: KPSS (Wider & Spanning over 2X) -->
-    <text x="256" y="195" fill="#ffffff" font-size="95" letter-spacing="6">KPSS</text>
+  <!-- Integrated Bold Typographic Brand Logo -->
+  <g font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Arial Black', sans-serif" font-weight="900" text-anchor="middle">
+    <!-- Top Line: KPSS -->
+    <text x="256" y="195" fill="#ffffff" font-size="102" letter-spacing="-1">KPSS</text>
 
-    <!-- Bottom Line: 2X (Compact & Sheltered under KPSS) -->
-    <text x="256" y="365" font-size="165" letter-spacing="-4">
+    <!-- Bottom Line: 2X -->
+    <text x="256" y="372" font-size="195" letter-spacing="-6">
       <tspan fill="#ffffff">2</tspan><tspan fill="#58cc02">X</tspan>
     </text>
-
   </g>
 </svg>
