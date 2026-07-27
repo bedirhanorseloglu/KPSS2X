@@ -74,8 +74,8 @@ export default function FloatingNavbar() {
               </span>
             </Link>
 
-            {/* 3D Navigation Links */}
-            <nav className="hidden md:flex items-center gap-1.5 xl:gap-2">
+            {/* 3D Navigation Links - Always Visible */}
+            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 overflow-x-auto no-scrollbar py-0.5">
               {NAV_LINKS.map((link) => {
                 const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
                   ? pathname === link.href 
@@ -85,7 +85,7 @@ export default function FloatingNavbar() {
                   <Link 
                     key={link.name} 
                     href={link.href}
-                    className={`relative flex items-center gap-2 px-3 xl:px-4 py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap active:translate-y-0.5 ${
+                    className={`relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 xl:px-4 py-1.5 sm:py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap shrink-0 active:translate-y-0.5 ${
                       isActive 
                         ? "bg-white dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-sm" 
                         : "bg-slate-100/90 dark:bg-slate-700/70 border-2 border-b-2 border-slate-200 border-b-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-[#1cb0f6] hover:text-[#1cb0f6] hover:bg-white dark:hover:bg-slate-700 shadow-2xs"
