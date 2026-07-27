@@ -329,12 +329,12 @@ export default function FloatingPomodoro() {
     if (isFinishedAlert) {
       let toggle = false;
       interval = setInterval(() => {
-        document.title = toggle ? "⏰ SÜRE BİTTİ!" : "⚠️ ZAMAN DOLDU";
+        document.title = toggle ? "🚨 SÜRE BİTTİ! · KPSS 2026" : "⚠️ ZAMAN DOLDU · KPSS 2026";
         toggle = !toggle;
       }, 1000);
-      document.title = "⏰ SÜRE BİTTİ!";
+      document.title = "🚨 SÜRE BİTTİ! · KPSS 2026";
     } else if (isActive) {
-      document.title = `(${formatTime}) ${mode === 'stopwatch' ? '⏱️ Kronometre' : '☕ Mola'}`;
+      document.title = `${mode === 'stopwatch' ? '⏱️' : '☕'} ${formatTime} · ${mode === 'stopwatch' ? 'Kronometre' : 'Mola Vakti'} | KPSS 2026`;
     } else {
       document.title = "KPSS 2026 Komuta Merkezi";
     }
