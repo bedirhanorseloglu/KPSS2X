@@ -703,19 +703,22 @@ export default function FloatingPomodoro() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.2 }}
                   >
-                      {/* 3D Daily Goal Container */}
-                      <div className="mb-6 p-5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-2xs relative overflow-hidden group">
-                         <div className="absolute right-0 top-0 opacity-[0.04]">
-                            <Target className="w-32 h-32 -mr-8 -mt-8 text-[#58cc02]" />
+                      {/* 3D Daily Goal Hero Card */}
+                      <div className="mb-6 p-4.5 bg-gradient-to-br from-slate-50 to-slate-100/80 dark:from-slate-800/80 dark:to-slate-900/60 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-2xs relative overflow-hidden group">
+                         <div className="absolute right-0 top-0 opacity-[0.05]">
+                            <Target className="w-28 h-28 -mr-6 -mt-6 text-[#58cc02]" />
                          </div>
-                         <div className="flex justify-between items-end mb-3.5 relative z-10">
+                         <div className="flex justify-between items-end mb-3 relative z-10">
                             <div>
-                              <div className="text-[11px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 mb-1">Günlük Hedef</div>
+                              <div className="text-[11px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 mb-1 flex items-center gap-1.5">
+                                <AppleEmoji emoji="🎯" size={14} />
+                                <span>Günlük Hedef</span>
+                              </div>
                               <div className="text-base font-black text-slate-800 dark:text-slate-100 font-mono">
                                  {Math.floor(displayTotalFocus/60)}s {displayTotalFocus%60}dk <span className="text-slate-400 text-sm font-sans font-bold">/ {Math.floor(dailyGoalMinutes/60)}s {dailyGoalMinutes%60 > 0 ? `${dailyGoalMinutes%60}dk` : ''}</span>
                               </div>
                             </div>
-                            <div className="text-xs font-black text-[#58cc02] bg-[#e5f9e7] dark:bg-[#58cc02]/20 px-3 py-1 rounded-xl border-2 border-b-2 border-[#58cc02]/30 shadow-2xs relative font-mono">
+                            <div className="text-xs font-black text-[#58cc02] bg-[#e5f9e7] dark:bg-[#58cc02]/20 px-3 py-1 rounded-xl border-2 border-b-2 border-[#58cc02]/40 shadow-2xs relative font-mono">
                                %{Math.min(100, Math.round((displayTotalFocus / dailyGoalMinutes) * 100))}
                                
                                <AnimatePresence>
@@ -733,9 +736,9 @@ export default function FloatingPomodoro() {
                                </AnimatePresence>
                             </div>
                          </div>
-                         <div className="w-full h-3.5 bg-slate-200 dark:bg-slate-900 rounded-full border-2 border-slate-300/40 dark:border-slate-700/80 overflow-hidden">
+                         <div className="w-full h-3.5 bg-slate-200 dark:bg-slate-950 rounded-full border-2 border-slate-300/40 dark:border-slate-800 p-0.5 overflow-hidden">
                             <div 
-                               className="h-full bg-[#58cc02] transition-all duration-1000 rounded-full relative shadow-2xs"
+                               className="h-full bg-gradient-to-r from-[#58cc02] to-[#46a302] transition-all duration-1000 rounded-full relative shadow-2xs"
                                style={{ width: `${Math.min(100, (displayTotalFocus / dailyGoalMinutes) * 100)}%` }}
                             >
                                <div className="absolute inset-x-0 top-0 h-1/3 bg-white/30 rounded-full" />
@@ -743,40 +746,41 @@ export default function FloatingPomodoro() {
                          </div>
                       </div>
 
-
-                    {/* 3D Mode Tabs */}
-                    <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-2xl mb-7 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-2xs gap-1.5">
+                    {/* 3D Segmented Mode Switcher */}
+                    <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/90 rounded-2xl mb-6 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-2xs gap-2">
                       <button
                         type="button"
                         onClick={() => requestModeChange("stopwatch")}
-                        className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all border-2 active:translate-y-0.5 cursor-pointer ${
+                        className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all border-2 border-b-4 active:translate-y-0.5 cursor-pointer flex items-center justify-center gap-1.5 ${
                           mode === "stopwatch" 
-                            ? "bg-white dark:bg-slate-900 text-[#1cb0f6] border-[#1cb0f6] border-b-4 shadow-sm" 
+                            ? "bg-white dark:bg-slate-900 text-[#1cb0f6] border-[#1cb0f6] border-b-[#1899d6] shadow-sm" 
                             : "bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-transparent"
                         }`}
                       >
-                        Krono
+                        <AppleEmoji emoji="⏱️" size={16} />
+                        <span>Krono</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => requestModeChange("break")}
-                        className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all border-2 active:translate-y-0.5 cursor-pointer ${
+                        className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all border-2 border-b-4 active:translate-y-0.5 cursor-pointer flex items-center justify-center gap-1.5 ${
                           mode === "break" 
-                            ? "bg-white dark:bg-slate-900 text-[#58cc02] border-[#58cc02] border-b-4 shadow-sm" 
+                            ? "bg-white dark:bg-slate-900 text-[#58cc02] border-[#58cc02] border-b-[#46a302] shadow-sm" 
                             : "bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-transparent"
                         }`}
                       >
-                        Mola
+                        <AppleEmoji emoji="☕" size={16} />
+                        <span>Mola</span>
                       </button>
                     </div>
 
-                    {/* Timer SVG Ring */}
-                    <div className="relative w-56 h-56 mx-auto mb-7 flex items-center justify-center">
+                    {/* Central 3D Timer Ring & Display */}
+                    <div className="relative w-60 h-60 mx-auto mb-6 flex items-center justify-center rounded-full bg-slate-100/50 dark:bg-slate-800/40 border-2 border-slate-200/80 dark:border-slate-700/60 shadow-inner">
                       <svg className="w-full h-full -rotate-90 drop-shadow-md" viewBox="0 0 200 200">
                         <circle 
                           cx="100" cy="100" r={radius} 
                           fill="none" 
-                          className="stroke-slate-200/80 dark:stroke-slate-800" 
+                          className="stroke-slate-200 dark:stroke-slate-800" 
                           strokeWidth="10" 
                         />
                         <motion.circle 
@@ -792,12 +796,15 @@ export default function FloatingPomodoro() {
                         />
                       </svg>
                       
-                      {/* Timer Text Inside */}
+                      {/* Timer Display Inside */}
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                         <p className={`${formatTime.length > 5 ? 'text-4xl' : 'text-5xl'} font-black font-mono tracking-tight transition-colors duration-300 ${mode === "focus" ? "text-emerald-500 dark:text-emerald-400" : (mode === "stopwatch" ? "text-[#1cb0f6]" : "text-[#58cc02]")}`}>
+                         <div className="mb-1">
+                           <AppleEmoji emoji={mode === "stopwatch" ? "⚡" : "☕"} size={22} />
+                         </div>
+                         <p className={`${formatTime.length > 5 ? 'text-4xl' : 'text-5xl'} font-black font-mono tracking-tight text-slate-800 dark:text-white transition-colors duration-300 drop-shadow-2xs`}>
                            {formatTime}
                          </p>
-                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mt-2.5 border ${
+                         <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mt-2 border shadow-2xs ${
                            mode === "stopwatch"
                              ? "bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 text-[#1cb0f6] border-[#1cb0f6]/30"
                              : "bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-[#58cc02]/30"
@@ -807,12 +814,12 @@ export default function FloatingPomodoro() {
                       </div>
                     </div>
 
-                    {/* 3D Push Button Controls */}
-                    <div className="flex items-center justify-center gap-3.5 mb-2">
+                    {/* 3D Push Control Dock */}
+                    <div className="flex items-center justify-center gap-3 mb-2">
                        <button 
                          type="button"
                          onClick={resetTimer}
-                         className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer"
+                         className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer shrink-0"
                          title="Sıfırla"
                        >
                          <RotateCcw className="w-5 h-5" />
@@ -820,13 +827,23 @@ export default function FloatingPomodoro() {
                        <button 
                          type="button"
                          onClick={toggleTimer}
-                         className={`w-20 h-14 flex items-center justify-center rounded-2xl text-white border-2 border-b-4 shadow-md hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer ${
+                         className={`flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl text-white font-black text-xs uppercase tracking-wider border-2 border-b-4 shadow-md hover:scale-[1.02] active:translate-y-0.5 transition-all cursor-pointer ${
                            isActive 
                              ? "bg-amber-500 border-amber-500 border-b-amber-600 dark:bg-amber-500 dark:border-amber-600 text-white" 
                              : (mode === "stopwatch" ? "bg-[#1cb0f6] border-[#1cb0f6] border-b-[#1899d6]" : "bg-[#58cc02] border-[#58cc02] border-b-[#46a302]")
                          }`}
                        >
-                         {isActive ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 ml-0.5 fill-current" />}
+                         {isActive ? (
+                           <>
+                             <Pause className="w-5 h-5 fill-current" />
+                             <span>DURAKLAT</span>
+                           </>
+                         ) : (
+                           <>
+                             <Play className="w-5 h-5 ml-0.5 fill-current" />
+                             <span>{mode === "stopwatch" ? "BAŞLAT" : "MOLAYI BAŞLAT"}</span>
+                           </>
+                         )}
                        </button>
                     </div>
 
