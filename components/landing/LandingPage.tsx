@@ -106,10 +106,9 @@ export default function LandingPage() {
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             <span
-              className="text-[28px] tracking-tight text-white"
-              style={{ fontFamily: SERIF }}
+              className="text-[28px] tracking-tight text-white font-bold flex items-center gap-1.5"
             >
-              KPSS 2026<sup className="text-[10px] ml-0.5 opacity-50">®</sup>
+              KPSS<span className="inline-flex items-center px-2 py-0.5 text-lg rounded-xl bg-[#1cb0f6] text-white font-black border-b-2 border-[#1899d6]">2<span className="text-[#58cc02]">X</span></span><sup className="text-[10px] ml-0.5 opacity-50">®</sup>
             </span>
           </div>
 

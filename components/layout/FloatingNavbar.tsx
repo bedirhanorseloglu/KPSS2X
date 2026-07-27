@@ -83,11 +83,12 @@ export default function FloatingNavbar() {
           <div className="flex items-center gap-3 lg:gap-6 min-w-0">
             {/* 3D Logo */}
             <Link href="/dashboard" className="flex items-center gap-2.5 group focus:outline-none shrink-0">
-              <div className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-[#1cb0f6] text-white shadow-xs border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] transition-all group-hover:scale-105 active:translate-y-0.5">
-                <span className="font-black text-xl leading-none">K</span>
+              <div className="relative flex flex-col items-center justify-center w-10 h-10 rounded-2xl bg-[#1cb0f6] text-white shadow-xs border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] transition-all group-hover:scale-105 active:translate-y-0.5">
+                <span className="font-black text-[10px] leading-none tracking-tighter opacity-90">KPSS</span>
+                <span className="font-black text-[14px] leading-none tracking-tighter mt-0.5">2<span className="text-[#58cc02]">X</span></span>
               </div>
-              <span className="font-black text-xl tracking-tight text-slate-800 dark:text-white hidden sm:inline-block">
-                KPSS<span className="text-[#1cb0f6]">26</span>
+              <span className="font-black text-xl tracking-tight text-slate-800 dark:text-white hidden sm:inline-flex items-center gap-1">
+                KPSS<span className="inline-flex items-center px-1.5 py-0.5 text-sm rounded-lg bg-[#1cb0f6] text-white font-black border-b-2 border-[#1899d6]">2<span className="text-[#58cc02]">X</span></span>
               </span>
             </Link>
 
