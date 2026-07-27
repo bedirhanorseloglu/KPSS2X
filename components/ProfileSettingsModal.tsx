@@ -337,37 +337,6 @@ export default function ProfileSettingsModal({
                       </div>
                     </div>
 
-                    {/* Gemini API Key */}
-                    <div>
-                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-2">
-                        <AppleEmoji emoji="✨" size={16} />
-                        <span>Yapay Zeka API Anahtarı (Gemini)</span>
-                      </label>
-                      <div className="bg-slate-50 dark:bg-slate-900/80 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 flex items-center gap-3 focus-within:border-[#1cb0f6] focus-within:bg-white dark:focus-within:bg-slate-900 transition-all shadow-2xs">
-                        <Sparkles className="w-4 h-4 text-[#1cb0f6] shrink-0" />
-                        <input
-                          type="password"
-                          value={geminiApiKey}
-                          onChange={(e) => setGeminiApiKey(e.target.value)}
-                          placeholder="AI Studio'dan aldığınız API anahtarı"
-                          className="w-full bg-transparent outline-none font-bold text-slate-800 dark:text-white text-sm placeholder:text-slate-400"
-                        />
-                      </div>
-                      <div className="mt-2 flex items-center justify-between">
-                        <p className="text-[10px] font-semibold text-slate-400">
-                          Hem video asistanı hem de deneme analizi için gereklidir.
-                        </p>
-                        <button 
-                          type="button"
-                          onClick={() => setShowApiKeyHelp(true)}
-                          className="text-xs font-black text-[#1cb0f6] hover:underline flex items-center gap-1 cursor-pointer"
-                        >
-                          <AppleEmoji emoji="💡" size={14} />
-                          <span>Nasıl Alınır?</span>
-                        </button>
-                      </div>
-                    </div>
-
                     {/* 3D Account Info Chips */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-slate-50 dark:bg-slate-900/80 rounded-2xl p-3.5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-3">

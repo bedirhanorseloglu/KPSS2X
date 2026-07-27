@@ -617,3 +617,7 @@ textarea.deneme-input:focus {
   border: none;
   box-shadow: 0 0 14px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.3);
 }
+
+/* Hide scrollbar for horizontal scroll sections */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
