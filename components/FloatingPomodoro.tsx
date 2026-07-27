@@ -323,27 +323,108 @@ export default function FloatingPomodoro() {
   const totalMinutesAll = totalFocusMinutes + totalBreakMinutes;
   const efficiencyScore = totalMinutesAll > 0 ? Math.round((totalFocusMinutes / totalMinutesAll) * 100) : 0;
 
+  // ─── Dynamic Live Favicon & Media Session Integration ───
   useEffect(() => {
     let interval: NodeJS.Timeout;
     
+    // Live Canvas Favicon Generator
+    const updateFavicon = (status: 'active' | 'paused' | 'break' | 'finished', progressPct: number) => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 32;
+        canvas.height = 32;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ctx.clearRect(0, 0, 32, 32);
+
+        const centerX = 16;
+        const centerY = 16;
+        const radius = 11;
+
+        // Background Track Circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = status === 'finished' ? '#ff4b4b' : 'rgba(100, 116, 139, 0.3)';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Progress Color
+        let color = '#1cb0f6';
+        if (status === 'break') color = '#58cc02';
+        if (status === 'paused') color = '#f59e0b';
+        if (status === 'finished') color = '#ff4b4b';
+
+        const startAngle = -0.5 * Math.PI;
+        const endAngle = startAngle + (Math.max(2, Math.min(100, progressPct)) / 100) * 2 * Math.PI;
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Center Indicator Dot
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 3.5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'shortcut icon';
+          document.getElementsByTagName('head')[0].appendChild(link);
+        }
+        link.href = canvas.toDataURL('image/png');
+      } catch (e) {
+        console.log("Favicon error", e);
+      }
+    };
+
     if (isFinishedAlert) {
       let toggle = false;
       interval = setInterval(() => {
-        document.title = toggle ? "🚨 SÜRE BİTTİ! · KPSS 2026" : "⚠️ ZAMAN DOLDU · KPSS 2026";
+        document.title = toggle ? "🚨 00:00 SÜRE BİTTİ!" : "⚠️ ZAMAN DOLDU!";
+        updateFavicon('finished', 100);
         toggle = !toggle;
       }, 1000);
-      document.title = "🚨 SÜRE BİTTİ! · KPSS 2026";
+      document.title = "🚨 00:00 SÜRE BİTTİ!";
     } else if (isActive) {
-      document.title = `${mode === 'stopwatch' ? '⏱️' : '☕'} ${formatTime} · ${mode === 'stopwatch' ? 'Kronometre' : 'Mola Vakti'} | KPSS 2026`;
+      const statusPrefix = mode === 'stopwatch' ? '▶' : '☕';
+      const modeLabel = mode === 'stopwatch' ? 'Odak' : 'Mola';
+      document.title = `${statusPrefix} ${formatTime} | ${modeLabel} — KPSS 2026`;
+      updateFavicon(mode === 'stopwatch' ? 'active' : 'break', progress);
+    } else if (timeLeft > 0 && mode !== 'stopwatch') {
+      document.title = `⏸ ${formatTime} (Duraklatıldı) | KPSS 2026`;
+      updateFavicon('paused', progress);
     } else {
       document.title = "KPSS 2026 Komuta Merkezi";
     }
 
     return () => {
       if (interval) clearInterval(interval);
-      document.title = "KPSS 2026 Komuta Merkezi";
     };
-  }, [isActive, formatTime, isFinishedAlert, mode]);
+  }, [isActive, formatTime, isFinishedAlert, mode, progress, timeLeft]);
+
+  // Media Session API for Keyboard / OS Control Center
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: isActive ? `${formatTime} — ${mode === 'stopwatch' ? 'Odak Seansı' : 'Mola Vakti'}` : 'KPSS 2026 Pomodoro',
+          artist: 'KPSS 2026 Komuta Merkezi',
+          album: mode === 'stopwatch' ? 'Çalışma Modu' : 'Dinlenme Modu',
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => setIsActive(true));
+        navigator.mediaSession.setActionHandler('pause', () => setIsActive(false));
+      } catch (e) {
+        console.log("MediaSession unsupported", e);
+      }
+    }
+  }, [isActive, formatTime, mode]);
 
   return (
     <>
