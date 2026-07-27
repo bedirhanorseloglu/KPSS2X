@@ -81,19 +81,11 @@ export default function FloatingNavbar() {
         >
           {/* Left Side: Logo + Nav */}
           <div className="flex items-center gap-3 lg:gap-6 min-w-0">
-            {/* 3D Brand Logo */}
-            <Link href="/dashboard" className="flex items-center gap-2 group focus:outline-none shrink-0">
-              {/* 3D Lightning Tile */}
-              <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] transition-transform group-hover:scale-105 active:translate-y-0.5 shrink-0 shadow-2xs">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-white drop-shadow-2xs">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </div>
-              
-              {/* Wordmark: KPSS + 3D 2X Badge */}
-              <span className="font-black text-lg sm:text-xl tracking-tight text-slate-800 dark:text-white flex items-center gap-1.5">
+            {/* 3D Brand Logo: KPSS + 3D 2X Badge */}
+            <Link href="/dashboard" className="flex items-center gap-1.5 group focus:outline-none shrink-0 transition-transform group-hover:scale-105 active:translate-y-0.5">
+              <span className="font-black text-xl sm:text-2xl tracking-tight text-slate-800 dark:text-white flex items-center gap-1.5">
                 KPSS
-                <span className="inline-flex items-center px-2 py-0.5 text-xs sm:text-sm rounded-xl bg-[#1cb0f6] text-white font-black border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs">
+                <span className="inline-flex items-center px-2.5 py-0.5 text-sm sm:text-base rounded-xl bg-[#1cb0f6] text-white font-black border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs">
                   2<span className="text-[#58cc02] ml-0.5">X</span>
                 </span>
               </span>
