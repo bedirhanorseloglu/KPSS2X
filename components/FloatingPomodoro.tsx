@@ -802,7 +802,7 @@ export default function FloatingPomodoro() {
                              ? "bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 text-[#1cb0f6] border-[#1cb0f6]/30"
                              : "bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-[#58cc02]/30"
                          }`}>
-                           {mode === "focus" ? "Kesintisiz Odak" : (mode === "stopwatch" ? "Serbest Çalışma" : "Dinlenme Vakti")}
+                           {mode === "focus" ? "Kesintisiz Odak" : (mode === "stopwatch" ? "Çalışma Süresi" : "Dinlenme Vakti")}
                          </span>
                       </div>
                     </div>
