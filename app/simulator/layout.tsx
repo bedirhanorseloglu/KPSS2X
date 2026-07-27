@@ -15,7 +15,7 @@ export default function SimulatorLayout({
   return (
     <AuthGuard>
       <FloatingNavbar />
-      <div className="pt-24 min-h-screen">
+      <div className="min-h-screen">
         {children}
       </div>
     </AuthGuard>

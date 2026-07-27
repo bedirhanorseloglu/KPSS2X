@@ -420,7 +420,7 @@ export default function ExamSimulatorPage() {
 
   // Active Simulator Room Screen
   return (
-    <div className={`fixed inset-0 z-40 overflow-y-auto flex flex-col relative select-none transition-colors duration-700 font-sans ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`min-h-screen w-full flex flex-col relative select-none transition-colors duration-700 font-sans ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
       
       {/* Minimal Header */}
       <header className="w-full p-6 flex items-center justify-between z-10">
