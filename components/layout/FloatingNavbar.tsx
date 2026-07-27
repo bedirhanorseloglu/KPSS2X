@@ -88,7 +88,7 @@ export default function FloatingNavbar() {
                     className={`relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 xl:px-4 py-1.5 sm:py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap shrink-0 active:translate-y-0.5 ${
                       isActive 
                         ? "bg-white dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-sm" 
-                        : "bg-slate-100/90 dark:bg-slate-700/70 border-2 border-b-2 border-slate-200 border-b-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-[#1cb0f6] hover:text-[#1cb0f6] hover:bg-white dark:hover:bg-slate-700 shadow-2xs"
+                        : "bg-transparent border-2 border-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6]"
                     }`}
                   >
                     <AppleEmoji emoji={link.emoji} size={18} />
