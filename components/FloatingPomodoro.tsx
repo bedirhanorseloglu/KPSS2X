@@ -361,25 +361,29 @@ export default function FloatingPomodoro() {
               className={`relative overflow-hidden flex items-center gap-3 px-4 py-2.5 rounded-full border-2 border-b-4 transition-all duration-300 cursor-pointer shadow-lg active:translate-y-0.5 ${
                 isActive
                   ? (mode === 'stopwatch' 
-                      ? "bg-slate-900 border-[#1cb0f6] border-b-[#1899d6] text-white" 
-                      : "bg-slate-900 border-[#58cc02] border-b-[#46a302] text-white")
+                      ? "bg-white dark:bg-slate-900 border-[#1cb0f6] border-b-[#1899d6] text-slate-800 dark:text-white" 
+                      : "bg-white dark:bg-slate-900 border-[#58cc02] border-b-[#46a302] text-slate-800 dark:text-white")
                   : "bg-white dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-800 dark:text-white hover:border-[#1cb0f6]"
               }`}
             >
-              {/* Background Progress Tint Bar when Active */}
+              {/* Ultra-Sleek Bottom Progress Line Bar when Active */}
               {isActive && (
-                <div 
-                  className={`absolute left-0 top-0 bottom-0 opacity-20 transition-all duration-1000 ${
-                    mode === 'stopwatch' ? 'bg-[#1cb0f6]' : 'bg-[#58cc02]'
-                  }`} 
-                  style={{ width: `${progress}%` }} 
-                />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                  <div 
+                    className={`h-full transition-all duration-1000 ${
+                      mode === 'stopwatch' ? 'bg-[#1cb0f6]' : 'bg-[#58cc02]'
+                    }`} 
+                    style={{ width: `${progress}%` }} 
+                  />
+                </div>
               )}
 
               {/* Expand Chevron Icon Button */}
               <div className={`w-7 h-7 rounded-full flex items-center justify-center border transition-all ${
                 isActive 
-                  ? "bg-slate-800 border-slate-700 text-slate-300 group-hover:bg-[#1cb0f6] group-hover:text-white group-hover:border-[#1cb0f6]"
+                  ? (mode === 'stopwatch'
+                      ? "bg-[#e8f7ff] dark:bg-slate-800 border-[#1cb0f6]/30 text-[#1cb0f6] group-hover:bg-[#1cb0f6] group-hover:text-white group-hover:border-[#1cb0f6]"
+                      : "bg-[#e5f9e7] dark:bg-slate-800 border-[#58cc02]/30 text-[#58cc02] group-hover:bg-[#58cc02] group-hover:text-white group-hover:border-[#58cc02]")
                   : "bg-slate-100 dark:bg-slate-700/80 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 group-hover:border-[#1cb0f6] group-hover:text-[#1cb0f6]"
               }`}>
                 <ChevronUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={3} />
@@ -389,7 +393,7 @@ export default function FloatingPomodoro() {
               <div className="relative flex items-center justify-center shrink-0">
                 <AppleEmoji emoji={mode === 'break' ? '☕' : '⏱️'} size={22} />
                 {isActive && (
-                  <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping border-2 border-slate-900 ${
+                  <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping border-2 border-white dark:border-slate-900 ${
                     mode === 'stopwatch' ? 'bg-[#1cb0f6]' : 'bg-[#58cc02]'
                   }`} />
                 )}
@@ -400,7 +404,7 @@ export default function FloatingPomodoro() {
                 <div className="flex items-center gap-2">
                   <span className={`text-xs sm:text-sm font-black tracking-wider uppercase ${
                     isActive 
-                      ? 'font-mono text-[#1cb0f6] text-base leading-none drop-shadow-xs' 
+                      ? (mode === 'stopwatch' ? 'font-mono text-[#1cb0f6] text-base leading-none' : 'font-mono text-[#58cc02] text-base leading-none') 
                       : 'text-slate-800 dark:text-white'
                   }`}>
                     {isFinishedAlert ? 'Süre Bitti!' : (isActive ? formatTime : (mode === 'stopwatch' ? 'KRONOMETRE' : 'MOLA'))}
@@ -422,8 +426,8 @@ export default function FloatingPomodoro() {
                 }}
                 className={`ml-1 w-7 h-7 rounded-full flex items-center justify-center border-2 border-b-2 transition-all cursor-pointer shadow-2xs hover:scale-110 active:scale-95 ${
                   isActive
-                    ? 'bg-amber-500/20 border-amber-500/40 text-amber-400 hover:bg-amber-500 hover:text-white'
-                    : 'bg-[#1cb0f6]/20 border-[#1cb0f6]/40 text-[#1cb0f6] hover:bg-[#1cb0f6] hover:text-white'
+                    ? 'bg-amber-50 dark:bg-amber-500/20 border-amber-300 dark:border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white'
+                    : 'bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 border-[#1cb0f6]/40 text-[#1cb0f6] hover:bg-[#1cb0f6] hover:text-white'
                 }`}
                 title={isActive ? "Duraklat" : "Başlat"}
               >
