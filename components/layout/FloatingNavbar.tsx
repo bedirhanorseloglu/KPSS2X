@@ -29,6 +29,21 @@ export default function FloatingNavbar() {
   const { theme, setTheme } = useTheme();
   const lastScrollY = useRef(0);
 
+  const [isSimulatorActive, setIsSimulatorActive] = useState(false);
+
+  useEffect(() => {
+    const checkSimulator = () => {
+      setIsSimulatorActive(document.body.classList.contains("simulator-active"));
+    };
+
+    checkSimulator();
+
+    const observer = new MutationObserver(checkSimulator);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+    return () => observer.disconnect();
+  }, [pathname]);
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -44,6 +59,8 @@ export default function FloatingNavbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (isSimulatorActive) return null;
 
   return (
     <>

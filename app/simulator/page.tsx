@@ -70,6 +70,18 @@ export default function ExamSimulatorPage() {
   }, [hasStarted, isFinished]);
 
   useEffect(() => {
+    if (hasStarted || countdown !== null) {
+      document.body.classList.add("simulator-active");
+    } else {
+      document.body.classList.remove("simulator-active");
+    }
+
+    return () => {
+      document.body.classList.remove("simulator-active");
+    };
+  }, [hasStarted, countdown]);
+
+  useEffect(() => {
     if (!hasStarted || isFinished) return;
     
     if (timeLeft <= 0) {
