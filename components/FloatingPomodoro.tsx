@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Timer, Users, Play, Pause, RotateCcw, X, Coffee, Brain, Settings2, Target, Clock } from "lucide-react";
+import { Timer, Users, Play, Pause, RotateCcw, X, Coffee, Brain, Settings2, Target, Clock, ChevronUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { updatePresence, getOnlineUsersCount } from "@/lib/firebaseService";
 import AppleEmoji from "@/components/AppleEmoji";
@@ -349,42 +349,88 @@ export default function FloatingPomodoro() {
     <>
       <AnimatePresence>
         {!isOpen && (
-          <motion.button
+          <motion.div
             initial={{ scale: 0, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0, opacity: 0, y: 20 }}
-            type="button"
-            onClick={() => { setIsOpen(true); setIsFinishedAlert(false); }}
-            className="fixed bottom-6 right-6 z-50 overflow-hidden flex items-center gap-3 bg-white dark:bg-slate-800 text-slate-800 dark:text-white px-5 py-3 rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-md hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer group"
+            className="fixed bottom-6 right-6 z-50 flex items-center group"
           >
-            {isActive && (
-               <div 
-                 className={`absolute left-0 top-0 bottom-0 opacity-15 dark:opacity-20 transition-all duration-1000 ${mode === 'stopwatch' ? 'bg-[#1cb0f6]' : 'bg-[#58cc02]'}`} 
-                 style={{ width: `${progress}%` }} 
-               />
-            )}
-
-            {/* Seamless Vector Icon */}
-            <div className="relative flex items-center justify-center z-10 shrink-0">
-              <AppleEmoji emoji={mode === 'break' ? '☕' : '⏱️'} size={22} />
+            {/* Main 3D Floating Pill Button */}
+            <div
+              onClick={() => { setIsOpen(true); setIsFinishedAlert(false); }}
+              className={`relative overflow-hidden flex items-center gap-3 px-4 py-2.5 rounded-full border-2 border-b-4 transition-all duration-300 cursor-pointer shadow-lg active:translate-y-0.5 ${
+                isActive
+                  ? (mode === 'stopwatch' 
+                      ? "bg-slate-900 border-[#1cb0f6] border-b-[#1899d6] text-white" 
+                      : "bg-slate-900 border-[#58cc02] border-b-[#46a302] text-white")
+                  : "bg-white dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-800 dark:text-white hover:border-[#1cb0f6]"
+              }`}
+            >
+              {/* Background Progress Tint Bar when Active */}
               {isActive && (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#58cc02] border-2 border-white dark:border-slate-800 animate-ping z-20" />
+                <div 
+                  className={`absolute left-0 top-0 bottom-0 opacity-20 transition-all duration-1000 ${
+                    mode === 'stopwatch' ? 'bg-[#1cb0f6]' : 'bg-[#58cc02]'
+                  }`} 
+                  style={{ width: `${progress}%` }} 
+                />
               )}
-            </div>
-            
-            <div className="relative z-10 flex flex-col items-start justify-center">
-              <div className="flex items-center gap-2">
-                <span className={`text-xs sm:text-sm font-black tracking-widest uppercase text-slate-800 dark:text-white ${isActive ? 'font-mono text-[#1cb0f6]' : ''}`}>
-                  {isFinishedAlert ? 'Süre Bitti!' : (isActive ? formatTime : (mode === 'stopwatch' ? 'KRONOMETRE' : 'MOLA'))}
-                </span>
+
+              {/* Expand Chevron Icon Button */}
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center border transition-all ${
+                isActive 
+                  ? "bg-slate-800 border-slate-700 text-slate-300 group-hover:bg-[#1cb0f6] group-hover:text-white group-hover:border-[#1cb0f6]"
+                  : "bg-slate-100 dark:bg-slate-700/80 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 group-hover:border-[#1cb0f6] group-hover:text-[#1cb0f6]"
+              }`}>
+                <ChevronUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={3} />
               </div>
-              {totalFocusMinutes > 0 && (
-                <span className="text-[10px] mt-0.5 font-black text-slate-400 uppercase tracking-widest hidden sm:block">
-                  Bugün: %{Math.min(100, Math.round((totalFocusMinutes / dailyGoalMinutes) * 100))} İlerleme
-                </span>
-              )}
+
+              {/* Live Status Pulse & Vector Emoji */}
+              <div className="relative flex items-center justify-center shrink-0">
+                <AppleEmoji emoji={mode === 'break' ? '☕' : '⏱️'} size={22} />
+                {isActive && (
+                  <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping border-2 border-slate-900 ${
+                    mode === 'stopwatch' ? 'bg-[#1cb0f6]' : 'bg-[#58cc02]'
+                  }`} />
+                )}
+              </div>
+              
+              {/* Time & Title Readout */}
+              <div className="relative z-10 flex flex-col items-start justify-center">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs sm:text-sm font-black tracking-wider uppercase ${
+                    isActive 
+                      ? 'font-mono text-[#1cb0f6] text-base leading-none drop-shadow-xs' 
+                      : 'text-slate-800 dark:text-white'
+                  }`}>
+                    {isFinishedAlert ? 'Süre Bitti!' : (isActive ? formatTime : (mode === 'stopwatch' ? 'KRONOMETRE' : 'MOLA'))}
+                  </span>
+                </div>
+                {totalFocusMinutes > 0 && (
+                  <span className="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest hidden sm:block mt-0.5">
+                    {Math.floor(displayTotalFocus / 60)}s {displayTotalFocus % 60}dk Çalışıldı
+                  </span>
+                )}
+              </div>
+
+              {/* Quick Play/Pause Mini Action Button on Pill */}
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleTimer();
+                }}
+                className={`ml-1 w-7 h-7 rounded-full flex items-center justify-center border-2 border-b-2 transition-all cursor-pointer shadow-2xs hover:scale-110 active:scale-95 ${
+                  isActive
+                    ? 'bg-amber-500/20 border-amber-500/40 text-amber-400 hover:bg-amber-500 hover:text-white'
+                    : 'bg-[#1cb0f6]/20 border-[#1cb0f6]/40 text-[#1cb0f6] hover:bg-[#1cb0f6] hover:text-white'
+                }`}
+                title={isActive ? "Duraklat" : "Başlat"}
+              >
+                {isActive ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 ml-0.5 fill-current" />}
+              </button>
             </div>
-          </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 
