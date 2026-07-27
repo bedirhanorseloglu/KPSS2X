@@ -83,7 +83,7 @@ export default function FloatingNavbar() {
           <div className="flex items-center gap-3 lg:gap-6 min-w-0">
             {/* 3D Logo */}
             <Link href="/dashboard" className="flex items-center gap-2.5 group focus:outline-none shrink-0">
-              {/* Icon Tile */}
+              {/* 3D Icon Tile */}
               <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#1cb0f6] text-white shadow-[0_3px_0_0_#1899d6] sm:shadow-[0_4px_0_0_#1899d6] transition-transform group-hover:scale-105 active:translate-y-0.5 shrink-0">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="transform translate-x-0.5">
                   <polyline points="13 17 18 12 13 7" />
@@ -91,13 +91,10 @@ export default function FloatingNavbar() {
                 </svg>
               </div>
               
-              {/* Wordmark: Visible on all screens, adaptive for dark/light themes */}
-              <div className="flex items-center gap-1.5 font-black text-lg sm:text-xl tracking-tight text-slate-800 dark:text-white">
-                <span>KPSS</span>
-                <span className="inline-flex items-center px-2 py-0.5 text-xs sm:text-sm rounded-lg sm:rounded-xl bg-[#1cb0f6] text-white font-black shadow-[0_2px_0_0_#1899d6]">
-                  2<span className="text-[#58cc02] ml-0.5">X</span>
-                </span>
-              </div>
+              {/* Pure Seamless Wordmark: KPSS2X */}
+              <span className="font-black text-xl sm:text-2xl tracking-tight text-slate-800 dark:text-white flex items-center">
+                KPSS<span className="text-[#1cb0f6] ml-0.5">2</span><span className="text-[#58cc02]">X</span>
+              </span>
             </Link>
 
             {/* 3D Navigation Links - Always Visible */}

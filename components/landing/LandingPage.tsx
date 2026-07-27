@@ -112,8 +112,8 @@ export default function LandingPage() {
                 <polyline points="6 17 11 12 6 7" />
               </svg>
             </div>
-            <span className="text-[26px] sm:text-[28px] tracking-tight text-white font-black flex items-center gap-1.5">
-              KPSS<span className="inline-flex items-center px-2 py-0.5 text-base sm:text-lg rounded-xl bg-[#1cb0f6] text-white font-black shadow-[0_2.5px_0_0_#1899d6]">2<span className="text-[#58cc02] ml-0.5">X</span></span><sup className="text-[10px] ml-0.5 opacity-50 font-normal">®</sup>
+            <span className="text-[26px] sm:text-[30px] tracking-tight text-white font-black flex items-center">
+              KPSS<span className="text-[#1cb0f6] ml-0.5">2</span><span className="text-[#58cc02]">X</span><sup className="text-[10px] ml-0.5 opacity-50 font-normal">®</sup>
             </span>
           </div>
 
