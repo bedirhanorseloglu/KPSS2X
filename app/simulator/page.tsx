@@ -70,7 +70,7 @@ export default function ExamSimulatorPage() {
   }, [hasStarted, isFinished]);
 
   useEffect(() => {
-    if (hasStarted || countdown !== null) {
+    if ((hasStarted || countdown !== null) && !isFinished) {
       document.body.classList.add("simulator-active");
     } else {
       document.body.classList.remove("simulator-active");
@@ -79,13 +79,17 @@ export default function ExamSimulatorPage() {
     return () => {
       document.body.classList.remove("simulator-active");
     };
-  }, [hasStarted, countdown]);
+  }, [hasStarted, countdown, isFinished]);
 
   useEffect(() => {
     if (!hasStarted || isFinished) return;
     
     if (timeLeft <= 0) {
       setIsFinished(true);
+      if (typeof window !== "undefined" && document.fullscreenElement) {
+        document.exitFullscreen().catch(e => console.log(e));
+      }
+      document.body.classList.remove("simulator-active");
       return;
     }
 
@@ -128,17 +132,42 @@ export default function ExamSimulatorPage() {
   };
 
   const forceExit = async () => {
-    if (document.fullscreenElement) {
+    if (typeof window !== "undefined" && document.fullscreenElement) {
       await document.exitFullscreen().catch(e => console.log(e));
     }
+    document.body.classList.remove("simulator-active");
+    setHasStarted(false);
+    setIsFinished(false);
     router.push("/");
   };
 
   const finishExam = async () => {
     setIsFinished(true);
-    if (document.fullscreenElement) {
+    if (typeof window !== "undefined" && document.fullscreenElement) {
       await document.exitFullscreen().catch(e => console.log(e));
     }
+    document.body.classList.remove("simulator-active");
+  };
+
+  const handleSaveResults = async () => {
+    if (typeof window !== "undefined" && document.fullscreenElement) {
+      await document.exitFullscreen().catch(e => console.log(e));
+    }
+    document.body.classList.remove("simulator-active");
+    setHasStarted(false);
+    setIsFinished(false);
+    const elapsedMinutes = Math.max(1, Math.round(elapsedSeconds / 60));
+    router.push(examMode === "brans" ? `/deneme?mode=brans&subject=${selectedSubject?.id}&duration=${elapsedMinutes}` : `/deneme?mode=genel&duration=${elapsedMinutes}`);
+  };
+
+  const handleReturnHome = async () => {
+    if (typeof window !== "undefined" && document.fullscreenElement) {
+      await document.exitFullscreen().catch(e => console.log(e));
+    }
+    document.body.classList.remove("simulator-active");
+    setHasStarted(false);
+    setIsFinished(false);
+    router.push("/");
   };
 
   const hours = Math.floor(timeLeft / 3600);
@@ -172,17 +201,14 @@ export default function ExamSimulatorPage() {
           </p>
           <button 
             type="button"
-            onClick={() => {
-              const elapsedMinutes = Math.max(1, Math.round(elapsedSeconds / 60));
-              router.push(examMode === "brans" ? `/deneme?mode=brans&subject=${selectedSubject?.id}&duration=${elapsedMinutes}` : `/deneme?mode=genel&duration=${elapsedMinutes}`);
-            }} 
+            onClick={handleSaveResults} 
             className="w-full bg-[#58cc02] text-white border-2 border-b-4 border-[#58cc02] border-b-[#46a302] hover:bg-[#4ecc00] font-black py-4 rounded-2xl shadow-xs transition-all active:translate-y-0.5 text-base cursor-pointer"
           >
             Sonuçları Kaydet
           </button>
           <button 
             type="button"
-            onClick={() => router.push("/")} 
+            onClick={handleReturnHome} 
             className="w-full mt-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-white border-2 border-b-4 border-slate-200 dark:border-slate-600 hover:bg-slate-200 font-black py-3.5 rounded-2xl transition-all active:translate-y-0.5 text-base cursor-pointer"
           >
             Anasayfaya Dön
