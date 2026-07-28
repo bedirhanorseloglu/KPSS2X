@@ -73,26 +73,26 @@ export default function FloatingNavbar() {
         } px-4 md:px-8 flex justify-center pointer-events-none`}
       >
         <div 
-          className={`pointer-events-auto flex items-center justify-between w-full max-w-[90rem] mx-auto rounded-2xl md:rounded-[2rem] px-4 md:px-6 py-2.5 transition-all duration-300 ${
+          className={`pointer-events-auto flex items-center justify-between w-full max-w-[90rem] mx-auto rounded-2xl md:rounded-[2rem] pl-5 sm:pl-7 pr-4 sm:pr-6 py-2.5 transition-all duration-300 ${
             isScrolled 
               ? "bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl shadow-md border-2 border-b-4 border-slate-200 dark:border-slate-700" 
               : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-xs border-2 border-b-4 border-slate-200/80 dark:border-slate-700/80"
           }`}
         >
-          {/* Left Side: Logo + Nav */}
-          <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 min-w-0 flex-1 mr-2">
-            {/* 3D Brand Logo: KPSS + 3D 2X Badge */}
-            <Link href="/dashboard" className="flex items-center gap-1.5 group focus:outline-none shrink-0 transition-transform group-hover:scale-105 active:translate-y-0.5">
-              <span className="font-black text-xl sm:text-2xl tracking-tight text-slate-800 dark:text-white flex items-center gap-1.5">
-                KPSS
-                <span className="inline-flex items-center px-2.5 py-0.5 text-sm sm:text-base rounded-xl bg-[#1cb0f6] text-white font-black border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs">
-                  2<span className="text-[#58cc02] ml-0.5">X</span>
-                </span>
+          {/* Left Side: Logo (Fixed) + Nav (Scrollable) */}
+          <div className="flex items-center gap-3 sm:gap-4 lg:gap-6 flex-1 min-w-0 mr-2">
+            {/* Pure Typographic Logo: Sleek & Seamless Brand Wordmark */}
+            <Link 
+              href="/dashboard" 
+              className="flex items-center group focus:outline-none shrink-0 transition-transform hover:scale-[1.02] active:translate-y-0.5 py-0.5 cursor-pointer"
+            >
+              <span className="font-black text-2xl tracking-tighter text-slate-800 dark:text-white select-none">
+                KPSS<span className="text-[#1cb0f6]">2</span><span className="text-[#58cc02]">X</span>
               </span>
             </Link>
 
-            {/* 3D Navigation Links - Always Visible */}
-            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 overflow-x-auto no-scrollbar py-0.5 min-w-0 max-w-full">
+            {/* 3D Navigation Links - Scrollable on tight viewports */}
+            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 overflow-x-auto no-scrollbar py-0.5 min-w-0 flex-1">
               {NAV_LINKS.map((link) => {
                 const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
                   ? pathname === link.href 

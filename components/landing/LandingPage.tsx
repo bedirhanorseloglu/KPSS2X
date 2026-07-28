@@ -202,17 +202,14 @@ export default function LandingPage() {
         transition={{ duration: 0.3 }}
         className="fixed top-0 left-0 right-0 z-50 py-3.5 px-4 sm:px-8 flex justify-center pointer-events-none"
       >
-        <div className="pointer-events-auto flex items-center justify-between w-full max-w-6xl mx-auto rounded-2xl sm:rounded-[2rem] px-5 py-3 bg-white/90 backdrop-blur-xl border-2 border-b-4 border-slate-200/90 shadow-lg">
-          {/* Logo */}
+          <div className="pointer-events-auto flex items-center justify-between w-full max-w-6xl mx-auto rounded-2xl sm:rounded-[2rem] px-5 py-3 bg-white/90 backdrop-blur-xl border-2 border-b-4 border-slate-200/90 shadow-lg">
+          {/* Pure Typographic Logo: Sleek & Seamless Brand Wordmark */}
           <div
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center cursor-pointer group transition-transform hover:scale-[1.02]"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <span className="font-black text-2xl sm:text-3xl tracking-tight text-slate-800 flex items-center gap-1.5">
-              KPSS
-              <span className="inline-flex items-center px-2.5 py-0.5 text-sm sm:text-base rounded-xl bg-[#1cb0f6] text-white font-black border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6]">
-                2<span className="text-[#58cc02] ml-0.5">X</span>
-              </span>
+            <span className="font-black text-3xl tracking-tighter text-slate-800 select-none">
+              KPSS<span className="text-[#1cb0f6]">2</span><span className="text-[#58cc02]">X</span>
             </span>
           </div>
 
