@@ -133,7 +133,7 @@ export default function DenemeAnalytics({
       });
       const ac = cnt ? tc / cnt : 0, aw = cnt ? tw / cnt : 0, ae = cnt ? te / cnt : 0;
       const net = cnt ? (tc - tw / 4) / cnt : 0;
-      const accuracy = ac + aw > 0 ? (ac / (ac + aw)) * 100 : 0;
+      const accuracy = sub.questionCount > 0 ? Math.max(0, (net / sub.questionCount) * 100) : 0;
       return { ...sub, avgCorrect: ac, avgWrong: aw, avgEmpty: ae, avgNet: net, accuracy };
     });
 
@@ -292,7 +292,7 @@ export default function DenemeAnalytics({
       const avgNet = data.totalNet / data.count;
       const avgDuration = data.durationCount > 0 ? data.totalDuration / data.durationCount : null;
       const totalQuestions = data.totalCorrect + data.totalWrong + data.totalEmpty;
-      const accuracy = totalQuestions > 0 ? (data.totalCorrect / totalQuestions) * 100 : 0;
+      const accuracy = totalQuestions > 0 ? Math.max(0, (data.totalNet / totalQuestions) * 100) : 0;
       return {
         name,
         count: data.count,

@@ -23,7 +23,7 @@ export default function SubjectScoreRow({
 }: Props) {
   const answered = subject.correct + subject.wrong;
   const accuracy =
-    answered === 0 ? 0 : Math.round((subject.correct / answered) * 100);
+    subject.questionCount === 0 ? 0 : Math.max(0, Math.round((subject.net / subject.questionCount) * 100));
 
   const correctPct = (subject.correct / subject.questionCount) * 100;
   const wrongPct = (subject.wrong / subject.questionCount) * 100;

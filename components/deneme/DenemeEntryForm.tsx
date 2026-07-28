@@ -123,7 +123,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   
   const displayNet = examType === "genel" ? result.totalNet : (selectedBranchSubject?.net ?? 0);
   const totalCorrectCount = examType === "genel" ? result.totalCorrect : (selectedBranchSubject?.correct ?? 0);
-  const successRate = totalAnswered > 0 ? (totalCorrectCount / totalAnswered) * 100 : 0;
+  const successRate = maxQuestions > 0 ? Math.max(0, (displayNet / maxQuestions) * 100) : 0;
   const activeColor = examType === "brans" ? (selectedBranchSubject?.color || "#1cb0f6") : "#1cb0f6";
 
   return (
