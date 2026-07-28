@@ -80,7 +80,7 @@ export default function FloatingNavbar() {
           }`}
         >
           {/* Left Side: Logo + Nav */}
-          <div className="flex items-center gap-3 lg:gap-6 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 min-w-0 flex-1 mr-2">
             {/* 3D Brand Logo: KPSS + 3D 2X Badge */}
             <Link href="/dashboard" className="flex items-center gap-1.5 group focus:outline-none shrink-0 transition-transform group-hover:scale-105 active:translate-y-0.5">
               <span className="font-black text-xl sm:text-2xl tracking-tight text-slate-800 dark:text-white flex items-center gap-1.5">
@@ -92,7 +92,7 @@ export default function FloatingNavbar() {
             </Link>
 
             {/* 3D Navigation Links - Always Visible */}
-            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 overflow-x-auto no-scrollbar py-0.5">
+            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 overflow-x-auto no-scrollbar py-0.5 min-w-0 max-w-full">
               {NAV_LINKS.map((link) => {
                 const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
                   ? pathname === link.href 
