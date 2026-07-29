@@ -54,6 +54,8 @@ function TimeSlot({
 
   const subjectObj = topic ? subjects.find((s: any) => s.topics.some((t: any) => t.id === topic.id)) : null;
   const subjectColor = subjectObj?.color || color || "#1cb0f6";
+  const hasContent = !!topic || !!revision || (!!note && note.trim() !== "");
+  const isCompletedActive = isCompleted && hasContent;
 
   return (
     <div 
@@ -61,9 +63,9 @@ function TimeSlot({
       className={`group relative rounded-[2.25rem] p-5 transition-all duration-200 border-2 flex flex-col justify-between gap-3 min-h-[170px] ${
         isLocked 
           ? 'bg-slate-100/70 dark:bg-slate-800/40 border-b-4 border-dashed border-slate-300 dark:border-slate-700 opacity-75' 
-          : isCompleted
+          : isCompletedActive
             ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-b-4 border-emerald-300 dark:border-emerald-700/60'
-            : topic || note
+            : topic || (note && note.trim() !== "")
               ? 'bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] shadow-xs'
               : 'bg-slate-50/80 dark:bg-slate-900/60 border-b-4 border-slate-200/80 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-[#1cb0f6] shadow-2xs'
       } ${isOver ? 'ring-4 ring-[#1cb0f6]/40 border-[#1cb0f6] scale-[1.02] z-10' : ''} ${
@@ -74,11 +76,11 @@ function TimeSlot({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className={`text-xs font-black font-mono tracking-tight px-3 py-1 rounded-xl border-2 border-b-2 shadow-2xs ${
-            isCompleted 
+            isCompletedActive 
               ? 'bg-[#58cc02] text-white border-[#58cc02] border-b-[#46a302]'
               : topic
                 ? 'bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 text-[#1cb0f6] border-[#1cb0f6]/30'
-                : note
+                : note && note.trim() !== ""
                   ? 'bg-[#fff8ed] dark:bg-[#ff9500]/20 text-[#ff9500] border-[#ff9500]/30'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'
           }`}>
@@ -88,7 +90,7 @@ function TimeSlot({
 
         <div className="flex items-center gap-1.5">
           {/* Check Button for Note / Task Completion */}
-          {(note || topic) && !isLocked && (
+          {hasContent && !isLocked && (
             <button 
               type="button"
               onClick={(e) => {
@@ -96,11 +98,11 @@ function TimeSlot({
                 onToggleNote(slotId);
               }}
               className={`w-7 h-7 rounded-xl border-2 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95 ${
-                isCompleted 
+                isCompletedActive 
                   ? 'bg-[#58cc02] border-b-2 border-[#58cc02] text-white' 
                   : 'bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-400 hover:text-[#58cc02] hover:border-[#58cc02]'
               }`}
-              title={isCompleted ? "Tamamlandı olarak işaretlendi" : "Tamamlandı olarak işaretle"}
+              title={isCompletedActive ? "Tamamlandı olarak işaretlendi" : "Tamamlandı olarak işaretle"}
             >
               <Check className="w-4 h-4" strokeWidth={3} />
             </button>
@@ -112,6 +114,9 @@ function TimeSlot({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                if (isCompleted && (!note || note.trim() === "")) {
+                  onToggleNote(slotId);
+                }
                 onRemoveTopic(topic.id, dateStr, `${hour.toString().padStart(2, '0')}:00`);
               }}
               className="w-7 h-7 rounded-xl bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-2 border-[#ff4b4b]/30 hover:bg-[#ff4b4b] hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 active:scale-95 shadow-2xs cursor-pointer"
@@ -144,7 +149,7 @@ function TimeSlot({
                 <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color: subjectColor }}>
                   {subjectObj?.title || "Ders"}
                 </span>
-                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-white'}`}>
+                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompletedActive ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-white'}`}>
                   {topic.title}
                 </span>
              </div>
@@ -158,7 +163,7 @@ function TimeSlot({
                 <span className="text-[10px] font-black uppercase tracking-widest text-[#ff9500]">
                   {revision.level === 3 ? "Kritik Tekrar" : "Rutin Tekrar"}
                 </span>
-                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompleted ? 'line-through text-slate-400' : 'text-slate-800 dark:text-white'}`}>
+                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompletedActive ? 'line-through text-slate-400' : 'text-slate-800 dark:text-white'}`}>
                   {revision.title}
                 </span>
              </div>
@@ -182,7 +187,7 @@ function TimeSlot({
              placeholder="📝 Not veya görev ekle..."
              rows={2}
              className={`w-full bg-transparent border-0 outline-none text-xs font-bold transition-all placeholder:text-slate-400/80 resize-none leading-relaxed ${
-               isCompleted ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-800 dark:text-slate-100'
+               isCompletedActive ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-800 dark:text-slate-100'
              }`}
              onClick={(e) => e.stopPropagation()}
            />
