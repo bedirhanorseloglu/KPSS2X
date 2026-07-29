@@ -52,117 +52,136 @@ function TimeSlot({
     disabled: isLocked
   });
 
+  const subjectObj = topic ? subjects.find((s: any) => s.topics.some((t: any) => t.id === topic.id)) : null;
+  const subjectColor = subjectObj?.color || color || "#1cb0f6";
+
   return (
     <div 
       ref={setNodeRef}
-      className={`group relative rounded-[2rem] p-5 transition-all duration-200 border-2 flex flex-col gap-4 ${
+      className={`group relative rounded-[2.25rem] p-5 transition-all duration-200 border-2 flex flex-col justify-between gap-3 min-h-[170px] ${
         isLocked 
-          ? 'bg-slate-100/70 dark:bg-slate-800/40 border-b-4 border-dashed border-slate-300 dark:border-slate-700 opacity-70' 
-          : 'bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] shadow-xs'
-      } ${isOver ? 'ring-4 ring-[#1cb0f6]/30 border-[#1cb0f6] scale-[1.02] z-10' : ''} ${
+          ? 'bg-slate-100/70 dark:bg-slate-800/40 border-b-4 border-dashed border-slate-300 dark:border-slate-700 opacity-75' 
+          : isCompleted
+            ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-b-4 border-emerald-300 dark:border-emerald-700/60'
+            : topic || note
+              ? 'bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] shadow-xs'
+              : 'bg-slate-50/80 dark:bg-slate-900/60 border-b-4 border-slate-200/80 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-[#1cb0f6] shadow-2xs'
+      } ${isOver ? 'ring-4 ring-[#1cb0f6]/40 border-[#1cb0f6] scale-[1.02] z-10' : ''} ${
         isDragging && !isLocked && !topic ? 'border-dashed border-[#1cb0f6] bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 animate-pulse' : ''
       }`}
     >
-      {/* Time Badge & Remove Button */}
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-black font-mono text-[#1cb0f6] tracking-tight bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 px-3 py-1 rounded-xl border-2 border-b-2 border-[#1cb0f6]/30 shadow-2xs">
-          {hour.toString().padStart(2, '0')}:00
-        </span>
-        
-        {topic && !isLocked && (
-          <button 
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemoveTopic(topic.id, dateStr, `${hour.toString().padStart(2, '0')}:00`);
-            }}
-            className="w-7 h-7 rounded-xl bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-2 border-[#ff4b4b]/30 hover:bg-[#ff4b4b] hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 active:scale-95 shadow-2xs cursor-pointer"
-            title="Dersi Kaldır"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
+      {/* ━━━ HEADER: TIME BADGE & ACTION BUTTONS ━━━ */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-black font-mono tracking-tight px-3 py-1 rounded-xl border-2 border-b-2 shadow-2xs ${
+            isCompleted 
+              ? 'bg-[#58cc02] text-white border-[#58cc02] border-b-[#46a302]'
+              : topic
+                ? 'bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 text-[#1cb0f6] border-[#1cb0f6]/30'
+                : note
+                  ? 'bg-[#fff8ed] dark:bg-[#ff9500]/20 text-[#ff9500] border-[#ff9500]/30'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+          }`}>
+            {hour.toString().padStart(2, '0')}:00 - {(hour + 1).toString().padStart(2, '0')}:00
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          {/* Check Button for Note / Task Completion */}
+          {(note || topic) && !isLocked && (
+            <button 
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleNote(slotId);
+              }}
+              className={`w-7 h-7 rounded-xl border-2 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95 ${
+                isCompleted 
+                  ? 'bg-[#58cc02] border-b-2 border-[#58cc02] text-white' 
+                  : 'bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-400 hover:text-[#58cc02] hover:border-[#58cc02]'
+              }`}
+              title={isCompleted ? "Tamamlandı olarak işaretlendi" : "Tamamlandı olarak işaretle"}
+            >
+              <Check className="w-4 h-4" strokeWidth={3} />
+            </button>
+          )}
+
+          {/* Remove Button for Topic */}
+          {topic && !isLocked && (
+            <button 
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemoveTopic(topic.id, dateStr, `${hour.toString().padStart(2, '0')}:00`);
+              }}
+              className="w-7 h-7 rounded-xl bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-2 border-[#ff4b4b]/30 hover:bg-[#ff4b4b] hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 active:scale-95 shadow-2xs cursor-pointer"
+              title="Dersi Kaldır"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Content Slot Area */}
-      <div className="min-h-[52px] flex flex-col justify-center">
+      {/* ━━━ MAIN CONTENT AREA: TOPIC OR LOCK REASON ━━━ */}
+      <div className="flex-1 flex flex-col justify-center my-1">
         {isLocked && lockedTitle ? (
-          <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-2xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0 border-2 border-b-2 border-slate-300 dark:border-slate-600">
-               <AppleEmoji emoji={lockedType === 'uni' ? '🎓' : lockedType === 'code' ? '💻' : '🏖️'} size={20} />
+          <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-200/50 dark:bg-slate-700/40 border border-slate-300/60 dark:border-slate-600/60">
+             <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shrink-0 border-2 border-b-2 border-slate-300 dark:border-slate-600 shadow-2xs">
+               <AppleEmoji emoji={lockedType === 'uni' ? '🎓' : lockedType === 'code' ? '💻' : '🏖️'} size={18} />
              </div>
              <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">KAPALI</span>
-                <span className="text-sm font-black text-slate-600 dark:text-slate-300 leading-tight truncate">{lockedTitle}</span>
+                <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">KAPALI SLOT</span>
+                <span className="text-xs font-black text-slate-700 dark:text-slate-200 leading-tight truncate">{lockedTitle}</span>
              </div>
           </div>
         ) : topic ? (
-          <div className="flex items-center gap-3">
-             <div className="w-2 h-10 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: color }} />
+          <div className="flex items-start gap-3 p-3 rounded-2xl border-2 border-b-4 transition-all shadow-2xs" style={{ backgroundColor: `${subjectColor}12`, borderColor: subjectColor }}>
+             <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 border-b-2 shadow-2xs" style={{ backgroundColor: `${subjectColor}25`, borderColor: subjectColor }}>
+                <AppleEmoji emoji={subjectObj?.icon || "📚"} size={18} />
+             </div>
              <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color }}>
-                  {subjects.find((s: any) => s.topics.some((t: any) => t.id === topic.id))?.title}
+                <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color: subjectColor }}>
+                  {subjectObj?.title || "Ders"}
                 </span>
-                <span className="text-sm font-black text-slate-800 dark:text-white leading-tight">{topic.title}</span>
+                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-white'}`}>
+                  {topic.title}
+                </span>
              </div>
           </div>
         ) : revision ? (
-          <div className="flex items-center gap-3">
-             <div className={`w-2 h-10 rounded-full shrink-0 ${revision.level === 3 ? 'bg-[#ff9500]' : 'bg-[#1cb0f6]'}`} />
+          <div className="flex items-start gap-3 p-3 rounded-2xl border-2 border-b-4 border-[#ff9500] bg-[#fff8ed] dark:bg-[#ff9500]/10 shadow-2xs">
+             <div className="w-9 h-9 rounded-xl bg-[#ff9500] text-white flex items-center justify-center shrink-0 border-2 border-b-2 border-[#e08400] shadow-2xs">
+                <AppleEmoji emoji="🔄" size={18} />
+             </div>
              <div className="flex flex-col min-w-0">
-                <span className={`text-[10px] font-black uppercase tracking-widest ${revision.level === 3 ? 'text-[#ff9500]' : 'text-[#1cb0f6]'}`}>
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#ff9500]">
                   {revision.level === 3 ? "Kritik Tekrar" : "Rutin Tekrar"}
                 </span>
-                <span className="text-sm font-black text-slate-800 dark:text-white leading-tight">{revision.title}</span>
+                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompleted ? 'line-through text-slate-400' : 'text-slate-800 dark:text-white'}`}>
+                  {revision.title}
+                </span>
              </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center border-2 border-b-2 border-dashed border-slate-300 dark:border-slate-700/60 rounded-2xl py-4 bg-slate-50 dark:bg-slate-900/50 group-hover:bg-[#e8f7ff] dark:group-hover:bg-[#1cb0f6]/10 group-hover:border-[#1cb0f6]/40 transition-all">
-             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-[#1cb0f6] transition-colors">
-               {isDragging ? "BURAYA BIRAK" : "BOŞ SLOT"}
+          <div className="flex items-center justify-center gap-2 border-2 border-dashed border-slate-300 dark:border-slate-700/70 rounded-2xl py-2.5 px-3 bg-slate-100/50 dark:bg-slate-900/40 group-hover:bg-[#e8f7ff] dark:group-hover:bg-[#1cb0f6]/10 group-hover:border-[#1cb0f6]/40 transition-all">
+             <AppleEmoji emoji="📌" size={14} />
+             <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 group-hover:text-[#1cb0f6] transition-colors">
+               {isDragging ? "BURAYA BIRAK" : "BOŞ SLOT (Ders veya Not)"}
              </span>
           </div>
         )}
       </div>
 
-      {/* Note Area */}
+      {/* ━━━ INTEGRATED NOTE INPUT ━━━ */}
       {!isLocked && (
-        <div className={`p-3.5 rounded-2xl border-2 transition-all relative ${
-          note 
-            ? isCompleted 
-              ? 'bg-slate-50 dark:bg-slate-900/40 border-b-2 border-slate-200 dark:border-slate-700 opacity-60' 
-              : 'bg-[#fff8ed] dark:bg-[#ff9500]/10 border-b-4 border-[#ff9500] shadow-2xs' 
-            : 'bg-slate-50 dark:bg-slate-900/40 border-b-2 border-slate-200 dark:border-slate-700/60 group-hover:bg-white'
-        }`}>
-           <div className="flex items-center justify-between mb-1.5">
-              <div className={`flex items-center gap-1.5 ${note ? (isCompleted ? 'opacity-40' : 'text-[#ff9500]') : 'text-slate-400'}`}>
-                <AppleEmoji emoji="📝" size={14} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Özel Not</span>
-              </div>
-              
-              {note && (
-                <button 
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleNote(slotId);
-                  }}
-                  className={`w-6 h-6 rounded-xl border-2 flex items-center justify-center transition-all cursor-pointer ${
-                    isCompleted 
-                      ? 'bg-[#58cc02] border-2 border-b-2 border-[#58cc02] text-white shadow-2xs' 
-                      : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:border-[#58cc02]'
-                  }`}
-                >
-                  {isCompleted && <Check className="w-3.5 h-3.5" strokeWidth={3.5} />}
-                </button>
-              )}
-           </div>
+        <div className="pt-2 border-t border-slate-100 dark:border-slate-700/60">
            <textarea 
              value={note || ""}
              onChange={(e) => onUpdateNote(slotId, e.target.value)}
-             placeholder="Bir not bırakın..."
+             placeholder="📝 Not veya görev ekle..."
              rows={2}
-             className={`w-full bg-transparent border-0 outline-none text-xs font-bold transition-all placeholder:text-slate-400 resize-none leading-relaxed ${
+             className={`w-full bg-transparent border-0 outline-none text-xs font-bold transition-all placeholder:text-slate-400/80 resize-none leading-relaxed ${
                isCompleted ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-800 dark:text-slate-100'
              }`}
              onClick={(e) => e.stopPropagation()}
@@ -187,7 +206,7 @@ export default function DailyPlanView({
   holidays, 
   onToggleHoliday 
 }: DailyPlanViewProps) {
-  const [activeTab, setActiveTab] = useState<'morning' | 'afternoon' | 'evening'>('morning');
+  const [activeTab, setActiveTab] = useState<'all' | 'morning' | 'afternoon' | 'evening'>('all');
   const [pomodoroFocusMins, setPomodoroFocusMins] = useState(0);
 
   const dateStr = format(date, "yyyy-MM-dd");
@@ -241,6 +260,7 @@ export default function DailyPlanView({
   const morningHours = [8, 9, 10, 11, 12];
   const afternoonHours = [13, 14, 15, 16, 17];
   const eveningHours = [18, 19, 20, 21, 22];
+  const allHours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
   const stats = useMemo(() => {
     const check = (hours: number[]) => {
@@ -273,6 +293,7 @@ export default function DailyPlanView({
       return { hasSomething, hasUncompleted };
     };
     return {
+      all: check(allHours),
       morning: check(morningHours),
       afternoon: check(afternoonHours),
       evening: check(eveningHours)
@@ -280,7 +301,7 @@ export default function DailyPlanView({
   }, [topics, topicsForDay, dateStr, slotNotes, completedNotes]);
 
   const tabContent = (hours: number[]) => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
       {hours.map(hour => {
         let lockedTitle = "";
         let lockedType = "";
@@ -428,8 +449,8 @@ export default function DailyPlanView({
       {/* 3D Timeline Section */}
       <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] overflow-hidden flex flex-col border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md">
         {/* 3D Sub-Tabs Header */}
-        <div className="flex bg-slate-100 dark:bg-slate-900 p-2 m-5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 gap-2 shadow-xs">
-           {(['morning', 'afternoon', 'evening'] as const).map((tab) => {
+        <div className="flex bg-slate-100 dark:bg-slate-900 p-2 m-5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 gap-2 shadow-xs flex-wrap sm:flex-nowrap">
+           {(['all', 'morning', 'afternoon', 'evening'] as const).map((tab) => {
              const { hasSomething, hasUncompleted } = stats[tab];
              const isActive = activeTab === tab;
 
@@ -438,13 +459,13 @@ export default function DailyPlanView({
                  key={tab}
                  type="button"
                  onClick={() => setActiveTab(tab)}
-                 className={`flex-1 py-3 px-6 text-xs font-black uppercase tracking-widest transition-all cursor-pointer relative flex items-center justify-center gap-3 rounded-xl ${
+                 className={`flex-1 py-3 px-4 sm:px-6 text-xs font-black uppercase tracking-widest transition-all cursor-pointer relative flex items-center justify-center gap-2.5 rounded-xl whitespace-nowrap ${
                    isActive 
                     ? 'bg-white dark:bg-slate-800 text-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs' 
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent'
                  }`}
                >
-                 <span>{tab === 'morning' ? 'Sabah' : tab === 'afternoon' ? 'Öğle' : 'Akşam'}</span>
+                 <span>{tab === 'all' ? 'Tüm Gün' : tab === 'morning' ? 'Sabah' : tab === 'afternoon' ? 'Öğle' : 'Akşam'}</span>
                  {hasSomething && (
                    <div className={`w-2.5 h-2.5 rounded-full ${
                      hasUncompleted 
@@ -457,8 +478,8 @@ export default function DailyPlanView({
            })}
         </div>
 
-        {/* Tab Slot Contents */}
-        <div className="p-6 pt-2">
+        {/* Tab Slot Contents with Internal Fixed Height Scroll */}
+        <div className="p-6 pt-2 max-h-[560px] overflow-y-auto no-scrollbar relative">
            <AnimatePresence mode="wait">
              <motion.div
                key={activeTab}
@@ -467,7 +488,15 @@ export default function DailyPlanView({
                exit={{ opacity: 0, y: -10 }}
                transition={{ duration: 0.2 }}
              >
-               {tabContent(activeTab === 'morning' ? morningHours : activeTab === 'afternoon' ? afternoonHours : eveningHours)}
+               {tabContent(
+                 activeTab === 'all' 
+                   ? allHours 
+                   : activeTab === 'morning' 
+                     ? morningHours 
+                     : activeTab === 'afternoon' 
+                       ? afternoonHours 
+                       : eveningHours
+               )}
              </motion.div>
            </AnimatePresence>
         </div>
