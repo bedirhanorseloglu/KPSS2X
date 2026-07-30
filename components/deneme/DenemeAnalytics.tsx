@@ -54,6 +54,7 @@ type Props = {
   denemeler: DenemeRecord[]; 
   allDenemeler?: DenemeRecord[]; 
   viewType?: "genel" | "brans"; 
+  activeSubjectTab?: string;
   targetNet: number;
   onTargetNetChange: (value: number) => void;
   onAdd: () => void;
@@ -61,8 +62,6 @@ type Props = {
 };
 
 type Range = "all" | "5" | "10";
-
-
 
 function Row({ label, value, color, bold }: { label: string; value: string; color?: string; bold?: boolean }) {
   return (
@@ -89,6 +88,7 @@ export default function DenemeAnalytics({
   denemeler,
   allDenemeler = [],
   viewType = "genel",
+  activeSubjectTab,
   targetNet,
   onTargetNetChange,
   onAdd,
@@ -96,7 +96,7 @@ export default function DenemeAnalytics({
 }: Props) {
   const [range, setRange] = useState<Range>("all");
   const [activeMetric, setActiveMetric] = useState<"total" | "gy" | "gk">("total");
-  const [selectedBransSubjectId, setSelectedBransSubjectId] = useState<string>("");
+  const [selectedBransSubjectId, setSelectedBransSubjectId] = useState<string>(activeSubjectTab || "");
 
   const availableBransSubjects = useMemo(() => {
     if (viewType !== "brans") return [];
@@ -105,12 +105,18 @@ export default function DenemeAnalytics({
   }, [allDenemeler, viewType]);
 
   useEffect(() => {
+    if (activeSubjectTab) {
+      setSelectedBransSubjectId(activeSubjectTab);
+    }
+  }, [activeSubjectTab]);
+
+  useEffect(() => {
     if (viewType === "brans" && availableBransSubjects.length > 0) {
       if (!selectedBransSubjectId || !availableBransSubjects.find(s => s.id === selectedBransSubjectId)) {
-        setSelectedBransSubjectId(availableBransSubjects[0].id);
+        setSelectedBransSubjectId(activeSubjectTab || availableBransSubjects[0].id);
       }
     }
-  }, [viewType, availableBransSubjects, selectedBransSubjectId]);
+  }, [viewType, availableBransSubjects, selectedBransSubjectId, activeSubjectTab]);
 
   const active = useMemo(() => {
     const list = [...denemeler];
@@ -768,21 +774,21 @@ export default function DenemeAnalytics({
               <SummaryCard label="Gelişimin" value={`${bransStats.improvement > 0 ? "+" : ""}${formatNet(bransStats.improvement)}`} sub="İlk sınava göre" emoji={bransStats.improvement > 0 ? "🚀" : "📉"} highlight />
             </div>
 
-            {/* ━━━ Soru Dağılımı ve Başarı Analizi (Chart.js Doughnut + Site Uyumlu Yan Panel) ━━━ */}
-            <div className="mt-8 p-7 sm:p-9 bg-white dark:bg-[#1e293b] rounded-[2.5rem] shadow-[0_4px_25px_rgb(0,0,0,0.04)] border border-slate-100 dark:border-white/5 space-y-6 relative overflow-hidden">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-white/5">
+            {/* ━━━ Soru Dağılımı ve Başarı Analizi (Chart.js Doughnut + 3D Yan Panel) ━━━ */}
+            <div className="mt-8 p-7 sm:p-9 bg-white dark:bg-slate-800 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs space-y-6 relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-700/60">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1cb0f6] opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#1cb0f6]" />
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: bransStats.config?.color || "#1cb0f6" }} />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: bransStats.config?.color || "#1cb0f6" }} />
                     </span>
                     <h4 className="text-base font-black text-slate-800 dark:text-white uppercase tracking-wider">Ortalama Soru Dağılımı</h4>
                   </div>
                   <p className="text-xs font-bold text-slate-400 mt-1">Sınav başına düşen Doğru, Yanlış ve Boş oranlarının canlı halka analizi.</p>
                 </div>
                 {bransStats.maxQuestions > 0 && (
-                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black bg-[#58cc02]/10 text-[#58cc02] border border-[#58cc02]/20 self-start sm:self-auto">
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-2 border-b-2 border-[#58cc02] shadow-2xs self-start sm:self-auto">
                     <Sparkles className="w-4 h-4 text-[#58cc02]" />
                     %{((bransStats.avgC / bransStats.maxQuestions) * 100).toFixed(0)} Başarı Oranı
                   </div>
@@ -790,70 +796,24 @@ export default function DenemeAnalytics({
               </div>
 
               <div className="grid md:grid-cols-12 gap-8 items-center pt-2">
-                {/* Left: Interactive Doughnut Chart with Center Metric */}
+                {/* Left: Apple Fitness Concentric Rings */}
                 <div className="md:col-span-5 flex justify-center relative">
-                  <div className="w-56 h-56 relative flex items-center justify-center">
-                    <Doughnut
-                      data={{
-                        labels: ["Doğru", "Yanlış", "Boş"],
-                        datasets: [
-                          {
-                            data: [
-                              bransStats.avgC > 0 ? bransStats.avgC : 0.0001,
-                              bransStats.avgW > 0 ? bransStats.avgW : 0.0001,
-                              bransStats.avgE > 0 ? bransStats.avgE : 0.0001,
-                            ],
-                            backgroundColor: ["#58cc02", "#ff4b4b", "#cbd5e1"],
-                            borderColor: "transparent",
-                            borderWidth: 0,
-                            hoverOffset: 6,
-                          },
-                        ],
-                      }}
-                      options={{
-                        cutout: "78%",
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                          legend: { display: false },
-                          tooltip: {
-                            backgroundColor: "rgba(15, 23, 42, 0.9)",
-                            titleFont: { size: 12, weight: 900 },
-                            bodyFont: { size: 12, weight: 800 },
-                            padding: 10,
-                            cornerRadius: 12,
-                            callbacks: {
-                              label: (ctx) => {
-                                const rawVal = typeof ctx.raw === "number" ? ctx.raw : 0;
-                                if (rawVal === 0.0001) return ` ${ctx.label}: 0 Soru`;
-                                const formatted = Number.isInteger(rawVal) 
-                                  ? rawVal.toString() 
-                                  : (Math.round(rawVal * 10) / 10).toFixed(1);
-                                return ` ${ctx.label}: ${formatted} Soru`;
-                              },
-                            },
-                          },
-                        },
-                      }}
-                    />
-
-                    {/* Center Label inside Ring */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Ort. Net</span>
-                      <span className="text-3xl font-black font-mono text-slate-800 dark:text-white leading-none mt-1">
-                        {formatNet(bransStats.avg)}
-                      </span>
-                      <span className="text-[11px] font-extrabold text-slate-400 mt-1">/ {bransStats.maxQuestions} Soru</span>
-                    </div>
-                  </div>
+                  <AppleFitnessConcentricRings 
+                    correct={bransStats.avgC}
+                    wrong={bransStats.avgW}
+                    empty={bransStats.avgE}
+                    maxQuestions={bransStats.maxQuestions}
+                    avgNet={bransStats.avg}
+                    color={bransStats.config?.color || "#1cb0f6"}
+                  />
                 </div>
 
-                {/* Right: Modern Stat Cards Column */}
+                {/* Right: Modern 3D Stat Cards Column */}
                 <div className="md:col-span-7 space-y-3.5">
                   {/* Doğru Card */}
-                  <div className="p-4 rounded-[1.25rem] bg-[#58cc02]/5 dark:bg-[#58cc02]/10 border border-[#58cc02]/20 flex items-center justify-between transition-all hover:translate-x-1">
+                  <div className="p-4 rounded-2xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] flex items-center justify-between transition-all hover:translate-x-1 shadow-2xs">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-xl bg-[#58cc02] text-white flex items-center justify-center shadow-sm shadow-[#58cc02]/30">
+                      <div className="w-10 h-10 rounded-xl bg-[#58cc02] text-white flex items-center justify-center border-2 border-b-2 border-[#46a302] shadow-xs">
                         <CheckCircle2 className="w-5 h-5" />
                       </div>
                       <div>
@@ -872,9 +832,9 @@ export default function DenemeAnalytics({
                   </div>
 
                   {/* Yanlış Card */}
-                  <div className="p-4 rounded-[1.25rem] bg-[#ff4b4b]/5 dark:bg-[#ff4b4b]/10 border border-[#ff4b4b]/20 flex items-center justify-between transition-all hover:translate-x-1">
+                  <div className="p-4 rounded-2xl bg-[#ffebeb] dark:bg-[#ff4b4b]/20 border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b] flex items-center justify-between transition-all hover:translate-x-1 shadow-2xs">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-xl bg-[#ff4b4b] text-white flex items-center justify-center shadow-sm shadow-[#ff4b4b]/30">
+                      <div className="w-10 h-10 rounded-xl bg-[#ff4b4b] text-white flex items-center justify-center border-2 border-b-2 border-[#ea2b2b] shadow-xs">
                         <XCircle className="w-5 h-5" />
                       </div>
                       <div>
@@ -893,9 +853,9 @@ export default function DenemeAnalytics({
                   </div>
 
                   {/* Boş Card */}
-                  <div className="p-4 rounded-[1.25rem] bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between transition-all hover:translate-x-1">
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex items-center justify-between transition-all hover:translate-x-1 shadow-2xs">
                     <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-slate-400 dark:bg-slate-600 text-white flex items-center justify-center shadow-sm">
+                      <div className="w-10 h-10 rounded-xl bg-slate-400 dark:bg-slate-600 text-white flex items-center justify-center border-2 border-b-2 border-slate-500 shadow-xs">
                         <MinusCircle className="w-5 h-5" />
                       </div>
                       <div>
@@ -926,7 +886,7 @@ export default function DenemeAnalytics({
               <Section 
                 title={`${bransStats.config?.title} - Yayınevi Bazlı Analiz`} 
                 desc="Seçili branşta çözdüğünüz yayınlara göre net ortalamalarınız." 
-                icon={<AppleEmoji emoji="🏷️" size={32} />}
+                icon={<AppleEmoji emoji={bransStats.config?.icon || "🏷️"} size={32} color={bransStats.config?.color} />}
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {publisherStats.map((pub, idx) => {
@@ -1160,31 +1120,33 @@ function renderRefLabel(text: string, color: string, align: 'right' | 'left' = '
     if (!viewBox) return null;
     const { x, y, width } = viewBox;
     const isRight = align === 'right';
-    const posX = isRight ? x + width - 15 : x + 25;
-    const textAnchor = isRight ? 'end' : 'start';
+    
+    const rectWidth = text.length * 8 + 22;
+    const rectHeight = 24;
+    const rectX = isRight ? x + width - rectWidth - 12 : x + 12;
+    const rectY = y - rectHeight / 2;
 
     return (
-      <g transform={`translate(${posX}, ${y - 8})`}>
-        <text
-          x={0}
-          y={0}
-          fill="none"
-          stroke="rgba(15, 23, 42, 0.95)"
-          strokeWidth={6}
-          strokeLinejoin="round"
-          fontSize={12}
-          fontWeight={900}
-          textAnchor={textAnchor}
-        >
-          {text}
-        </text>
-        <text
-          x={0}
-          y={0}
+      <g className="select-none">
+        <rect
+          x={rectX}
+          y={rectY}
+          width={rectWidth}
+          height={rectHeight}
+          rx={10}
+          ry={10}
           fill={color}
+          stroke="#ffffff"
+          strokeWidth={2}
+        />
+        <text
+          x={rectX + rectWidth / 2}
+          y={rectY + 16}
+          fill="#ffffff"
           fontSize={12}
           fontWeight={900}
-          textAnchor={textAnchor}
+          textAnchor="middle"
+          style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, sans-serif' }}
         >
           {text}
         </text>
@@ -1256,18 +1218,26 @@ function GenelRechartsTrend({ stats, activeMetric, targetNet }: { stats: any; ac
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-600 text-xs font-black text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-            <span className="text-slate-400">Son:</span>
-            <span className="font-mono text-sm" style={{ color: mainColor }}>{formatNet(latestNet)}</span>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div 
+            className="px-3.5 py-1.5 rounded-xl border-2 border-b-4 text-xs font-black flex items-center gap-1.5 shadow-2xs"
+            style={{
+              backgroundColor: `${mainColor}12`,
+              borderColor: `${mainColor}40`,
+              borderBottomColor: mainColor,
+              color: mainColor,
+            }}
+          >
+            <span className="opacity-75">Son:</span>
+            <span className="font-mono text-sm">{formatNet(latestNet)}</span>
           </div>
 
-          <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+          <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-400 border-b-amber-500 text-amber-600 dark:text-amber-400 text-xs font-black flex items-center gap-1.5 shadow-2xs">
             <span className="flex items-center gap-1"><AppleEmoji emoji="🏆" size={14} /> Rekor:</span>
             <span className="font-mono text-sm">{formatNet(bestNet)}</span>
           </div>
 
-          <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+          <div className="px-3.5 py-1.5 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] text-[#58cc02] text-xs font-black flex items-center gap-1.5 shadow-2xs">
             <span className="flex items-center gap-1"><AppleEmoji emoji="⚡" size={14} /> Ort:</span>
             <span className="font-mono text-sm">{formatNet(avgNet)}</span>
           </div>
@@ -1378,6 +1348,158 @@ function GenelRechartsTrend({ stats, activeMetric, targetNet }: { stats: any; ac
   );
 }
 
+function AppleFitnessConcentricRings({ 
+  correct, 
+  wrong, 
+  empty, 
+  maxQuestions, 
+  avgNet, 
+  color 
+}: { 
+  correct: number; 
+  wrong: number; 
+  empty: number; 
+  maxQuestions: number; 
+  avgNet: number; 
+  color: string; 
+}) {
+  const [hoveredRing, setHoveredRing] = useState<"correct" | "wrong" | "empty" | null>(null);
+
+  const total = maxQuestions > 0 ? maxQuestions : 1;
+  const cPct = Math.min(1, Math.max(0, correct / total));
+  const wPct = Math.min(1, Math.max(0, wrong / total));
+  const ePct = Math.min(1, Math.max(0, empty / total));
+
+  const size = 220;
+  const center = size / 2;
+
+  const rings = [
+    { 
+      key: "correct" as const, 
+      label: "Doğru", 
+      val: correct, 
+      pct: cPct, 
+      radius: 85, 
+      strokeWidth: 14, 
+      color: "#58cc02", 
+      trackColor: "rgba(88, 204, 2, 0.15)",
+    },
+    { 
+      key: "wrong" as const, 
+      label: "Yanlış", 
+      val: wrong, 
+      pct: wPct, 
+      radius: 67, 
+      strokeWidth: 14, 
+      color: "#ff4b4b", 
+      trackColor: "rgba(255, 75, 75, 0.15)",
+    },
+    { 
+      key: "empty" as const, 
+      label: "Boş", 
+      val: empty, 
+      pct: ePct, 
+      radius: 49, 
+      strokeWidth: 14, 
+      color: "#94a3b8", 
+      trackColor: "rgba(148, 163, 184, 0.15)",
+    },
+  ];
+
+  const activeRing = rings.find(r => r.key === hoveredRing);
+
+  return (
+    <div className="relative flex flex-col items-center justify-center py-2">
+      <div className="relative w-[220px] h-[220px] flex items-center justify-center">
+        {/* SVG Concentric Rings */}
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
+          {rings.map((ring, idx) => {
+            const circumference = 2 * Math.PI * ring.radius;
+            const strokeDashoffset = circumference * (1 - ring.pct);
+            const isHovered = hoveredRing === ring.key;
+
+            return (
+              <g key={ring.key} className="cursor-pointer" onMouseEnter={() => setHoveredRing(ring.key)} onMouseLeave={() => setHoveredRing(null)}>
+                {/* Track Circle */}
+                <circle
+                  cx={center}
+                  cy={center}
+                  r={ring.radius}
+                  fill="transparent"
+                  stroke={ring.trackColor}
+                  strokeWidth={ring.strokeWidth}
+                />
+                {/* Active Progress Arc */}
+                <motion.circle
+                  cx={center}
+                  cy={center}
+                  r={ring.radius}
+                  fill="transparent"
+                  stroke={ring.color}
+                  strokeWidth={isHovered ? ring.strokeWidth + 4 : ring.strokeWidth}
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  initial={{ strokeDashoffset: circumference }}
+                  animate={{ strokeDashoffset }}
+                  transition={{ type: "spring", stiffness: 60, damping: 15, delay: idx * 0.15 }}
+                  className="transition-all duration-300 filter drop-shadow-xs"
+                />
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* Center 3D Hero Label */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-[84px] h-[84px] rounded-full bg-white dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md flex flex-col items-center justify-center text-center p-1">
+            {activeRing ? (
+              <motion.div key={activeRing.key} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }}>
+                <span className="text-[9px] font-black uppercase tracking-wider block leading-tight" style={{ color: activeRing.color }}>
+                  {activeRing.label}
+                </span>
+                <span className="text-xl font-black text-slate-800 dark:text-white leading-none mt-0.5 block">
+                  {activeRing.val.toFixed(1)}
+                </span>
+                <span className="text-[9px] font-bold text-slate-400 block mt-0.5">
+                  %{Math.round(activeRing.pct * 100)}
+                </span>
+              </motion.div>
+            ) : (
+              <div>
+                <span className="text-[8px] font-black uppercase tracking-wider text-slate-400 block leading-tight">Ort. Net</span>
+                <span className="text-xl font-black tracking-tight leading-none mt-0.5 block" style={{ color: color || "#1cb0f6" }}>
+                  {formatNet(avgNet)}
+                </span>
+                <span className="text-[9px] font-extrabold text-slate-400 mt-0.5 block">/ {maxQuestions}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Ring Legends below */}
+      <div className="flex items-center gap-4 mt-3">
+        {rings.map((ring) => (
+          <div 
+            key={ring.key} 
+            onMouseEnter={() => setHoveredRing(ring.key)}
+            onMouseLeave={() => setHoveredRing(null)}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-black transition-all cursor-pointer border-2 ${
+              hoveredRing === ring.key 
+                ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 shadow-2xs scale-105" 
+                : "border-transparent text-slate-500"
+            }`}
+          >
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: ring.color }} />
+            <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{ring.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function BransRechartsTrend({ bransStats }: { bransStats: any }) {
   const mainColor = bransStats.config?.color || "#1cb0f6";
   const [chartView, setChartView] = useState<"net" | "breakdown">("net");
@@ -1421,18 +1543,26 @@ function BransRechartsTrend({ bransStats }: { bransStats: any }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 text-xs font-black text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-            <span className="text-slate-400">Son:</span>
-            <span className="font-mono text-sm" style={{ color: mainColor }}>{formatNet(latestNet)}</span>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div 
+            className="px-3.5 py-1.5 rounded-xl border-2 border-b-4 text-xs font-black flex items-center gap-1.5 shadow-2xs"
+            style={{
+              backgroundColor: `${mainColor}12`,
+              borderColor: `${mainColor}40`,
+              borderBottomColor: mainColor,
+              color: mainColor,
+            }}
+          >
+            <span className="opacity-75">Son:</span>
+            <span className="font-mono text-sm">{formatNet(latestNet)}</span>
           </div>
 
-          <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+          <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-400 border-b-amber-500 text-amber-600 dark:text-amber-400 text-xs font-black flex items-center gap-1.5 shadow-2xs">
             <span className="flex items-center gap-1"><AppleEmoji emoji="🏆" size={14} /> Rekor:</span>
             <span className="font-mono text-sm">{formatNet(bestNet)}</span>
           </div>
 
-          <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+          <div className="px-3.5 py-1.5 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] text-[#58cc02] text-xs font-black flex items-center gap-1.5 shadow-2xs">
             <span className="flex items-center gap-1"><AppleEmoji emoji="⚡" size={14} /> Ort:</span>
             <span className="font-mono text-sm">{formatNet(avgNet)}</span>
           </div>

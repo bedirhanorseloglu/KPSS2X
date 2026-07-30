@@ -282,6 +282,8 @@ export default function DenemePageContent() {
     ), { position: 'top-center', duration: 3000 });
   };
 
+  const [activeSubjectTab, setActiveSubjectTab] = useState<string>("turkce");
+
   if (!loaded) {
     return <DenemeLoading />;
   }
@@ -466,6 +468,8 @@ export default function DenemePageContent() {
                 >
                   <DenemeHistoryList
                     denemeler={filteredDenemeler}
+                    activeSubjectTab={activeSubjectTab}
+                    onActiveSubjectTabChange={setActiveSubjectTab}
                     onDelete={handleDelete}
                     onEdit={(d) => {
                       setEditing(d);
@@ -500,6 +504,7 @@ export default function DenemePageContent() {
                     denemeler={filteredDenemeler}
                     allDenemeler={denemeler}
                     viewType={viewType}
+                    activeSubjectTab={activeSubjectTab}
                     targetNet={targetNet}
                     onTargetNetChange={handleTargetNetChange}
                     onAdd={() => setTab("yeni")}
