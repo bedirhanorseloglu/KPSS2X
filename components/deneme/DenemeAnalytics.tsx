@@ -788,7 +788,6 @@ export default function DenemeAnalytics({
                 </div>
                 {bransStats.maxQuestions > 0 && (
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-2 border-b-2 border-[#58cc02] shadow-2xs self-start sm:self-auto">
-                    <Sparkles className="w-4 h-4 text-[#58cc02]" />
                     %{((bransStats.avgC / bransStats.maxQuestions) * 100).toFixed(0)} Başarı Oranı
                   </div>
                 )}
@@ -1232,12 +1231,12 @@ function GenelRechartsTrend({ stats, activeMetric, targetNet }: { stats: any; ac
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-400 border-b-amber-500 text-amber-600 dark:text-amber-400 text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span className="flex items-center gap-1"><AppleEmoji emoji="🏆" size={14} /> Rekor:</span>
+            <span>Rekor:</span>
             <span className="font-mono text-sm">{formatNet(bestNet)}</span>
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] text-[#58cc02] text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span className="flex items-center gap-1"><AppleEmoji emoji="⚡" size={14} /> Ort:</span>
+            <span>Ort:</span>
             <span className="font-mono text-sm">{formatNet(avgNet)}</span>
           </div>
         </div>
@@ -1437,12 +1436,10 @@ function AppleFitnessConcentricRings({
                   stroke={ring.color}
                   strokeWidth={isHovered ? ring.strokeWidth + 4 : ring.strokeWidth}
                   strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
                   strokeLinecap="round"
-                  initial={{ strokeDashoffset: circumference }}
-                  animate={{ strokeDashoffset }}
-                  transition={{ type: "spring", stiffness: 60, damping: 15, delay: idx * 0.15 }}
-                  className="transition-all duration-300 filter drop-shadow-xs"
+                  animate={{ strokeDashoffset, strokeWidth: isHovered ? ring.strokeWidth + 4 : ring.strokeWidth }}
+                  transition={{ type: "spring", stiffness: 100, damping: 18 }}
+                  className="filter drop-shadow-xs"
                 />
               </g>
             );
@@ -1557,12 +1554,12 @@ function BransRechartsTrend({ bransStats }: { bransStats: any }) {
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-400 border-b-amber-500 text-amber-600 dark:text-amber-400 text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span className="flex items-center gap-1"><AppleEmoji emoji="🏆" size={14} /> Rekor:</span>
+            <span>Rekor:</span>
             <span className="font-mono text-sm">{formatNet(bestNet)}</span>
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] text-[#58cc02] text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span className="flex items-center gap-1"><AppleEmoji emoji="⚡" size={14} /> Ort:</span>
+            <span>Ort:</span>
             <span className="font-mono text-sm">{formatNet(avgNet)}</span>
           </div>
         </div>
