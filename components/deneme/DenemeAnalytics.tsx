@@ -9,7 +9,7 @@ import {
   estimateP3Score,
   formatDuration,
 } from "@/lib/denemeUtils";
-import { DENEME_SUBJECTS } from "@/lib/denemeConfig";
+import { DENEME_SUBJECTS, getSubjectQuestionCount } from "@/lib/denemeConfig";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -79,7 +79,6 @@ const getSubjectIcon = (id: string, color: string) => {
     case 'tarih': return <Landmark className="w-5 h-5" style={{ color }} />;
     case 'cografya': return <Globe2 className="w-5 h-5" style={{ color }} />;
     case 'vatandaslik': return <Scale className="w-5 h-5" style={{ color }} />;
-    case 'guncel-bilgiler': return <Newspaper className="w-5 h-5" style={{ color }} />;
     default: return <BookOpen className="w-5 h-5" style={{ color }} />;
   }
 };
@@ -200,7 +199,7 @@ export default function DenemeAnalytics({
     if (list.length === 0) return null;
 
     const subConfig = DENEME_SUBJECTS.find(s => s.id === selectedBransSubjectId);
-    const maxQuestions = subConfig?.questionCount ?? 30;
+    const maxQuestions = getSubjectQuestionCount(selectedBransSubjectId, "brans");
 
     const evals = list.map(d => {
       const s = d.scores.find(x => x.subjectId === selectedBransSubjectId);

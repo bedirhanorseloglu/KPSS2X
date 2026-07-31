@@ -125,7 +125,7 @@ export default function DenemeHistoryList({
       {/* ━━━ 3D DERS SEÇİM SEKMELERİ (TAM SIĞACAK BİÇİMDE GRID DÜZENİ) ━━━ */}
       {isAllBrans && groupedBrans && (
         <div className="mb-6 p-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 p-0.5 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 p-0.5 w-full">
             {DENEME_SUBJECTS.map((sub) => {
               const count = (groupedBrans[sub.id] || []).length;
               const isActive = activeSubjectTab === sub.id;

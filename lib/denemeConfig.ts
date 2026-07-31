@@ -49,15 +49,7 @@ export const DENEME_SUBJECTS: DenemeSubjectConfig[] = [
     icon: "⚖️",
     color: "#5856d6", // Apple Indigo
     category: "Vatandaşlık",
-    questionCount: 9,
-  },
-  {
-    id: "guncel-bilgiler",
-    title: "Güncel Bilgiler",
-    icon: "🌍",
-    color: "#ff2d55", // Apple Pink
-    category: "Genel Kültür",
-    questionCount: 6,
+    questionCount: 15,
   },
 ];
 
@@ -68,3 +60,8 @@ export const TOTAL_QUESTIONS = DENEME_SUBJECTS.reduce(
 
 export const getSubjectConfig = (id: string) =>
   DENEME_SUBJECTS.find((s) => s.id === id);
+
+export function getSubjectQuestionCount(subjectId: string, examType?: "genel" | "brans"): number {
+  const config = getSubjectConfig(subjectId);
+  return config?.questionCount ?? 0;
+}

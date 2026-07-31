@@ -2,6 +2,7 @@ import {
   DENEME_SUBJECTS,
   DenemeCategory,
   getSubjectConfig,
+  getSubjectQuestionCount,
 } from "./denemeConfig";
 
 export type SubjectScoreInput = {
@@ -108,7 +109,7 @@ export function evaluateSubjectScore(
 export function evaluateDeneme(scores: SubjectScoreInput[], examType?: "genel" | "brans"): DenemeResult {
   const subjects = DENEME_SUBJECTS.map((config) => {
     const existing = scores.find((s) => s.subjectId === config.id);
-    let qCount = config.questionCount;
+    let qCount = getSubjectQuestionCount(config.id, examType);
 
     return evaluateSubjectScore(
       existing ?? {
@@ -236,7 +237,34 @@ export function migrateDenemeler(denemeler: DenemeRecord[]): DenemeRecord[] {
       record = { ...record, scores: newScores };
     }
 
-    // 2. Eksik bransSubjectId tamamla (branş denemesi ama id kaydedilmemiş)
+    // 2. Güncel Bilgiler → Vatandaşlık birleştirme (eski format)
+    const guncelScore = record.scores.find(s => s.subjectId === "guncel-bilgiler");
+    if (guncelScore) {
+      const newScores = record.scores.filter(s => s.subjectId !== "guncel-bilgiler");
+      const vatandaslikIdx = newScores.findIndex(s => s.subjectId === "vatandaslik");
+      if (vatandaslikIdx !== -1) {
+        newScores[vatandaslikIdx] = {
+          ...newScores[vatandaslikIdx],
+          correct: newScores[vatandaslikIdx].correct + guncelScore.correct,
+          wrong: newScores[vatandaslikIdx].wrong + guncelScore.wrong,
+          empty: newScores[vatandaslikIdx].empty + guncelScore.empty,
+        };
+      } else {
+        newScores.push({
+          subjectId: "vatandaslik",
+          correct: guncelScore.correct,
+          wrong: guncelScore.wrong,
+          empty: guncelScore.empty + 9,
+        });
+      }
+      record = { ...record, scores: newScores };
+    }
+
+    if (record.bransSubjectId === "guncel-bilgiler") {
+      record.bransSubjectId = "vatandaslik";
+    }
+
+    // 3. Eksik bransSubjectId tamamla (branş denemesi ama id kaydedilmemiş)
     if (record.examType === "brans" && !record.bransSubjectId) {
       const inferred = inferBransSubjectId(record);
       if (inferred) {

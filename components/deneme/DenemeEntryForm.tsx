@@ -16,7 +16,7 @@ import {
   SubjectScoreInput,
   estimateP3Score,
 } from "@/lib/denemeUtils";
-import { TOTAL_QUESTIONS, getSubjectConfig, DENEME_SUBJECTS } from "@/lib/denemeConfig";
+import { TOTAL_QUESTIONS, getSubjectConfig, getSubjectQuestionCount, DENEME_SUBJECTS } from "@/lib/denemeConfig";
 import DenemeAlert from "./DenemeAlert";
 import AppleEmoji from "../AppleEmoji";
 
@@ -65,8 +65,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
     setScores((prev) =>
       prev.map((s) => {
         if (s.subjectId !== subjectId) return s;
-        const config = getSubjectConfig(subjectId);
-        let questionCount = config?.questionCount ?? 0;
+        let questionCount = getSubjectQuestionCount(subjectId, examType);
 
         if (field === "correct") {
           const newCorrect = value;
@@ -305,7 +304,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         >
                           <span className={bransSubjectId ? "text-slate-800 dark:text-slate-200" : "text-slate-400 dark:text-slate-500"}>
                             {bransSubjectId 
-                              ? result.subjects.find(s => s.subjectId === bransSubjectId)?.title + ` (${result.subjects.find(s => s.subjectId === bransSubjectId)?.subjectId === "matematik" ? 30 : result.subjects.find(s => s.subjectId === bransSubjectId)?.questionCount} Soru)`
+                              ? result.subjects.find(s => s.subjectId === bransSubjectId)?.title + ` (${getSubjectQuestionCount(bransSubjectId, "brans")} Soru)`
                               : "Lütfen bir branş seçin..."}
                           </span>
                           <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -329,6 +328,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                                   const subjectColor = DENEME_SUBJECTS.find(ds => ds.id === s.subjectId)?.color || "#3b82f6";
                                   const isSelected = bransSubjectId === s.subjectId;
                                   const isHovered = hoveredSubjectId === s.subjectId;
+                                  const bransCount = getSubjectQuestionCount(s.subjectId, "brans");
                                   
                                   return (
                                     <button
@@ -341,14 +341,14 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                                       }}
                                       onMouseEnter={() => setHoveredSubjectId(s.subjectId)}
                                       onMouseLeave={() => setHoveredSubjectId(null)}
-                                      className="w-full text-left px-5 py-3 text-sm font-bold transition-all"
+                                      className="w-full text-left px-5 py-3 text-sm font-bold transition-all flex items-center justify-between"
                                       style={{
                                         backgroundColor: isSelected || isHovered ? `${subjectColor}15` : "transparent",
                                         color: isSelected || isHovered ? subjectColor : undefined
                                       }}
                                     >
-                                      {s.title} ({s.subjectId === "matematik" ? 30 : s.questionCount} Soru)
-                                      {isSelected && <Check className="w-4 h-4 inline-block float-right mt-0.5" style={{ color: subjectColor }} />}
+                                      <span>{s.title} ({bransCount} Soru)</span>
+                                      {isSelected && <Check className="w-4 h-4" style={{ color: subjectColor }} />}
                                     </button>
                                   );
                                 })}
