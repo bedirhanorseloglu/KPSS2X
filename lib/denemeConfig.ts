@@ -15,7 +15,7 @@ export const DENEME_SUBJECTS: DenemeSubjectConfig[] = [
     id: "turkce",
     title: "Türkçe",
     icon: "📘",
-    color: "#1cb0f6", // Duolingo Blue
+    color: "#F43F5E", // Koyu Mercan / Deep Coral
     category: "Genel Yetenek",
     questionCount: 30,
   },
@@ -39,7 +39,7 @@ export const DENEME_SUBJECTS: DenemeSubjectConfig[] = [
     id: "cografya",
     title: "Coğrafya",
     icon: "🗺",
-    color: "#58cc02", // Duolingo Green
+    color: "#78350F", // Koyu Kahve / Bronz
     category: "Genel Kültür",
     questionCount: 18,
   },

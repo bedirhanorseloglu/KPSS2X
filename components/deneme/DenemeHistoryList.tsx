@@ -392,9 +392,9 @@ export default function DenemeHistoryList({
                             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                             className="pt-4 border-t-2 border-slate-100 dark:border-slate-700/80 overflow-hidden space-y-4"
                           >
-                            {/* 🧠 GENEL YETENEK (GY) GRUBU */}
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between px-1 mb-1">
+                            {/* ━━━ GENEL YETENEK (GY) PROGRESS BARS ━━━ */}
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between px-0.5">
                                 <span className="text-[11px] font-black uppercase tracking-wider text-[#1cb0f6] flex items-center gap-1.5">
                                   <AppleEmoji emoji="🧠" size={14} /> Genel Yetenek (GY)
                                 </span>
@@ -412,51 +412,55 @@ export default function DenemeHistoryList({
                                   const subItemConfig = DENEME_SUBJECTS.find((sub) => sub.id === s.subjectId);
                                   const qTotal = subItemConfig?.questionCount || 1;
                                   const subAcc = Math.max(0, Math.round((s.net / qTotal) * 100));
+                                  const barPercent = Math.max(0, Math.min(100, (s.net / qTotal) * 100));
                                   const itemColor = subItemConfig?.color || "#1cb0f6";
 
                                   return (
                                     <motion.div
                                       key={s.subjectId}
-                                      initial={{ opacity: 0, y: 6 }}
-                                      animate={{ opacity: 1, y: 0 }}
-                                      transition={{ duration: 0.15, delay: sIdx * 0.02 }}
-                                      className="p-2.5 px-3.5 rounded-xl border-2 border-b-2 transition-all shadow-2xs flex items-center justify-between gap-3"
-                                      style={{
-                                        backgroundColor: `${itemColor}08`,
-                                        borderColor: `${itemColor}30`,
-                                      }}
+                                      initial={{ opacity: 0, x: -12 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ duration: 0.25, delay: sIdx * 0.04 }}
+                                      className="space-y-1.5"
                                     >
-                                      <div className="flex items-center gap-2.5 min-w-0">
-                                        <div 
-                                          className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 border shadow-2xs"
-                                          style={{ backgroundColor: `${itemColor}15`, borderColor: `${itemColor}40` }}
-                                        >
-                                          <AppleEmoji emoji={subItemConfig?.icon || "📘"} size={14} />
-                                        </div>
-                                        <span className="text-xs font-black text-slate-800 dark:text-white truncate">
-                                          {s.title}
-                                        </span>
-                                      </div>
-
-                                      <div className="flex items-center gap-3 shrink-0">
-                                        <div className="flex items-center gap-2 text-[11px] font-mono font-bold">
-                                          <div className="flex gap-1.5">
-                                            <span className="text-[#58cc02] font-black">{s.correct}D</span>
-                                            <span className="text-[#ff4b4b] font-black">{s.wrong}Y</span>
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                          <AppleEmoji emoji={subItemConfig?.icon || "📘"} size={16} />
+                                          <span className="text-xs font-black text-slate-800 dark:text-white">
+                                            {s.title}
+                                          </span>
+                                          <span className="text-[10px] font-mono font-bold">
+                                            <span className="text-[#58cc02]">{s.correct}D</span>{" "}
+                                            <span className="text-[#ff4b4b]">{s.wrong}Y</span>{" "}
                                             <span className="text-slate-400">{s.empty}B</span>
-                                          </div>
-                                          <span className="text-[10px] text-[#58cc02] font-black px-2 py-0.5 rounded-md bg-[#e5f9e7] dark:bg-[#58cc02]/20 border border-[#58cc02]/30 shrink-0">%{subAcc}</span>
+                                          </span>
                                         </div>
-
                                         <span 
-                                          className="text-xs font-black font-mono px-2 py-0.5 rounded-lg border shadow-2xs shrink-0"
+                                          className="text-xs font-black font-mono px-2 py-0.5 rounded-lg border"
                                           style={{ 
                                             color: itemColor, 
-                                            backgroundColor: `${itemColor}15`,
-                                            borderColor: `${itemColor}30` 
+                                            backgroundColor: `${itemColor}12`, 
+                                            borderColor: `${itemColor}40` 
                                           }}
                                         >
                                           {formatNet(s.net)} NET
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-2.5 rounded-full bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+                                          <motion.div
+                                            className="h-full rounded-full"
+                                            style={{ backgroundColor: itemColor }}
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${barPercent}%` }}
+                                            transition={{ duration: 0.6, delay: sIdx * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                                          />
+                                        </div>
+                                        <span 
+                                          className="text-[10px] font-black font-mono w-9 text-right shrink-0"
+                                          style={{ color: itemColor }}
+                                        >
+                                          %{subAcc}
                                         </span>
                                       </div>
                                     </motion.div>
@@ -464,9 +468,9 @@ export default function DenemeHistoryList({
                                 })}
                             </div>
 
-                            {/* 🏛️ GENEL KÜLTÜR (GK) GRUBU */}
-                            <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-700/60">
-                              <div className="flex items-center justify-between px-1 mb-1">
+                            {/* ━━━ GENEL KÜLTÜR (GK) PROGRESS BARS ━━━ */}
+                            <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-700/60">
+                              <div className="flex items-center justify-between px-0.5">
                                 <span className="text-[11px] font-black uppercase tracking-wider text-[#58cc02] flex items-center gap-1.5">
                                   <AppleEmoji emoji="🏛️" size={14} /> Genel Kültür (GK)
                                 </span>
@@ -484,51 +488,55 @@ export default function DenemeHistoryList({
                                   const subItemConfig = DENEME_SUBJECTS.find((sub) => sub.id === s.subjectId);
                                   const qTotal = subItemConfig?.questionCount || 1;
                                   const subAcc = Math.max(0, Math.round((s.net / qTotal) * 100));
+                                  const barPercent = Math.max(0, Math.min(100, (s.net / qTotal) * 100));
                                   const itemColor = subItemConfig?.color || "#58cc02";
 
                                   return (
                                     <motion.div
                                       key={s.subjectId}
-                                      initial={{ opacity: 0, y: 6 }}
-                                      animate={{ opacity: 1, y: 0 }}
-                                      transition={{ duration: 0.15, delay: sIdx * 0.02 }}
-                                      className="p-2.5 px-3.5 rounded-xl border-2 border-b-2 transition-all shadow-2xs flex items-center justify-between gap-3"
-                                      style={{
-                                        backgroundColor: `${itemColor}08`,
-                                        borderColor: `${itemColor}30`,
-                                      }}
+                                      initial={{ opacity: 0, x: -12 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ duration: 0.25, delay: (sIdx + 2) * 0.04 }}
+                                      className="space-y-1.5"
                                     >
-                                      <div className="flex items-center gap-2.5 min-w-0">
-                                        <div 
-                                          className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 border shadow-2xs"
-                                          style={{ backgroundColor: `${itemColor}15`, borderColor: `${itemColor}40` }}
-                                        >
-                                          <AppleEmoji emoji={subItemConfig?.icon || "📘"} size={14} />
-                                        </div>
-                                        <span className="text-xs font-black text-slate-800 dark:text-white truncate">
-                                          {s.title}
-                                        </span>
-                                      </div>
-
-                                      <div className="flex items-center gap-3 shrink-0">
-                                        <div className="flex items-center gap-2 text-[11px] font-mono font-bold">
-                                          <div className="flex gap-1.5">
-                                            <span className="text-[#58cc02] font-black">{s.correct}D</span>
-                                            <span className="text-[#ff4b4b] font-black">{s.wrong}Y</span>
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                          <AppleEmoji emoji={subItemConfig?.icon || "🏛️"} size={16} />
+                                          <span className="text-xs font-black text-slate-800 dark:text-white">
+                                            {s.title}
+                                          </span>
+                                          <span className="text-[10px] font-mono font-bold">
+                                            <span className="text-[#58cc02]">{s.correct}D</span>{" "}
+                                            <span className="text-[#ff4b4b]">{s.wrong}Y</span>{" "}
                                             <span className="text-slate-400">{s.empty}B</span>
-                                          </div>
-                                          <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">%{subAcc}</span>
+                                          </span>
                                         </div>
-
                                         <span 
-                                          className="text-xs font-black font-mono px-2 py-0.5 rounded-lg border shadow-2xs shrink-0"
+                                          className="text-xs font-black font-mono px-2 py-0.5 rounded-lg border"
                                           style={{ 
                                             color: itemColor, 
-                                            backgroundColor: `${itemColor}15`,
-                                            borderColor: `${itemColor}30` 
+                                            backgroundColor: `${itemColor}12`, 
+                                            borderColor: `${itemColor}40` 
                                           }}
                                         >
                                           {formatNet(s.net)} NET
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-2.5 rounded-full bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+                                          <motion.div
+                                            className="h-full rounded-full"
+                                            style={{ backgroundColor: itemColor }}
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${barPercent}%` }}
+                                            transition={{ duration: 0.6, delay: (sIdx + 2) * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                                          />
+                                        </div>
+                                        <span 
+                                          className="text-[10px] font-black font-mono w-9 text-right shrink-0"
+                                          style={{ color: itemColor }}
+                                        >
+                                          %{subAcc}
                                         </span>
                                       </div>
                                     </motion.div>
@@ -541,9 +549,9 @@ export default function DenemeHistoryList({
                     </div>
 
                     {/* Footer Action Buttons */}
-                    <div className="px-6 pb-6 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+                    <div className="px-6 pb-6 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-3">
                       <span 
-                        className="text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-3 py-1 rounded-xl border-2 border-b-2 shadow-2xs"
+                        className="text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-b-2 shadow-2xs shrink-0 whitespace-nowrap"
                         style={{
                           backgroundColor: `${cardColor}15`,
                           borderColor: `${cardColor}40`,
@@ -558,7 +566,7 @@ export default function DenemeHistoryList({
                         ) : (
                           <>
                             <AppleEmoji emoji="🏛️" size={13} />
-                            <span>KPSS Genel Deneme</span>
+                            <span>Genel Deneme</span>
                           </>
                         )}
                       </span>
