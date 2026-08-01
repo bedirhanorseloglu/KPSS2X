@@ -296,8 +296,8 @@ export default function DenemeAnalytics({
     return Object.entries(map).map(([name, data]) => {
       const avgNet = data.totalNet / data.count;
       const avgDuration = data.durationCount > 0 ? data.totalDuration / data.durationCount : null;
-      const totalQuestions = data.totalCorrect + data.totalWrong + data.totalEmpty;
-      const accuracy = totalQuestions > 0 ? Math.max(0, (data.totalNet / totalQuestions) * 100) : 0;
+      const totalQuestions = data.count * (viewType === "brans" ? (getSubjectQuestionCount(selectedBransSubjectId, "brans") || 30) : 120);
+      const accuracy = totalQuestions > 0 ? Math.max(0, Math.round((data.totalNet / totalQuestions) * 100)) : 0;
       return {
         name,
         count: data.count,
@@ -788,7 +788,7 @@ export default function DenemeAnalytics({
                 </div>
                 {bransStats.maxQuestions > 0 && (
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-2 border-b-2 border-[#58cc02] shadow-2xs self-start sm:self-auto">
-                    %{((bransStats.avgC / bransStats.maxQuestions) * 100).toFixed(0)} Başarı Oranı
+                    %{Math.max(0, Math.round((bransStats.avg / bransStats.maxQuestions) * 100))} İsabet Oranı
                   </div>
                 )}
               </div>

@@ -195,8 +195,9 @@ export default function DenemeHistoryList({
                 const totalCorrect = res.subjects.reduce((sum, s) => sum + s.correct, 0);
                 const totalWrong = res.subjects.reduce((sum, s) => sum + s.wrong, 0);
                 const totalEmpty = res.subjects.reduce((sum, s) => sum + s.empty, 0);
-                const answered = isBrans ? (subRes ? subRes.correct + subRes.wrong : 1) : (totalCorrect + totalWrong || 1);
-                const cardAccuracy = (((isBrans && subRes ? subRes.correct : totalCorrect) / answered) * 100).toFixed(0);
+                const totalQuestions = isBrans ? (subRes ? subRes.questionCount : 30) : 120;
+                const cardNet = isBrans ? (subRes ? subRes.net : res.totalNet) : res.totalNet;
+                const cardAccuracy = totalQuestions > 0 ? Math.max(0, Math.round((cardNet / totalQuestions) * 100)) : 0;
                 const p3Score = estimateP3Score(res.gyNet, res.gkNet);
                 const isExpanded = expandedId === deneme.id;
 
@@ -293,10 +294,11 @@ export default function DenemeHistoryList({
                             </div>
 
                             <div className="flex items-center justify-between text-xs font-black font-mono pt-1">
-                              <div className="flex items-center gap-1.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className="px-2.5 py-0.5 rounded-lg bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border border-[#58cc02]/40">{totalCorrect} D</span>
                                 <span className="px-2.5 py-0.5 rounded-lg bg-[#ffebeb] dark:bg-[#ff4b4b]/20 text-[#ff4b4b] border border-[#ff4b4b]/40">{totalWrong} Y</span>
                                 <span className="px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 border border-slate-200 dark:border-slate-600">{totalEmpty} B</span>
+                                <span className="px-2.5 py-0.5 rounded-lg bg-[#1cb0f6]/10 text-[#1cb0f6] border border-[#1cb0f6]/30 font-black">%{cardAccuracy} İsabet</span>
                               </div>
                               <span className="text-[11px] text-[#1cb0f6] font-extrabold font-mono hover:underline">
                                 {isExpanded ? "Detayları Gizle ▲" : "Ders Detayları ▼"}
@@ -408,8 +410,8 @@ export default function DenemeHistoryList({
                                 })
                                 .map((s, sIdx) => {
                                   const subItemConfig = DENEME_SUBJECTS.find((sub) => sub.id === s.subjectId);
-                                  const qAns = s.correct + s.wrong;
-                                  const subAcc = qAns > 0 ? ((s.correct / qAns) * 100).toFixed(0) : "0";
+                                  const qTotal = subItemConfig?.questionCount || 1;
+                                  const subAcc = Math.max(0, Math.round((s.net / qTotal) * 100));
                                   const itemColor = subItemConfig?.color || "#1cb0f6";
 
                                   return (
@@ -443,7 +445,7 @@ export default function DenemeHistoryList({
                                             <span className="text-[#ff4b4b] font-black">{s.wrong}Y</span>
                                             <span className="text-slate-400">{s.empty}B</span>
                                           </div>
-                                          <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">%{subAcc}</span>
+                                          <span className="text-[10px] text-[#58cc02] font-black px-2 py-0.5 rounded-md bg-[#e5f9e7] dark:bg-[#58cc02]/20 border border-[#58cc02]/30 shrink-0">%{subAcc}</span>
                                         </div>
 
                                         <span 
@@ -480,8 +482,8 @@ export default function DenemeHistoryList({
                                 })
                                 .map((s, sIdx) => {
                                   const subItemConfig = DENEME_SUBJECTS.find((sub) => sub.id === s.subjectId);
-                                  const qAns = s.correct + s.wrong;
-                                  const subAcc = qAns > 0 ? ((s.correct / qAns) * 100).toFixed(0) : "0";
+                                  const qTotal = subItemConfig?.questionCount || 1;
+                                  const subAcc = Math.max(0, Math.round((s.net / qTotal) * 100));
                                   const itemColor = subItemConfig?.color || "#58cc02";
 
                                   return (
