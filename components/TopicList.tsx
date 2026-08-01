@@ -42,11 +42,14 @@ function DraggableTopicItem({
       className={`cursor-grab active:cursor-grabbing group relative flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-200 border-2 ${
         topic.done
           ? "bg-slate-50 dark:bg-slate-900/40 border-b-2 border-slate-200 dark:border-slate-700/50 opacity-60 grayscale"
-          : "bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] shadow-2xs"
+          : "bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs"
       }`}
     >
       {/* 3D Drag Handle */}
-      <div className="text-slate-300 group-hover:text-[#1cb0f6] p-1 shrink-0 rounded-xl transition-colors cursor-grab active:cursor-grabbing">
+      <div 
+        className="text-slate-300 p-1 shrink-0 rounded-xl transition-colors cursor-grab active:cursor-grabbing"
+        style={{ color: isDragging ? color : undefined }}
+      >
         <GripVertical className="w-4 h-4" />
       </div>
 
@@ -154,6 +157,16 @@ export default function TopicList({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      const isTyping = activeEl && (
+        activeEl.tagName === "INPUT" ||
+        activeEl.tagName === "TEXTAREA" ||
+        activeEl.tagName === "SELECT" ||
+        (activeEl as HTMLElement).isContentEditable
+      );
+
+      if (isTyping) return;
+
       if (e.key === "ArrowRight") goToNext();
       if (e.key === "ArrowLeft") goToPrev();
     };
@@ -161,20 +174,13 @@ export default function TopicList({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goToNext, goToPrev]);
 
-  // Subject theme color map
-  const getSubjectColor = (id: string) => {
-    const colors: Record<string, { bg: string; border: string; text: string }> = {
-      turkce: { bg: "bg-[#1cb0f6]", border: "border-[#1899d6]", text: "text-[#1cb0f6]" },
-      matematik: { bg: "bg-[#af52de]", border: "border-[#963ec7]", text: "text-[#af52de]" },
-      tarih: { bg: "bg-[#ff9500]", border: "border-[#e08400]", text: "text-[#ff9500]" },
-      cografya: { bg: "bg-[#58cc02]", border: "border-[#46a302]", text: "text-[#58cc02]" },
-      vatandaslik: { bg: "bg-[#5856d6]", border: "border-[#4744b8]", text: "text-[#5856d6]" },
-      guncel: { bg: "bg-[#ff2d55]", border: "border-[#e02649]", text: "text-[#ff2d55]" },
-    };
-    return colors[id] || { bg: "bg-[#1cb0f6]", border: "border-[#1899d6]", text: "text-[#1cb0f6]" };
+  // Subject theme color map using dynamic subject.color
+  const mainColor = subject.color || "#1cb0f6";
+  const subjectTheme = {
+    color: mainColor,
+    bgStyle: { backgroundColor: mainColor, borderColor: mainColor },
+    textStyle: { color: mainColor },
   };
-
-  const subjectTheme = getSubjectColor(subject.id);
   const progressPercent = Math.round((subject.topics.filter(t => t.done).length / (subject.topics.length || 1)) * 100);
 
   return (
@@ -221,7 +227,10 @@ export default function TopicList({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4 flex-1">
                 {/* 3D Subject Icon Badge */}
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${subjectTheme.bg} border-2 border-b-4 ${subjectTheme.border} text-white flex items-center justify-center shadow-xs shrink-0`}>
+                <div 
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-b-4 text-white flex items-center justify-center shadow-xs shrink-0"
+                  style={{ backgroundColor: subjectTheme.color, borderColor: subjectTheme.color }}
+                >
                   <AppleEmoji emoji={subject.icon || "📘"} size={32} className="text-white" />
                 </div>
                 
@@ -237,7 +246,7 @@ export default function TopicList({
                       {subject.category}
                     </span>
                     <span className="text-slate-300">•</span>
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${subjectTheme.text}`}>
+                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: subjectTheme.color }}>
                       {subject.subCategory}
                     </span>
                   </div>
@@ -245,12 +254,12 @@ export default function TopicList({
               </div>
 
               {/* Success Rate Box */}
-              <div className="flex flex-col items-start sm:items-end bg-slate-50 dark:bg-slate-900/60 p-3 sm:px-4 sm:py-2.5 rounded-2xl border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs">
-                <span className={`text-2xl font-black font-mono tracking-tight ${subjectTheme.text}`}>
+              <div className="flex flex-col items-center justify-center shrink-0 bg-slate-50 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs text-center min-w-[96px]">
+                <span className="text-2xl font-black font-mono tracking-tight leading-none mb-1" style={{ color: subjectTheme.color }}>
                   {progressPercent}%
                 </span>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  BAŞARI
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider whitespace-nowrap">
+                  TAMAMLANDI
                 </span>
               </div>
             </div>

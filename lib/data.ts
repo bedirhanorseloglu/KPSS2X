@@ -186,19 +186,8 @@ export const initialData: Subject[] = [
       { id: "vat-5", title: "Yasama", done: false, questionCount: "1" },
       { id: "vat-6", title: "Yürütme", done: false, questionCount: "1" },
       { id: "vat-7", title: "Yargı", done: false, questionCount: "1" },
-      { id: "vat-8", title: "İdare Hukuku", done: false, questionCount: "2" }
-    ]
-  },
-  {
-    id: "guncel-bilgiler",
-    title: "Güncel Bilgiler",
-    tip: "Güncel olaylar ve genel kültür birikimi sınavda 6 soru olarak karşına gelir.",
-    color: "#ff2d55",
-    category: "Genel Kültür",
-    subCategory: "Sosyal",
-    icon: "🌍",
-    topics: [
-      { id: "gun-1", title: "Güncel Bilgiler ve Genel Kültür", done: false, questionCount: "6" }
+      { id: "vat-8", title: "İdare Hukuku", done: false, questionCount: "2" },
+      { id: "vat-9", title: "Güncel Bilgiler ve Genel Kültür", done: false, questionCount: "6" }
     ]
   }
 ]

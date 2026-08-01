@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
-import { loadData, saveData } from "@/lib/storage"
+import { loadData, saveData, mergeWithInitialData } from "@/lib/storage"
 import { loadFromFirebase, saveToFirebase, forceUploadToFirebase, updateUserProfile, loadPlannerYeniden, savePlannerYeniden } from "@/lib/firebaseService"
 import { initialData } from "@/lib/data"
 import { format } from "date-fns"
@@ -191,7 +191,7 @@ function HomeContent() {
     />
   )
 
-  const safeSubjects = data.subjects || initialData
+  const safeSubjects = mergeWithInitialData(data.subjects || [])
 
   const toggleTopic = (topicId: string, subjectId?: string) => {
     if (!data) return
@@ -668,19 +668,36 @@ function HomeContent() {
           </main>
 
 
-        {/* Drag Overlay Redesign */}
+        {/* Drag Overlay Redesign with Dynamic Subject Identity Color */}
         <DragOverlay>
-          {activeTopic ? (
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xl cursor-grabbing w-80 z-[100] flex items-center gap-4 rotate-2">
-               <div className="w-12 h-12 rounded-xl bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-white flex items-center justify-center shadow-xs shrink-0">
-                  <AppleEmoji emoji={safeSubjects.find(s => s.topics.some(t => t.id === activeTopic.id))?.icon || '📚'} size={28} className="text-white" />
-               </div>
-               <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#1cb0f6]">Yerleştiriliyor</span>
-                  <span className="text-sm font-black text-slate-800 dark:text-white truncate">{activeTopic.title}</span>
-               </div>
-            </div>
-          ) : null}
+          {activeTopic ? (() => {
+            const activeSub = safeSubjects.find(s => s.topics.some(t => t.id === activeTopic.id));
+            const subColor = activeSub?.color || '#1cb0f6';
+            return (
+              <div 
+                className="bg-white dark:bg-slate-800 p-4 rounded-2xl border-2 border-b-4 shadow-2xl cursor-grabbing w-80 z-[100] flex items-center gap-4 rotate-2"
+                style={{
+                  borderColor: `${subColor}60`,
+                  borderBottomColor: subColor,
+                }}
+              >
+                 <div 
+                   className="w-12 h-12 rounded-xl text-white flex items-center justify-center shadow-xs shrink-0 border-2 border-b-4"
+                   style={{
+                     backgroundColor: subColor,
+                     borderColor: subColor,
+                     borderBottomColor: subColor,
+                   }}
+                 >
+                    <AppleEmoji emoji={activeSub?.icon || '📚'} size={28} className="text-white" />
+                 </div>
+                 <div className="flex flex-col min-w-0 flex-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: subColor }}>Yerleştirildiği Ders</span>
+                    <span className="text-sm font-black text-slate-800 dark:text-white truncate">{activeTopic.title}</span>
+                 </div>
+              </div>
+            );
+          })() : null}
         </DragOverlay>
 
         <ResetModal isOpen={isResetModalOpen} onClose={() => setIsResetModalOpen(false)} onConfirm={handleReset} />

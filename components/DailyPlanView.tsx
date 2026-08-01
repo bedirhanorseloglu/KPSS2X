@@ -119,7 +119,7 @@ function TimeSlot({
                 }
                 onRemoveTopic(topic.id, dateStr, `${hour.toString().padStart(2, '0')}:00`);
               }}
-              className="w-7 h-7 rounded-xl bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-2 border-[#ff4b4b]/30 hover:bg-[#ff4b4b] hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 active:scale-95 shadow-2xs cursor-pointer"
+              className="w-7 h-7 rounded-xl bg-red-50 dark:bg-red-500/20 text-[#ff4b4b] border-2 border-b-2 border-[#ff4b4b]/40 hover:bg-[#ff4b4b] hover:text-white flex items-center justify-center transition-all active:scale-95 shadow-2xs cursor-pointer"
               title="Dersi Kaldır"
             >
               <X className="w-4 h-4" />

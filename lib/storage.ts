@@ -25,8 +25,10 @@ export const loadData = (): LocalDashboardData => {
   return { subjects: initialData, streak: 0, lastActiveDate: null }
 }
 
-const mergeWithInitialData = (savedSubjects: Subject[] = []) => {
+export const mergeWithInitialData = (savedSubjects: Subject[] = []): Subject[] => {
   const safeSubjects = savedSubjects || [];
+  const gun1Topic = safeSubjects.flatMap(s => s.topics || []).find(t => t.id === "gun-1");
+
   return initialData.map(initialSubject => {
     const savedSubject = safeSubjects.find(s => s.id === initialSubject.id)
     if (!savedSubject) return initialSubject
@@ -35,6 +37,16 @@ const mergeWithInitialData = (savedSubjects: Subject[] = []) => {
       ...initialSubject,
       topics: initialSubject.topics.map(initialTopic => {
         const savedTopic = savedSubject.topics.find(t => t.id === initialTopic.id)
+        
+        // Migrate gun-1 completion status to vat-9 if applicable
+        if (initialTopic.id === "vat-9" && gun1Topic && !savedTopic) {
+          return {
+            ...initialTopic,
+            done: gun1Topic.done,
+            schedules: gun1Topic.schedules,
+          }
+        }
+
         if (!savedTopic) return initialTopic
         return { 
           ...initialTopic, 
