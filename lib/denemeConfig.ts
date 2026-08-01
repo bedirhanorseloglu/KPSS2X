@@ -39,7 +39,7 @@ export const DENEME_SUBJECTS: DenemeSubjectConfig[] = [
     id: "cografya",
     title: "Coğrafya",
     icon: "🗺",
-    color: "#78350F", // Koyu Kahve / Bronz
+    color: "#10B981", // Zümrüt Yeşili
     category: "Genel Kültür",
     questionCount: 18,
   },

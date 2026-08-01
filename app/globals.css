@@ -55,6 +55,18 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   letter-spacing: -0.022em;
 }
 
+/* Custom Text Selection Highlight (Soft Duolingo Blue + Subtle Glow) */
+::selection {
+  background-color: rgba(28, 176, 246, 0.2);
+  color: inherit;
+  text-shadow: 0 0 1px rgba(28, 176, 246, 0.4);
+}
+::-moz-selection {
+  background-color: rgba(28, 176, 246, 0.2);
+  color: inherit;
+  text-shadow: 0 0 1px rgba(28, 176, 246, 0.4);
+}
+
 /* Custom Scrollbar (macOS Style) */
 ::-webkit-scrollbar {
   width: 6px;

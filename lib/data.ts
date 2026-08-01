@@ -155,7 +155,7 @@ export const initialData: Subject[] = [
     id: "cografya",
     title: "Coğrafya",
     tip: "Harita bilgisi gerektirir. Fiziki haritayı oturtmadan beşeri konulara geçilmemelidir.",
-    color: "#78350F",
+    color: "#10B981",
     category: "Genel Kültür",
     subCategory: "Sosyal",
     icon: "🗺",
