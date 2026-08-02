@@ -45,6 +45,7 @@ export default function DenemePageContent() {
   const [loaded, setLoaded] = useState(false);
   const [tab, setTab] = useState<Tab>("yeni");
   const [viewType, setViewType] = useState<"genel" | "brans">((initialMode as "genel" | "brans") || "genel");
+  const [activeSubjectTab, setActiveSubjectTab] = useState<string>(initialSubject || "turkce");
   const [editing, setEditing] = useState<DenemeRecord | null>(null);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
@@ -190,16 +191,33 @@ export default function DenemePageContent() {
     date: string;
     publisher?: string;
     note?: string;
+    durationMinutes?: number;
     scores: DenemeRecord["scores"];
+    examType?: "genel" | "brans";
+    bransSubjectId?: string;
   }) => {
+    const targetExamType = payload.examType || (editing ? editing.examType : "genel");
+    const targetBranchId = payload.bransSubjectId || (editing ? editing.bransSubjectId : undefined) || "turkce";
+
+    const updateTabAndViews = () => {
+      if (targetExamType === "brans") {
+        setViewType("brans");
+        if (targetBranchId) {
+          setActiveSubjectTab(targetBranchId);
+        }
+      } else {
+        setViewType("genel");
+      }
+      setTab("gecmis");
+    };
+
     if (editing) {
       const updated = denemeler.map(d => d.id === editing.id ? { ...editing, ...payload } : d);
-      
-      const savePromise = persistData(updated, targetNet).then(() => {
-        setDenemeler(updated);
-        setEditing(null);
-        setTab("gecmis");
-      });
+      setDenemeler(updated);
+      setEditing(null);
+      updateTabAndViews();
+
+      persistData(updated, targetNet);
 
       toast.custom(() => (
         <div className="flex items-center justify-center w-full mt-2 pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300">
@@ -229,10 +247,10 @@ export default function DenemePageContent() {
     const updated = [newRecord, ...denemeler];
     updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     
-    const savePromise = persistData(updated, targetNet).then(() => {
-      setDenemeler(updated);
-      setTab("gecmis");
-    });
+    setDenemeler(updated);
+    updateTabAndViews();
+
+    persistData(updated, targetNet);
 
     toast.custom(() => (
       <div className="flex items-center justify-center w-full mt-2 pointer-events-auto animate-in fade-in slide-in-from-top-4 duration-300">

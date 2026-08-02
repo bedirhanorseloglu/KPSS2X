@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { getStudyDate } from "@/lib/dateUtils";
 import { tr } from "date-fns/locale";
-import { FileText, Brain, Compass, Calendar, Tag, Check, ArrowRight, ArrowLeft, ChevronDown, Globe, Target, Clock, BarChart3, CheckCircle2, XCircle, MinusCircle, BookOpen, Landmark, Trophy } from "lucide-react";
+import { FileText, Brain, Compass, Calendar, Tag, Check, ArrowRight, ArrowLeft, ChevronDown, Globe, Target, Clock, BarChart3, CheckCircle2, XCircle, MinusCircle, BookOpen, Landmark, Trophy, Loader2 } from "lucide-react";
 import SubjectScoreRow from "./SubjectScoreRow";
 import DenemeScoreRing from "./DenemeScoreRing";
 import {
@@ -58,6 +58,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const [durationMinutes, setDurationMinutes] = useState<number | "">(initial?.durationMinutes ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
   const [scores, setScores] = useState<SubjectScoreInput[]>(initial?.scores ?? createEmptyScores());
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const result = useMemo(() => evaluateDeneme(scores, examType), [scores, examType]);
 
@@ -87,28 +88,33 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !result.isValid || (examType === "brans" && !bransSubjectId)) return;
+    if (!name.trim() || !result.isValid || (examType === "brans" && !bransSubjectId) || isSubmitting) return;
     
-    onSubmit({
-      name: name.trim(),
-      date,
-      publisher: publisher.trim() || undefined,
-      note: note.trim() || undefined,
-      durationMinutes: durationMinutes !== "" ? Number(durationMinutes) : undefined,
-      scores,
-      examType,
-      bransSubjectId: examType === "brans" ? bransSubjectId : undefined,
-    });
-    
-    if (!initial) {
-      setName("");
-      setPublisher("");
-      setDurationMinutes("");
-      setNote("");
-      setScores(createEmptyScores());
-      setStep(1);
+    setIsSubmitting(true);
+    try {
+      await onSubmit({
+        name: name.trim(),
+        date,
+        publisher: publisher.trim() || undefined,
+        note: note.trim() || undefined,
+        durationMinutes: durationMinutes !== "" ? Number(durationMinutes) : undefined,
+        scores,
+        examType,
+        bransSubjectId: examType === "brans" ? bransSubjectId : undefined,
+      });
+      
+      if (!initial) {
+        setName("");
+        setPublisher("");
+        setDurationMinutes("");
+        setNote("");
+        setScores(createEmptyScores());
+        setStep(1);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -488,12 +494,25 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
             ) : (
               <motion.button
                 type="submit"
-                disabled={!name.trim() || !publisher.trim() || !result.isValid}
-                whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-[15px] font-black text-white bg-[#58cc02] hover:bg-[#58cc02]/90 active:bg-[#58cc02] border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:border-b-0 disabled:translate-y-1 shadow-md shadow-[#58cc02]/20"
+                disabled={!name.trim() || !publisher.trim() || !result.isValid || isSubmitting}
+                whileTap={{ scale: 0.95 }}
+                className={`flex items-center gap-2.5 px-8 py-3.5 rounded-2xl text-[15px] font-black text-white transition-all cursor-pointer shadow-lg ${
+                  isSubmitting
+                    ? "bg-[#46a302] border-2 border-b-2 border-[#378202] translate-y-0.5 opacity-90 cursor-wait shadow-none"
+                    : "bg-[#58cc02] hover:bg-[#4eb802] active:bg-[#46a302] border-2 border-b-4 border-[#46a302] active:border-b-2 active:translate-y-0.5 shadow-[#58cc02]/30 hover:scale-[1.02]"
+                } disabled:opacity-50 disabled:cursor-not-allowed disabled:border-b-2 disabled:translate-y-0.5 disabled:hover:scale-100`}
               >
-                <Check className="w-4 h-4" />
-                {initial ? "Değişiklikleri Kaydet" : "Denemeyi Kaydet"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Kaydediliyor...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-5 h-5" strokeWidth={3} />
+                    <span>{initial ? "Değişiklikleri Kaydet" : "Denemeyi Kaydet"}</span>
+                  </>
+                )}
               </motion.button>
             )}
           </div>
