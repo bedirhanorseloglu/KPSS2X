@@ -300,8 +300,6 @@ export default function DenemePageContent() {
     ), { position: 'top-center', duration: 3000 });
   };
 
-  const [activeSubjectTab, setActiveSubjectTab] = useState<string>("turkce");
-
   if (!loaded) {
     return <DenemeLoading />;
   }
