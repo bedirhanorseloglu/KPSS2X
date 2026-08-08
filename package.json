@@ -25,6 +25,7 @@
     "@types/three": "^0.185.1",
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",
+    "clsx": "^2.1.1",
     "d3-geo": "^3.1.1",
     "date-fns": "^4.1.0",
     "emoji-picker-react": "^4.19.1",
@@ -46,6 +47,7 @@
     "react-type-animation": "^3.2.0",
     "recharts": "^3.8.1",
     "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0",
     "three": "^0.185.1"
   },
   "devDependencies": {

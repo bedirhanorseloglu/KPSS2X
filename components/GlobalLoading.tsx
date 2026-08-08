@@ -28,7 +28,7 @@ export default function GlobalLoading({
           <motion.div
             animate={{ x: ["-100%", "100%"] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-full h-full bg-gradient-to-r from-[#1cb0f6] via-[#58cc02] to-[#af52de]"
+            className="w-full h-full bg-gradient-to-r from-[#1cb0f6] via-[#58cc02] to-[#F43F5E]"
           />
         </div>
       )}
@@ -46,20 +46,12 @@ export default function GlobalLoading({
 
       {/* Title & Description */}
       <div className="space-y-2 max-w-sm">
-        <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight flex items-center justify-center gap-2">
-          <AppleEmoji emoji="⚡" size={22} />
+        <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight justify-center text-center">
           <span>{title}</span>
         </h3>
         <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-relaxed">
           {description}
         </p>
-      </div>
-
-      {/* Subtle Bottom Pulsing Dots */}
-      <div className="flex items-center gap-1.5 mt-6">
-        <span className="w-2 h-2 rounded-full bg-[#1cb0f6] animate-ping" />
-        <span className="w-2 h-2 rounded-full bg-[#58cc02] animate-ping" style={{ animationDelay: "0.2s" }} />
-        <span className="w-2 h-2 rounded-full bg-[#af52de] animate-ping" style={{ animationDelay: "0.4s" }} />
       </div>
     </div>
   );

@@ -376,7 +376,7 @@ export default function DenemeAnalytics({
           <Section
             title="Genel Bakış"
             desc="Sınav skorlarınızın özet tablosu. Çalışmalarınızın genel seyrini buradan takip edebilirsiniz."
-            icon={<AppleEmoji emoji="📊" size={32} />}
+            icon={<AppleEmoji emoji="📊" size={32} color="#1cb0f6" />}
           >
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <SummaryCard label="Net Ortalaması" value={formatNet(stats.avg)} sub="120 soru üzerinden" accent emoji="🔥" />
@@ -403,7 +403,7 @@ export default function DenemeAnalytics({
           <Section
             title="Net Gelişim Eğrisi"
             desc="Sınavdan sınava olan net değişimlerinizi ve trendinizi gösterir."
-            icon={<AppleEmoji emoji="📈" size={32} />}
+            icon={<AppleEmoji emoji="📈" size={32} color="#1cb0f6" />}
           >
             <div className="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 text-xs font-black w-fit mb-8 shadow-xs">
               {([
@@ -422,7 +422,7 @@ export default function DenemeAnalytics({
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
-                  <span className="relative z-10 text-sm"><AppleEmoji emoji={m.icon} size={16} /></span>
+                  <span className="relative z-10 text-sm"><AppleEmoji emoji={m.icon} size={16} color="#1cb0f6" /></span>
                   <span className="relative z-10">{m.label}</span>
                 </button>
               ))}
@@ -431,11 +431,19 @@ export default function DenemeAnalytics({
             <GenelRechartsTrend stats={stats} activeMetric={activeMetric} targetNet={targetNet} />
 
             {stats.improvement !== 0 && stats.count > 1 && (
-              <div className="mt-4 flex justify-center">
-                <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black shadow-xs border-2 border-b-2 ${stats.improvement > 0 ? "bg-[#e5f9e7] text-[#58cc02] border-[#58cc02]" : "bg-[#ffebeb] text-[#ff4b4b] border-[#ff4b4b]"}`}>
-                  <AppleEmoji emoji={stats.improvement > 0 ? "🚀" : "📉"} size={18} />
-                  İlk denemeden bu yana {stats.improvement > 0 ? "+" : ""}{formatNet(stats.improvement)} net {stats.improvement > 0 ? "ilerleme!" : "gerileme."}
-                </span>
+              <div className="mt-6 flex justify-center">
+                <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-2.5 flex items-center gap-3 shadow-2xs">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 border-b-2 shrink-0 ${
+                    stats.improvement > 0
+                      ? "bg-[#58cc02] border-[#46a302] text-white"
+                      : "bg-[#ff4b4b] border-[#ea2b2b] text-white"
+                  }`}>
+                    <AppleEmoji emoji={stats.improvement > 0 ? "🚀" : "📉"} size={16} color="#ffffff" />
+                  </div>
+                  <span className="text-xs font-black text-slate-800 dark:text-white leading-none">
+                    İlk denemeden bu yana <span className={`font-mono font-black ${stats.improvement > 0 ? "text-[#58cc02]" : "text-[#ff4b4b]"}`}>{stats.improvement > 0 ? "+" : ""}{formatNet(stats.improvement)} net</span> {stats.improvement > 0 ? "ilerleme!" : "gerileme."}
+                  </span>
+                </div>
               </div>
             )}
           </Section>
@@ -450,7 +458,7 @@ export default function DenemeAnalytics({
           />
 
           {/* ━━━ 4 · Ders Bazlı Kırılım (Cards) ━━━ */}
-          <Section title="Ders Karnen" desc="Derslerin detaylı analizleri. En yüksek ve en düşük başarı oranlarını incele." icon={<BookOpen className="w-8 h-8 text-purple-500" />}>
+          <Section title="Ders Karnen" desc="Derslerin detaylı analizleri. En yüksek ve en düşük başarı oranlarını incele." icon={<AppleEmoji emoji="📚" size={32} color="#1cb0f6" />}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {stats.subjects.map((s, i) => {
                 const pct = s.questionCount > 0 ? (s.avgNet / s.questionCount) * 100 : 0;
@@ -462,7 +470,7 @@ export default function DenemeAnalytics({
                     <div className="flex justify-between items-start mb-5 pt-1">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-2xl flex items-center justify-center border-2 border-b-4 shadow-xs" style={{ backgroundColor: `${s.color}15`, borderColor: s.color }}>
-                          <AppleEmoji emoji={s.icon} size={22} />
+                          <AppleEmoji emoji={s.icon} size={22} color={s.color} />
                         </div>
                         <div>
                           <p className="text-[15px] font-black text-slate-800 dark:text-white leading-tight">{s.title}</p>
@@ -507,7 +515,7 @@ export default function DenemeAnalytics({
             <Section 
               title="Yayınevi Bazlı Performans Analizi" 
               desc="Çözdüğünüz yayınlara göre net ortalamalarınız ve başarı karşılaştırmanız." 
-              icon={<AppleEmoji emoji="🏷️" size={32} />}
+              icon={<AppleEmoji emoji="🏷️" size={32} color="#1cb0f6" />}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {publisherStats.map((pub, idx) => {
@@ -591,7 +599,7 @@ export default function DenemeAnalytics({
           )}
 
           {/* ━━━ 5 · Tavsiyeler ━━━ */}
-          <Section title="Akıllı Tavsiyeler" desc="Sonuçlarına göre oluşturulan kişisel koçluk notların." icon={<AppleEmoji emoji="💡" size={32} />}>
+          <Section title="Akıllı Tavsiyeler" desc="Sonuçlarına göre oluşturulan kişisel koçluk notların." icon={<AppleEmoji emoji="💡" size={32} color="#1cb0f6" />}>
             <div className="grid md:grid-cols-2 gap-5">
               {stats.mostWrong && (
                 <Tip 
@@ -641,7 +649,7 @@ export default function DenemeAnalytics({
                 accentColor="#58cc02"
                 badgeColor={{ bg: "#e5f9e7", border: "#58cc02", borderBottom: "#46a302" }}
               >
-                Tüm yanlış ve boş sorularını doğruya çevirirsen <span className="inline-block px-2.5 py-0.5 rounded-lg bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-2 border-[#58cc02] font-black font-mono text-[#58cc02]">+{formatNet(120 - stats.avg)} net</span> kazanabilirsin. Hatalarından öğrenmek en büyük sıçramayı yaptırır!
+                Tüm yanlış ve boş sorularını doğruya çevirirsen <span className="inline-block px-2.5 py-0.5 rounded-lg bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-2 border-[#58cc02] font-black font-mono text-[#2b6801] dark:text-[#58cc02]">+{formatNet(120 - stats.avg)} net</span> kazanabilirsin. Hatalarından öğrenmek en büyük sıçramayı yaptırır!
               </Tip>
             </div>
           </Section>
@@ -931,7 +939,7 @@ function SummaryCard({ label, value, sub, accent, highlight, emoji }: { label: s
           <AppleEmoji 
             emoji={emoji} 
             size={24} 
-            color={accent || highlight ? "#ffffff" : undefined}
+            color={accent || highlight ? "#ffffff" : "#1cb0f6"}
             className="relative z-10 shrink-0 drop-shadow-sm hover:scale-110 transition-transform" 
           />
         )}
