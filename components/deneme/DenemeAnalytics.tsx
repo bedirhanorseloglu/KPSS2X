@@ -49,6 +49,7 @@ import DenemeScoreRing from "./DenemeScoreRing";
 import { BarChart3, TrendingUp, Target, BookOpen, CheckCircle2, XCircle, MinusCircle, Lightbulb, AlertTriangle, Clock, Scale, Sparkles, BookText, Calculator, Landmark, Globe2, Newspaper } from "lucide-react";
 import AppleEmoji from "../AppleEmoji";
 import * as Slider from "@radix-ui/react-slider";
+import RankSimulator from "./RankSimulator";
 
 type Props = { 
   denemeler: DenemeRecord[]; 
@@ -439,115 +440,14 @@ export default function DenemeAnalytics({
             )}
           </Section>
 
-          {/* ━━━ 3 · Hedef Belirleme (Gamified Path) ━━━ */}
-          {!isReadOnly && (
-            <Section title="Hedefine Doğru İlerle" desc="Koyduğun hedefe ulaşmak için önündeki yolu takip et." icon={<AppleEmoji emoji="🎯" size={32} />}>
-              <div className="w-full bg-white dark:bg-[#1e293b] rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.02)] border-2 border-slate-100 dark:border-white/5 relative overflow-hidden">
-                {/* Background Decoration */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none" />
-
-                <div className="flex flex-col gap-10 sm:gap-14 relative z-10">
-                  
-                  {/* Top: Stats Header */}
-                  <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
-                    <div className="text-center flex-1">
-                      <p className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">Mevcut Ortalaman</p>
-                      <div className="flex items-baseline justify-center gap-2">
-                        <p className="text-5xl sm:text-6xl font-black font-mono text-slate-800 dark:text-white leading-none">
-                          {formatNet(stats.avg)}
-                        </p>
-                        <span className="text-xl font-black text-slate-400">net</span>
-                      </div>
-                    </div>
-
-                    <div className="hidden sm:flex flex-col justify-center flex-1 px-4 mt-4">
-                      <div className="h-2 w-full bg-slate-100 dark:bg-slate-700/50 rounded-full relative overflow-hidden">
-                        <motion.div 
-                          className="absolute top-0 left-0 bottom-0 bg-[#58cc02]" 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, (stats.avg / targetNet) * 100)}%` }}
-                          transition={{ type: "spring", stiffness: 50, damping: 20 }}
-                        />
-                      </div>
-                      <p className="text-center text-xs font-black text-slate-400 mt-3">
-                        Hedefin %{Math.round(Math.min(100, (stats.avg / targetNet) * 100))}'ine ulaştın!
-                      </p>
-                    </div>
-
-                    <div className="text-center flex-1">
-                      <p className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1 flex justify-center items-center gap-1.5">
-                        Yeni Hedefin
-                      </p>
-                      <div className="flex items-baseline justify-center gap-2 text-[#1cb0f6]">
-                        <p className="text-5xl sm:text-6xl font-black font-mono leading-none">
-                          {targetNet}
-                        </p>
-                        <span className="text-xl font-black opacity-80">net</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Middle: Interactive Path Slider */}
-                  <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] p-6 sm:p-10 border-2 border-slate-100 dark:border-white/5">
-                    <div className="flex justify-between items-center mb-8">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 flex items-center justify-center">
-                          <AppleEmoji emoji="🎯" size={24} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-black text-slate-800 dark:text-white">Hedefini Güncelle</p>
-                          <p className="text-xs font-semibold text-slate-500">Hedefini artır, daha iyisini başar!</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tahmini P3 Puanı</p>
-                        <p className="text-2xl font-black font-mono text-[#ff9600] leading-none">{estimateP3Score(targetNet).toFixed(2)}</p>
-                      </div>
-                    </div>
-
-                    <Slider.Root
-                      className="relative flex items-center select-none touch-none w-full h-8"
-                      value={[targetNet]}
-                      min={60}
-                      max={115}
-                      step={1}
-                      onValueChange={(val) => onTargetNetChange(val[0])}
-                    >
-                      <Slider.Track className="bg-slate-200 dark:bg-slate-700 relative grow rounded-full h-4 sm:h-5 shadow-inner overflow-hidden">
-                        <Slider.Range className="absolute bg-[#1cb0f6] rounded-full h-full" />
-                      </Slider.Track>
-                      <Slider.Thumb
-                        className="block w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full border-[3px] border-[#1cb0f6] shadow-[0_4px_10px_rgba(28,176,246,0.3)] hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-[#1cb0f6]/20 transition-colors cursor-grab active:cursor-grabbing flex items-center justify-center"
-                        aria-label="Hedef Net"
-                      >
-                        <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#1cb0f6]" />
-                      </Slider.Thumb>
-                    </Slider.Root>
-                    <div className="flex justify-between w-full mt-3 text-sm font-black text-slate-400 px-2">
-                      <span>60 Net</span>
-                      <span>115 Net</span>
-                    </div>
-                  </div>
-
-                  {/* Bottom: Motivation Badge */}
-                  <div className="flex justify-center">
-                    {remaining > 0 ? (
-                      <div className="inline-flex items-center gap-3 px-6 py-4 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-2xl font-black border-2 border-amber-200 dark:border-amber-500/20">
-                        <AppleEmoji emoji="🔥" size={24} className="animate-bounce" />
-                        <span className="text-sm sm:text-base">Hedefe ulaşmana sadece <span className="font-black text-amber-500 text-lg sm:text-xl px-1">{formatNet(remaining)} net</span> kaldı! Devam et!</span>
-                      </div>
-                    ) : (
-                      <div className="inline-flex items-center gap-3 px-6 py-4 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl font-black border-2 border-emerald-200 dark:border-emerald-500/20">
-                        <AppleEmoji emoji="🎉" size={28} className="animate-bounce" /> 
-                        <span className="text-sm sm:text-base">Mükemmel! Mevcut hedefini aştın. Yeni bir hedef belirleme zamanı!</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                </div>
-              </div>
-            </Section>
-          )}
+          {/* ━━━ 3 · Hedef Belirleme & ÖSYM Tahmini Sıralama Simülatörü ━━━ */}
+          <RankSimulator 
+            currentAvgNet={stats.avg} 
+            bestNet={stats.best} 
+            targetNet={targetNet}
+            onTargetNetChange={onTargetNetChange}
+            isReadOnly={isReadOnly}
+          />
 
           {/* ━━━ 4 · Ders Bazlı Kırılım (Cards) ━━━ */}
           <Section title="Ders Karnen" desc="Derslerin detaylı analizleri. En yüksek ve en düşük başarı oranlarını incele." icon={<BookOpen className="w-8 h-8 text-purple-500" />}>
@@ -697,35 +597,51 @@ export default function DenemeAnalytics({
                 <Tip 
                   emoji="⚠️" 
                   title="Dikkat: Çok Hata Yapıyorsun" 
+                  accentColor="#ff4b4b"
                   badgeColor={{ bg: "#ffebeb", border: "#ff4b4b", borderBottom: "#ea2b2b" }}
                 >
-                  <strong className="font-black text-slate-800 dark:text-slate-100">{stats.mostWrong.title}</strong> dersinde soruların %{Math.round(stats.mostWrong.wr * 100)}'unu yanlış yapıyorsun. Yanlış yaptığın konuları tekrar etmeden yeni denemeye geçme!
+                  <span className="font-black px-2 py-0.5 rounded-lg text-white text-xs inline-block mr-1" style={{ backgroundColor: stats.mostWrong.color }}>
+                    {stats.mostWrong.title}
+                  </span>
+                  dersinde soruların <strong className="font-black font-mono text-[#ff4b4b]">%{Math.round(stats.mostWrong.wr * 100)}</strong>'ini yanlış yapıyorsun. Yanlış yaptığın konuları tekrar etmeden yeni denemeye geçme!
                 </Tip>
               )}
               {stats.mostEmpty && (
                 <Tip 
                   emoji="⏱️" 
                   title="Süre veya Bilgi Eksikliği" 
+                  accentColor="#f59e0b"
                   badgeColor={{ bg: "#fffbeb", border: "#f59e0b", borderBottom: "#d97706" }}
                 >
-                  <strong className="font-black text-slate-800 dark:text-slate-100">{stats.mostEmpty.title}</strong> dersinde soruların %{Math.round(stats.mostEmpty.er * 100)}'unu boş bırakıyorsun. Turlama tekniğini daha iyi kullanarak süreni yönetebilirsin.
+                  <span className="font-black px-2 py-0.5 rounded-lg text-white text-xs inline-block mr-1" style={{ backgroundColor: stats.mostEmpty.color }}>
+                    {stats.mostEmpty.title}
+                  </span>
+                  dersinde soruların <strong className="font-black font-mono text-amber-600 dark:text-amber-400">%{Math.round(stats.mostEmpty.er * 100)}</strong>'ini boş bırakıyorsun. Turlama tekniğini daha iyi kullanarak süreni yönetebilirsin.
                 </Tip>
               )}
               <Tip 
                 emoji="⚖️" 
                 title="GY / GK Dengen" 
+                accentColor="#1cb0f6"
                 badgeColor={{ bg: "#ddf4ff", border: "#1cb0f6", borderBottom: "#1899d6" }}
               >
-                {stats.gyAvg < stats.gkAvg
-                  ? "Genel Yetenek puanın daha düşük. Paragraf ve matematik çözme hızını artırmaya odaklan."
-                  : "Genel Kültür puanın daha düşük. Tarih, Coğrafya ve Vatandaşlık okumalarını sıklaştır."}
+                {stats.gyAvg < stats.gkAvg ? (
+                  <>
+                    Genel Yetenek puanın daha düşük. <span className="font-black text-[#F43F5E]">Türkçe</span> paragraf ve <span className="font-black text-[#af52de]">Matematik</span> çözme hızını artırmaya odaklan.
+                  </>
+                ) : (
+                  <>
+                    Genel Kültür puanın daha düşük. <span className="font-black text-[#ff9500]">Tarih</span>, <span className="font-black text-[#10B981]">Coğrafya</span> ve <span className="font-black text-[#5856d6]">Vatandaşlık</span> okumalarını sıklaştır.
+                  </>
+                )}
               </Tip>
               <Tip 
                 emoji="✨" 
                 title="Gizli Potansiyelin" 
+                accentColor="#58cc02"
                 badgeColor={{ bg: "#e5f9e7", border: "#58cc02", borderBottom: "#46a302" }}
               >
-                Tüm yanlış ve boş sorularını doğruya çevirirsen <span className="inline-block px-2 py-0.5 rounded-lg bg-[#e5f9e7] dark:bg-[#58cc02]/20 border border-[#58cc02]/40 font-black font-mono text-[#58cc02]">+{formatNet(120 - stats.avg)} net</span> kazanabilirsin. Hatalarından öğrenmek en büyük sıçramayı yaptırır!
+                Tüm yanlış ve boş sorularını doğruya çevirirsen <span className="inline-block px-2.5 py-0.5 rounded-lg bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-2 border-[#58cc02] font-black font-mono text-[#58cc02]">+{formatNet(120 - stats.avg)} net</span> kazanabilirsin. Hatalarından öğrenmek en büyük sıçramayı yaptırır!
               </Tip>
             </div>
           </Section>
@@ -1052,28 +968,34 @@ function BalanceBar({ label, value, max, color, textColor }: { label: string; va
   );
 }
 
-function Tip({ emoji = "💡", title, badgeColor, colorClass, children }: { emoji?: string; title: string; badgeColor?: { bg: string; border: string; borderBottom: string }; colorClass?: string; children: React.ReactNode; }) {
+function Tip({ emoji = "💡", title, badgeColor, accentColor, children }: { emoji?: string; title: string; badgeColor?: { bg: string; border: string; borderBottom: string }; accentColor?: string; children: React.ReactNode; }) {
   const bg = badgeColor?.bg || "#ddf4ff";
   const border = badgeColor?.border || "#1cb0f6";
   const borderBottom = badgeColor?.borderBottom || "#1899d6";
+  const barColor = accentColor || border;
 
   return (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] transition-all flex items-start gap-5">
+    <motion.div
+      whileHover={{ y: -3 }}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+      className="bg-white dark:bg-slate-800 p-6 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] transition-all flex items-start gap-4 sm:gap-5 relative overflow-hidden group"
+    >
+      <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: barColor }} />
       <div 
-        className="w-13 h-13 rounded-2xl flex items-center justify-center border-2 border-b-4 shrink-0 shadow-xs"
+        className="w-13 h-13 rounded-2xl flex items-center justify-center border-2 border-b-4 shrink-0 shadow-2xs mt-0.5"
         style={{
           backgroundColor: bg,
           borderColor: border,
           borderBottomColor: borderBottom,
         }}
       >
-        <AppleEmoji emoji={emoji} size={26} />
+        <AppleEmoji emoji={emoji} size={26} color={border} />
       </div>
-      <div>
-        <h4 className="text-base font-black text-slate-800 dark:text-white mb-1.5">{title}</h4>
-        <p className="text-xs font-semibold leading-relaxed text-slate-500 dark:text-slate-400">{children}</p>
+      <div className="flex-1 min-w-0">
+        <h4 className="text-base font-black text-slate-800 dark:text-white mb-1.5 leading-snug">{title}</h4>
+        <div className="text-xs font-semibold leading-relaxed text-slate-500 dark:text-slate-400">{children}</div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

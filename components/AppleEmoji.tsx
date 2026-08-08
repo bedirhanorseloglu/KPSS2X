@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 // Duolingo 3D Vector Icon Mapping for Clean Seamless Rendering
-const EMOJI_VECTOR_MAP: Record<string, { icon: React.ElementType; defaultColor: string }> = {
+const EMOJI_VECTOR_MAP: Record<string, { icon: React.ComponentType<{ style?: React.CSSProperties; className?: string }>; defaultColor: string }> = {
   "⚙️": { icon: Settings2, defaultColor: "#1cb0f6" },
   "⚙": { icon: Settings2, defaultColor: "#1cb0f6" },
   "⚔️": { icon: Swords, defaultColor: "#ff4b4b" },
