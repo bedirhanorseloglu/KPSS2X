@@ -380,14 +380,14 @@ export default function DenemeAnalytics({
           >
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <SummaryCard label="Net Ortalaması" value={formatNet(stats.avg)} sub="120 soru üzerinden" accent emoji="🔥" />
-              <SummaryCard label="En Yüksek Net" value={formatNet(stats.best)} sub={`Tahmini P3: ${estimateP3Score(stats.best).toFixed(2)}`} emoji="👑" />
+              <SummaryCard label="En Yüksek Net" value={formatNet(stats.best)} sub={`Tahmini P3: ${stats.p3.toFixed(2)}`} emoji="👑" />
               <SummaryCard 
                 label="Ortalama Süre" 
                 value={stats.avgDuration ? formatDuration(Math.round(stats.avgDuration)) : "-"} 
                 sub={stats.avgSecondsPerQuestion ? `Soru başı ~${Math.round(stats.avgSecondsPerQuestion)} sn` : "Süre kaydı bulunmuyor"} 
                 emoji="⏱️" 
               />
-              <SummaryCard label="Tahmini P3 Puanı" value={stats.p3.toFixed(2)} sub="Net ortalamanıza göre" highlight emoji="🎓" />
+              <SummaryCard label="Tahmini P3 Puanı" value={stats.p3.toFixed(2)} sub="Ortalama netinize göre" highlight emoji="🎓" />
             </div>
 
             <div className="mt-8 p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs">
