@@ -132,13 +132,19 @@ export default function DenemeAnalytics({
     const best = Math.max(...nets);
 
     const subjects = DENEME_SUBJECTS.map((sub) => {
-      let tc = 0, tw = 0, te = 0, cnt = 0;
-      active.forEach((d) => {
-        const s = d.scores.find((x) => x.subjectId === sub.id);
-        if (s) { tc += s.correct; tw += s.wrong; te += s.empty; cnt++; }
+      let tc = 0, tw = 0, te = 0, tNet = 0, cnt = 0;
+      evals.forEach((e) => {
+        const s = e.r.subjects.find((x) => x.subjectId === sub.id);
+        if (s) {
+          tc += s.correct;
+          tw += s.wrong;
+          te += s.empty;
+          tNet += s.net;
+          cnt++;
+        }
       });
       const ac = cnt ? tc / cnt : 0, aw = cnt ? tw / cnt : 0, ae = cnt ? te / cnt : 0;
-      const net = cnt ? (tc - tw / 4) / cnt : 0;
+      const net = cnt ? Math.round((tNet / cnt) * 100) / 100 : 0;
       const accuracy = sub.questionCount > 0 ? Math.max(0, (net / sub.questionCount) * 100) : 0;
       return { ...sub, avgCorrect: ac, avgWrong: aw, avgEmpty: ae, avgNet: net, accuracy };
     });
@@ -211,12 +217,12 @@ export default function DenemeAnalytics({
       const correct = s?.correct ?? 0;
       const wrong = s?.wrong ?? 0;
       const empty = s?.empty ?? 0;
-      const net = correct - wrong / 4;
+      const net = Math.round((correct - wrong / 4) * 100) / 100;
       return { correct, wrong, empty, net, name: d.name, date: d.date };
     });
 
     const nets = evals.map(e => e.net);
-    const avg = nets.reduce((a, b) => a + b, 0) / nets.length;
+    const avg = Math.round((nets.reduce((a, b) => a + b, 0) / nets.length) * 100) / 100;
     const best = Math.max(...nets);
     const latest = nets[0];
 
