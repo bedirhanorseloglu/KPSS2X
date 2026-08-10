@@ -562,13 +562,13 @@ function ViewTypeSwitcher({
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
             />
           )}
-          <AppleEmoji emoji="🌍" className="relative z-10 mr-1" />
+          <AppleEmoji emoji="🌍" className="relative z-10 mr-1" color="#1cb0f6" />
           <span className="relative z-10">Genel Deneme</span>
         </button>
         <button
           onClick={() => onChange("brans")}
           className={`flex-1 sm:flex-none relative px-6 py-2.5 text-sm font-bold transition-all rounded-xl z-10 flex items-center justify-center gap-2 ${
-            viewType === "brans" ? "text-violet-700 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400"
+            viewType === "brans" ? "text-[#af52de] dark:text-[#af52de]" : "text-slate-500 hover:text-slate-700 dark:text-slate-400"
           }`}
         >
           {viewType === "brans" && (
@@ -578,7 +578,7 @@ function ViewTypeSwitcher({
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
             />
           )}
-          <AppleEmoji emoji="🎯" className="relative z-10 mr-1" />
+          <AppleEmoji emoji="🎯" className="relative z-10 mr-1" color="#af52de" />
           <span className="relative z-10">Branş Denemesi</span>
         </button>
       </div>

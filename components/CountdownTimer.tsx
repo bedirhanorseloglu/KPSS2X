@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 
-const EXAM_DATE = new Date("2026-05-18T10:15:00").getTime()
+const EXAM_DATE = new Date("2026-09-06T10:15:00+03:00").getTime()
 
 export default function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
@@ -11,12 +11,12 @@ export default function CountdownTimer() {
 
   useEffect(() => {
     setIsClient(true)
-    const interval = setInterval(() => {
+    const updateTimer = () => {
       const now = new Date().getTime()
       const distance = EXAM_DATE - now
 
       if (distance < 0) {
-        clearInterval(interval)
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
         return
       }
 
@@ -26,8 +26,10 @@ export default function CountdownTimer() {
         minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
         seconds: Math.floor((distance % (1000 * 60)) / 1000),
       })
-    }, 1000)
+    }
 
+    updateTimer()
+    const interval = setInterval(updateTimer, 1000)
     return () => clearInterval(interval)
   }, [])
 

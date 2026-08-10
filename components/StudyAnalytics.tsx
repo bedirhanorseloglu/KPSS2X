@@ -147,9 +147,9 @@ export default function StudyAnalytics() {
           isExpanded ? 'border-[#1cb0f6] shadow-md' : ''
         }`}
       >
-        {/* 3D Badge Icon Box */}
-        <div className="w-14 h-14 rounded-2xl bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-white flex items-center justify-center shadow-xs shrink-0">
-          <AppleEmoji emoji="📊" size={28} className="text-white" />
+        {/* Soft 3D Tinted Badge Icon Box */}
+        <div className="w-13 h-13 rounded-2xl bg-sky-50 dark:bg-[#1cb0f6]/20 border-2 border-b-4 border-sky-200 dark:border-[#1cb0f6]/50 flex items-center justify-center shadow-xs shrink-0">
+          <AppleEmoji emoji="📊" size={26} color="#1cb0f6" />
         </div>
 
         <div className="flex flex-col z-10 w-full">

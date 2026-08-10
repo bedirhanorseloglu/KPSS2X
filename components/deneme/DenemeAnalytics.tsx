@@ -179,11 +179,15 @@ export default function DenemeAnalytics({
     const avgDuration = durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : null;
     const avgSecondsPerQuestion = avgDuration ? (avgDuration * 60) / 120 : null;
 
+    const bestEval = evals.reduce((max, curr) => curr.r.totalNet > max.r.totalNet ? curr : max, evals[0]);
+    const bestP3 = bestEval ? estimateP3Score(bestEval.r.gyNet, bestEval.r.gkNet) : estimateP3Score(best);
+
     return {
       count: active.length, avg, best, latest: nets[0],
       subjects, strongest: sorted[0], weakest: sorted[sorted.length - 1],
       trend, gyAvg, gkAvg,
       p3: estimateP3Score(gyAvg, gkAvg),
+      bestP3,
       mostWrong: worstWrong[0]?.wr > 0 ? worstWrong[0] : null,
       mostEmpty: worstEmpty[0]?.er > 0 ? worstEmpty[0] : null,
       improvement,
@@ -380,7 +384,7 @@ export default function DenemeAnalytics({
           >
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <SummaryCard label="Net Ortalaması" value={formatNet(stats.avg)} sub="120 soru üzerinden" accent emoji="🔥" />
-              <SummaryCard label="En Yüksek Net" value={formatNet(stats.best)} sub={`Tahmini P3: ${stats.p3.toFixed(2)}`} emoji="👑" />
+              <SummaryCard label="En Yüksek Net" value={formatNet(stats.best)} sub={`Tahmini P3: ${stats.bestP3.toFixed(2)}`} emoji="👑" />
               <SummaryCard 
                 label="Ortalama Süre" 
                 value={stats.avgDuration ? formatDuration(Math.round(stats.avgDuration)) : "-"} 
@@ -390,13 +394,7 @@ export default function DenemeAnalytics({
               <SummaryCard label="Tahmini P3 Puanı" value={stats.p3.toFixed(2)} sub="Ortalama netinize göre" highlight emoji="🎓" />
             </div>
 
-            <div className="mt-8 p-6 sm:p-8 bg-white dark:bg-slate-800 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs">
-              <h4 className="text-[13px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-6">Denge Grafiği</h4>
-              <div className="space-y-6">
-                <BalanceBar label="Genel Yetenek" value={stats.gyAvg} max={60} color="bg-[#1cb0f6]" textColor="text-[#1cb0f6]" />
-                <BalanceBar label="Genel Kültür" value={stats.gkAvg} max={60} color="bg-[#ce82ff]" textColor="text-[#ce82ff]" />
-              </div>
-            </div>
+            <DengeGrafigi stats={stats} />
           </Section>
 
           {/* ━━━ 2 · Gelişim Grafiği ━━━ */}
@@ -451,6 +449,8 @@ export default function DenemeAnalytics({
           {/* ━━━ 3 · Hedef Belirleme & ÖSYM Tahmini Sıralama Simülatörü ━━━ */}
           <RankSimulator 
             currentAvgNet={stats.avg} 
+            currentGyAvgNet={stats.gyAvg}
+            currentGkAvgNet={stats.gkAvg}
             bestNet={stats.best} 
             targetNet={targetNet}
             onTargetNetChange={onTargetNetChange}
@@ -953,25 +953,263 @@ function SummaryCard({ label, value, sub, accent, highlight, emoji }: { label: s
   );
 }
 
-function BalanceBar({ label, value, max, color, textColor }: { label: string; value: number; max: number; color: string; textColor: string; }) {
-  const percentage = Math.min(100, Math.max(0, (value / max) * 100));
+function DengeGrafigi({ stats }: { stats: any }) {
+  const gyVal = stats.gyAvg;
+  const gkVal = stats.gkAvg;
+  const totalNet = gyVal + gkVal;
+  
+  const gyPercent = Math.min(100, Math.max(0, (gyVal / 60) * 100));
+  const gkPercent = Math.min(100, Math.max(0, (gkVal / 60) * 100));
+  
+  const gyRatio = totalNet > 0 ? (gyVal / totalNet) * 100 : 50;
+  const gkRatio = totalNet > 0 ? (gkVal / totalNet) * 100 : 50;
+  const diff = gyVal - gkVal;
+
+  const isBalanced = Math.abs(diff) <= 2;
+  const isGyHigher = diff > 2;
+
+  const gySubjects = stats.subjects ? stats.subjects.filter((s: any) => s.category === "Genel Yetenek") : [];
+  const gkSubjects = stats.subjects ? stats.subjects.filter((s: any) => s.category === "Genel Kültür" || s.category === "Vatandaşlık") : [];
+
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-end">
-        <span className="font-black text-slate-700 dark:text-slate-200 text-[15px]">{label}</span>
-        <div className="flex items-baseline gap-1">
-          <span className={`font-black text-xl ${textColor}`}>{formatNet(value)}</span>
-          <span className="text-xs font-black text-slate-400">/ {max}</span>
+    <div className="mt-8 p-6 sm:p-8 bg-white dark:bg-slate-800/95 backdrop-blur-md rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-md relative overflow-hidden transition-all">
+      {/* Background ambient glow effects */}
+      <div className="absolute -top-16 -left-16 w-56 h-56 bg-[#1cb0f6]/10 dark:bg-[#1cb0f6]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -right-16 w-56 h-56 bg-[#58cc02]/10 dark:bg-[#58cc02]/15 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl bg-sky-100/80 dark:bg-sky-950/80 border-2 border-b-4 border-sky-200 dark:border-sky-800 flex items-center justify-center shrink-0 shadow-xs">
+            <AppleEmoji emoji="⚖️" size={24} color="#1cb0f6" />
+          </div>
+          <div>
+            <h4 className="text-base sm:text-lg font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+              DENGE GRAFİĞİ
+            </h4>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Genel Yetenek & Genel Kültür Başarı Oranı
+            </p>
+          </div>
+        </div>
+
+        {/* Dynamic Status Badge */}
+        <div className={`px-3.5 py-1.5 rounded-2xl border-2 border-b-4 text-xs font-black flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs ${
+          isBalanced 
+            ? "bg-[#d7ffb8]/90 dark:bg-[#58cc02]/20 text-[#58cc02] border-[#58cc02]/40 dark:border-[#58cc02]/50"
+            : isGyHigher
+            ? "bg-sky-50 dark:bg-sky-950/60 text-[#1cb0f6] border-sky-200 dark:border-sky-800"
+            : "bg-[#d7ffb8]/90 dark:bg-[#58cc02]/20 text-[#58cc02] border-[#58cc02]/40 dark:border-[#58cc02]/50"
+        }`}>
+          {isBalanced ? (
+            <>
+              <AppleEmoji emoji="⚖️" size={16} color="#58cc02" />
+              <span>Dengeli İlerleme (%{gyRatio.toFixed(0)} - %{gkRatio.toFixed(0)})</span>
+            </>
+          ) : isGyHigher ? (
+            <>
+              <AppleEmoji emoji="⚡" size={16} color="#1cb0f6" />
+              <span>GY Ağırlıklı (+{diff.toFixed(2)} Net)</span>
+            </>
+          ) : (
+            <>
+              <AppleEmoji emoji="📖" size={16} color="#58cc02" />
+              <span>GK Ağırlıklı (+{Math.abs(diff).toFixed(2)} Net)</span>
+            </>
+          )}
         </div>
       </div>
-      <div className="h-4.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[2px] shadow-inner overflow-hidden flex">
-        <motion.div 
-          className={`h-full ${color} rounded-full`} 
-          initial={{ width: 0 }}
-          animate={{ width: `${percentage}%` }}
-          transition={{ type: "spring", stiffness: 60, damping: 15 }}
+
+      {/* Dual Ratio Equilibrium Meter */}
+      <div className="mb-8 p-4 bg-slate-50/80 dark:bg-slate-900/70 rounded-2xl border-2 border-slate-200/80 dark:border-slate-700/70 relative z-10">
+        <div className="flex justify-between items-center text-xs font-black mb-2.5">
+          <div className="flex items-center gap-1.5 text-[#1cb0f6]">
+            <AppleEmoji emoji="🧠" size={14} color="#1cb0f6" />
+            <span>Genel Yetenek %{gyRatio.toFixed(1)}</span>
+          </div>
+          <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest hidden xs:inline">
+            50/50 Denge Noktası
+          </span>
+          <div className="flex items-center gap-1.5 text-[#58cc02]">
+            <span>Genel Kültür %{gkRatio.toFixed(1)}</span>
+            <AppleEmoji emoji="🏛️" size={14} color="#58cc02" />
+          </div>
+        </div>
+
+        {/* Bi-directional split progress bar */}
+        <div className="h-4 w-full bg-slate-200/80 dark:bg-slate-950/90 rounded-full border-2 border-slate-300/80 dark:border-slate-700 p-[2px] shadow-inner relative overflow-hidden flex">
+          {/* Midpoint notch indicator */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-400 dark:bg-slate-500 z-20 -translate-x-1/2 opacity-70" />
+
+          {/* GY Ratio Left Fill */}
+          <motion.div 
+            className="h-full bg-gradient-to-r from-[#1cb0f6] to-[#0284c7] rounded-l-full relative"
+            initial={{ width: 0 }}
+            animate={{ width: `${gyRatio}%` }}
+            transition={{ type: "spring", stiffness: 60, damping: 15 }}
+          >
+            <div className="absolute inset-0 bg-white/20 rounded-l-full h-1/2" />
+          </motion.div>
+
+          {/* GK Ratio Right Fill */}
+          <motion.div 
+            className="h-full bg-gradient-to-r from-[#46a302] via-[#58cc02] to-[#65e005] rounded-r-full relative ms-auto"
+            initial={{ width: 0 }}
+            animate={{ width: `${gkRatio}%` }}
+            transition={{ type: "spring", stiffness: 60, damping: 15 }}
+          >
+            <div className="absolute inset-0 bg-white/20 rounded-r-full h-1/2" />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Main Category Cards Grid */}
+      <div className="grid md:grid-cols-2 gap-6 relative z-10">
+        <CategoryBalanceCard 
+          label="Genel Yetenek"
+          emoji="🧠"
+          value={gyVal}
+          max={60}
+          percentage={gyPercent}
+          color="from-[#1cb0f6] via-[#38bdf8] to-[#0284c7]"
+          accentColor="#1cb0f6"
+          badgeBg="bg-sky-50 dark:bg-sky-950/60 text-[#1cb0f6] border-sky-200 dark:border-sky-800"
+          subSubjects={gySubjects}
+        />
+        
+        <CategoryBalanceCard 
+          label="Genel Kültür"
+          emoji="🏛️"
+          value={gkVal}
+          max={60}
+          percentage={gkPercent}
+          color="from-[#46a302] via-[#58cc02] to-[#65e005]"
+          accentColor="#58cc02"
+          badgeBg="bg-[#d7ffb8]/90 dark:bg-[#58cc02]/20 text-[#58cc02] border-[#58cc02]/40 dark:border-[#58cc02]/50"
+          subSubjects={gkSubjects}
         />
       </div>
+    </div>
+  );
+}
+
+function CategoryBalanceCard({
+  label,
+  emoji,
+  value,
+  max,
+  percentage,
+  color,
+  accentColor,
+  badgeBg,
+  subSubjects
+}: {
+  label: string;
+  emoji: string;
+  value: number;
+  max: number;
+  percentage: number;
+  color: string;
+  accentColor: string;
+  badgeBg: string;
+  subSubjects: any[];
+}) {
+  return (
+    <div className="bg-slate-50/70 dark:bg-slate-900/60 p-5 sm:p-6 rounded-3xl border-2 border-b-4 border-slate-200/90 dark:border-slate-700/80 shadow-xs flex flex-col justify-between transition-all hover:border-slate-300 dark:hover:border-slate-600">
+      <div>
+        {/* Header */}
+        <div className="flex justify-between items-start mb-3 gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-xs">
+              <AppleEmoji emoji={emoji} size={20} color={accentColor} />
+            </div>
+            <div>
+              <span className="font-black text-slate-800 dark:text-slate-100 text-base leading-tight block">
+                {label}
+              </span>
+              <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">
+                {max} Soru Üzerinden
+              </span>
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="flex items-baseline justify-end gap-1">
+              <span className="font-black text-2xl font-mono text-slate-800 dark:text-white leading-none">
+                {formatNet(value)}
+              </span>
+              <span className="text-xs font-black text-slate-400">/ {max}</span>
+            </div>
+            <span className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-black rounded-lg border border-b-2 ${badgeBg}`}>
+              %{percentage.toFixed(1)} İsabet
+            </span>
+          </div>
+        </div>
+
+        {/* 3D Recessed Progress Track */}
+        <div className="h-5 w-full bg-slate-200/80 dark:bg-slate-950/90 rounded-full border-2 border-slate-300/70 dark:border-slate-700 p-[2px] shadow-inner relative overflow-hidden flex items-center my-3">
+          {/* Inner Grid Ticks */}
+          <div className="absolute left-[25%] top-0 bottom-0 w-[1px] bg-slate-300/50 dark:bg-slate-700/50 z-10 pointer-events-none" />
+          <div className="absolute left-[50%] top-0 bottom-0 w-[1px] bg-slate-300/50 dark:bg-slate-700/50 z-10 pointer-events-none" />
+          <div className="absolute left-[75%] top-0 bottom-0 w-[1px] bg-slate-300/50 dark:bg-slate-700/50 z-10 pointer-events-none" />
+
+          {/* Animated Fill Bar */}
+          <motion.div 
+            className={`h-full bg-gradient-to-r ${color} rounded-full relative flex items-center justify-end pr-1`} 
+            initial={{ width: 0 }}
+            animate={{ width: `${percentage}%` }}
+            transition={{ type: "spring", stiffness: 60, damping: 15 }}
+          >
+            {/* Top Gloss Reflection */}
+            <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/25 rounded-t-full pointer-events-none" />
+            {percentage > 5 && (
+              <div className="w-2.5 h-2.5 rounded-full bg-white shadow-md animate-pulse shrink-0 relative z-10" />
+            )}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Sub-subjects Breakdown */}
+      {subSubjects && subSubjects.length > 0 && (
+        <div className="mt-4 pt-3 border-t-2 border-slate-200/60 dark:border-slate-800/80">
+          <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 flex justify-between items-center">
+            <span>Ders Net Dağılımı</span>
+            <span>Net / Soru</span>
+          </div>
+
+          <div className="space-y-2">
+            {subSubjects.map((sub: any) => {
+              const subPercent = sub.questionCount ? Math.min(100, Math.max(0, (sub.avgNet / sub.questionCount) * 100)) : 0;
+              return (
+                <div key={sub.id} className="p-2 bg-white dark:bg-slate-800 rounded-xl border-2 border-b-3 border-slate-200/80 dark:border-slate-700/80 shadow-2xs flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <AppleEmoji emoji={sub.icon} size={16} color={sub.color} />
+                    <span className="font-bold text-slate-700 dark:text-slate-200 truncate">
+                      {sub.title}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0 font-mono">
+                    <div className="w-12 h-2 bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden hidden xs:block">
+                      <div 
+                        className="h-full rounded-full" 
+                        style={{ width: `${subPercent}%`, backgroundColor: sub.color }} 
+                      />
+                    </div>
+
+                    <span className="font-black text-slate-800 dark:text-slate-100">
+                      {formatNet(sub.avgNet)}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-semibold">
+                      / {sub.questionCount}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

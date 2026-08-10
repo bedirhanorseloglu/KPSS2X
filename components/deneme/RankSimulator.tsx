@@ -14,6 +14,8 @@ import Link from "next/link";
 
 type Props = {
   currentAvgNet: number;
+  currentGyAvgNet?: number;
+  currentGkAvgNet?: number;
   bestNet: number;
   targetNet: number;
   onTargetNetChange?: (value: number) => void;
@@ -131,9 +133,11 @@ export const PROFESSIONS: Profession[] = [
    ÖSYM SIRALAMA LOGIC
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-export function calculateRankEstimates(net: number) {
+export function calculateRankEstimates(net: number, gyNet?: number, gkNet?: number) {
   const safeNet = Math.max(0, Math.min(120, net));
-  const p3 = estimateP3Score(safeNet);
+  const p3 = (gyNet !== undefined && gkNet !== undefined && gyNet >= 0 && gkNet >= 0)
+    ? estimateP3Score(gyNet, gkNet)
+    : estimateP3Score(safeNet);
 
   let minRank = 1, maxRank = 1, percentile = 99.9;
 
@@ -166,7 +170,7 @@ export function calculateRankEstimates(net: number) {
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 export default function RankSimulator({
-  currentAvgNet, bestNet, targetNet, onTargetNetChange, isReadOnly = false,
+  currentAvgNet, currentGyAvgNet, currentGkAvgNet, bestNet, targetNet, onTargetNetChange, isReadOnly = false,
 }: Props) {
   const { user } = useAuth();
   const isBedirhanUser = user?.email?.toLowerCase().includes("denemebedo6161") || user?.email?.toLowerCase().includes("bedo6161");
@@ -188,7 +192,7 @@ export default function RankSimulator({
 
   // Current Average Net Calculations
   const curAvg = Math.max(0, currentAvgNet || 0);
-  const curEst = useMemo(() => calculateRankEstimates(curAvg), [curAvg]);
+  const curEst = useMemo(() => calculateRankEstimates(curAvg, currentGyAvgNet, currentGkAvgNet), [curAvg, currentGyAvgNet, currentGkAvgNet]);
   const isCurQualified = curEst.p3 >= prof.minP3;
   const curP3Diff = Math.round((curEst.p3 - prof.minP3) * 100) / 100;
   const netMargin = Math.round((curAvg - prof.targetNet) * 10) / 10;

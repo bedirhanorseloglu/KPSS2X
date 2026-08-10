@@ -195,14 +195,14 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         setExamType("genel");
                         window.history.replaceState(null, '', "?mode=genel");
                       }}
-                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-[1.5rem] border-2 transition-all duration-300 text-left focus:outline-none ${
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left focus:outline-none ${
                         examType === "genel"
-                          ? "border-[#1cb0f6] bg-gradient-to-br from-[#1cb0f6]/10 to-[#1cb0f6]/5 dark:from-[#1cb0f6]/20 dark:to-[#1cb0f6]/5 shadow-[0_8px_25px_rgba(28,176,246,0.18)] scale-[1.02]"
-                          : "border-slate-200/70 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 hover:border-slate-300 hover:bg-white dark:hover:bg-white/10"
+                          ? "border-[#1cb0f6] border-b-[#1899d6] bg-sky-50/60 dark:bg-sky-950/30"
+                          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
                       }`}
                     >
                       {/* Seçili işareti */}
-                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${
+                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                         examType === "genel" ? "border-[#1cb0f6] bg-[#1cb0f6]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
                       }`}>
                         {examType === "genel" && (
@@ -213,16 +213,18 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       </div>
 
                       {/* Apple 3D Emoji Icon */}
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-md ${
-                        examType === "genel" ? "bg-white dark:bg-slate-800 shadow-[#1cb0f6]/20" : "bg-white/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10"
+                      <div className={`w-13 h-13 rounded-2xl flex items-center justify-center transition-all border-2 border-b-4 ${
+                        examType === "genel" 
+                          ? "bg-sky-100/80 dark:bg-sky-900/40 border-sky-200 dark:border-sky-800" 
+                          : "bg-slate-100/80 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600"
                       }`}>
-                        <AppleEmoji emoji="🌍" size={34} />
+                        <AppleEmoji emoji="🌍" size={30} color="#1cb0f6" />
                       </div>
 
                       {/* Başlık + Açıklama */}
                       <div>
                         <p className={`text-base font-black tracking-tight transition-colors ${
-                          examType === "genel" ? "text-[#1cb0f6] dark:text-[#1cb0f6]" : "text-slate-800 dark:text-white"
+                          examType === "genel" ? "text-[#1cb0f6]" : "text-slate-800 dark:text-white"
                         }`}>
                           Genel Deneme
                         </p>
@@ -232,10 +234,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       </div>
 
                       {/* Alt etiket */}
-                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full transition-all ${
+                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl transition-all border ${
                         examType === "genel"
-                          ? "bg-[#1cb0f6]/20 text-[#1cb0f6] dark:bg-[#1cb0f6]/30 dark:text-blue-300 border border-[#1cb0f6]/30"
-                          : "bg-slate-200/60 text-slate-500 dark:bg-white/10 dark:text-slate-400"
+                          ? "bg-sky-100 text-[#1cb0f6] dark:bg-sky-950/60 dark:text-sky-300 border-sky-200 dark:border-sky-800"
+                          : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-600"
                       }`}>
                         Türkiye Geneli
                       </div>
@@ -249,14 +251,14 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         setStep(1); 
                         window.history.replaceState(null, '', `?mode=brans${bransSubjectId ? `&subject=${bransSubjectId}` : ""}`);
                       }}
-                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-[1.5rem] border-2 transition-all duration-300 text-left focus:outline-none ${
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left focus:outline-none ${
                         examType === "brans"
-                          ? "border-[#af52de] bg-gradient-to-br from-[#af52de]/10 to-[#af52de]/5 dark:from-[#af52de]/20 dark:to-[#af52de]/5 shadow-[0_8px_25px_rgba(175,82,222,0.18)] scale-[1.02]"
-                          : "border-slate-200/70 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 hover:border-slate-300 hover:bg-white dark:hover:bg-white/10"
+                          ? "border-[#af52de] border-b-[#8e24aa] bg-purple-50/60 dark:bg-purple-950/30"
+                          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
                       }`}
                     >
                       {/* Seçili işareti */}
-                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shadow-sm ${
+                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                         examType === "brans" ? "border-[#af52de] bg-[#af52de]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
                       }`}>
                         {examType === "brans" && (
@@ -267,16 +269,18 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       </div>
 
                       {/* Apple 3D Emoji Icon */}
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-md ${
-                        examType === "brans" ? "bg-white dark:bg-slate-800 shadow-[#af52de]/20" : "bg-white/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10"
+                      <div className={`w-13 h-13 rounded-2xl flex items-center justify-center transition-all border-2 border-b-4 ${
+                        examType === "brans" 
+                          ? "bg-purple-100/80 dark:bg-purple-900/40 border-purple-200 dark:border-purple-800" 
+                          : "bg-slate-100/80 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600"
                       }`}>
-                        <AppleEmoji emoji="🎯" size={34} />
+                        <AppleEmoji emoji="🎯" size={30} color="#af52de" />
                       </div>
 
                       {/* Başlık + Açıklama */}
                       <div>
                         <p className={`text-base font-black tracking-tight transition-colors ${
-                          examType === "brans" ? "text-[#af52de] dark:text-[#af52de]" : "text-slate-800 dark:text-white"
+                          examType === "brans" ? "text-[#af52de]" : "text-slate-800 dark:text-white"
                         }`}>
                           Branş Denemesi
                         </p>
@@ -286,10 +290,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       </div>
 
                       {/* Alt etiket */}
-                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full transition-all ${
+                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl transition-all border ${
                         examType === "brans"
-                          ? "bg-[#af52de]/20 text-[#af52de] dark:bg-[#af52de]/30 dark:text-purple-300 border border-[#af52de]/30"
-                          : "bg-slate-200/60 text-slate-500 dark:bg-white/10 dark:text-slate-400"
+                          ? "bg-purple-100 text-[#af52de] dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                          : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-600"
                       }`}>
                         Ders Bazlı
                       </div>
