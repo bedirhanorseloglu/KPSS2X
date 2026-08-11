@@ -17,7 +17,10 @@ export default function AkarsularPage() {
       <div className={`mx-auto w-full transition-all duration-500 ${stage === "map" ? "max-w-[1600px]" : "max-w-5xl"}`}>
         {/* Top bar back button */}
         <div className="mb-8">
-          <Link href="/etkinlik" className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-bold uppercase tracking-widest text-xs transition-colors">
+          <Link 
+            href="/etkinlik" 
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-black text-xs uppercase tracking-widest hover:border-[#58cc02] dark:hover:border-[#58cc02] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
+          >
             <ArrowLeft className="w-4 h-4" /> ETKİNLİKLERE DÖN
           </Link>
         </div>

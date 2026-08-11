@@ -2,21 +2,44 @@
 
 import React, { useState, useMemo } from "react";
 import { ComposableMap, Geographies, Geography, Line, Marker } from "react-simple-maps";
+import { geoMercator, geoCentroid } from "d3-geo";
 import { RIVER_PATHS, RiverPath } from "@/lib/riverData";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Check, MapPin, RefreshCw } from "lucide-react";
+import { X, Trophy, RefreshCw, Droplets } from "lucide-react";
 import confetti from "canvas-confetti";
+import AppleEmoji from "@/components/AppleEmoji";
 
 const GEO_URL = "/turkey-topo.json";
 
-// We'll shuffle and use all rivers on the map
-const GAME_RIVERS = [...RIVER_PATHS].sort(() => Math.random() - 0.5);
+const MAP_CENTER: [number, number] = [35.2, 39.0];
+const MAP_SCALE = 3000;
+const VIEW_W = 1200;
+const VIEW_H = 550;
 
 interface RiverMapGameProps {
-  onRestart: () => void;
+  onQuit: () => void;
 }
 
-export default function RiverMapGame({ onRestart }: RiverMapGameProps) {
+// ── Progress Bar ──
+function ProgressBar({ progress, total }: { progress: number; total: number }) {
+  const pct = total > 0 ? (progress / total) * 100 : 0;
+  
+  return (
+    <div className="flex-1 max-w-2xl mx-auto h-4 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
+      <motion.div 
+        className="h-full bg-[#58cc02] rounded-full relative"
+        initial={{ width: 0 }}
+        animate={{ width: `${pct}%` }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+      >
+        <div className="absolute top-1 left-2 right-2 h-1 bg-white/30 rounded-full" />
+      </motion.div>
+    </div>
+  );
+}
+
+export default function RiverMapGame({ onQuit }: RiverMapGameProps) {
+  const [gameRivers] = useState(() => [...RIVER_PATHS].sort(() => Math.random() - 0.5));
   const [targetIndex, setTargetIndex] = useState(0);
   const [placedIds, setPlacedIds] = useState<string[]>([]);
   const [fails, setFails] = useState(0);
@@ -24,7 +47,18 @@ export default function RiverMapGame({ onRestart }: RiverMapGameProps) {
   const [isGameOver, setIsGameOver] = useState(false);
   const [errorId, setErrorId] = useState<string | null>(null);
 
-  const targetRiver = GAME_RIVERS[targetIndex];
+  const targetRiver = gameRivers[targetIndex];
+  const progress = placedIds.length;
+  const total = gameRivers.length;
+
+  const initGame = () => {
+    setTargetIndex(0);
+    setPlacedIds([]);
+    setFails(0);
+    setShowHint(false);
+    setIsGameOver(false);
+    setErrorId(null);
+  };
 
   const handleRiverClick = (river: RiverPath) => {
     if (isGameOver) return;
@@ -36,7 +70,7 @@ export default function RiverMapGame({ onRestart }: RiverMapGameProps) {
       setFails(0);
       setShowHint(false);
 
-      if (targetIndex === GAME_RIVERS.length - 1) {
+      if (targetIndex === gameRivers.length - 1) {
         setIsGameOver(true);
         confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
       } else {
@@ -56,128 +90,261 @@ export default function RiverMapGame({ onRestart }: RiverMapGameProps) {
   };
 
   return (
-    <div className="w-full flex flex-col items-center">
-      {/* Target Header */}
-      {!isGameOver ? (
-        <div className="mb-6 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-xs rounded-xl mb-4">
-            <MapPin className="w-4 h-4" /> HARİTADA BUL
-          </div>
-          <h2 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-white text-center">
-            {targetRiver.name} nerede?
-          </h2>
-          {showHint && (
-            <motion.p 
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              className="text-amber-500 font-bold mt-2"
-            >
-              İpucu: Haritada parlayan nehre tıkla!
-            </motion.p>
-          )}
-        </div>
-      ) : (
-        <div className="mb-6 flex flex-col items-center">
-          <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center text-white border-b-4 border-yellow-600 mb-4 shadow-lg shadow-yellow-500/30">
-            <Trophy className="w-10 h-10" />
-          </div>
-          <h2 className="text-4xl font-black text-slate-800 dark:text-white mb-2">Harika İş Çıkardın!</h2>
-          <p className="text-slate-500 font-medium">Tüm nehirlerin yerini öğrendin.</p>
-          <button
-            onClick={onRestart}
-            className="mt-6 px-6 py-3 bg-[#58cc02] text-white font-black uppercase tracking-widest rounded-2xl shadow-sm border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
-          >
-            <RefreshCw className="w-5 h-5" /> Tekrar Oyna
-          </button>
-        </div>
-      )}
+    <div className="flex flex-col w-full h-full relative">
 
-      {/* Map Container */}
-      <div className="w-full aspect-[2/1] relative bg-[#82d8ff] dark:bg-[#0f233b] rounded-[2rem] border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden mt-4">
-        <ComposableMap
-          projection="geoMercator"
-          projectionConfig={{ center: [35.2, 39.0], scale: 3000 }}
-          className="w-full h-full"
+      {/* ── Game Header (Progress Bar + X) ── */}
+      <div className="flex items-center gap-4 py-4 px-4 sm:px-8 w-full max-w-5xl mx-auto z-10">
+        <button 
+          onClick={onQuit}
+          className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
         >
-          {/* Turkey Base */}
-          <Geographies geography={GEO_URL}>
-            {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill="#fde68a" // land color
-                  stroke="#d97706" // border
-                  strokeWidth={0.5}
-                  className="outline-none dark:fill-[#1e293b] dark:stroke-slate-600"
-                />
-              ))
-            }
-          </Geographies>
-
-          {/* Rivers */}
-          {GAME_RIVERS.map((river) => {
-            const isPlaced = placedIds.includes(river.id);
-            const isTarget = river.id === targetRiver?.id;
-            
-            // Define colors
-            let strokeColor = "#1e40af"; // default hidden blue
-            let strokeWidth = 2;
-            let opacity = 0.5;
-
-            if (isPlaced) {
-              strokeColor = "#2563eb"; // vivid blue when placed
-              strokeWidth = 4;
-              opacity = 1;
-            } else if (errorId === river.id) {
-              strokeColor = "#ef4444"; // red for error
-              strokeWidth = 4;
-              opacity = 1;
-            } else if (isTarget && showHint) {
-              strokeColor = "#58cc02"; // glowing green hint
-              strokeWidth = 6;
-              opacity = 1;
-            }
-
-            return (
-              <g key={river.id} onClick={() => handleRiverClick(river)} className="cursor-pointer outline-none">
-                <Line
-                  from={river.coordinates[0]}
-                  to={river.coordinates[river.coordinates.length - 1]}
-                  coordinates={river.coordinates}
-                  stroke={strokeColor}
-                  strokeWidth={strokeWidth}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`transition-all ${errorId === river.id ? "duration-75" : "duration-300 hover:stroke-[#3b82f6] hover:stroke-[6px]"}`}
-                  style={{ opacity }}
-                />
-              </g>
-            );
-          })}
-        </ComposableMap>
-
-        {/* Labels overlay */}
-        <ComposableMap
-          projection="geoMercator"
-          projectionConfig={{ center: [35.2, 39.0], scale: 3000 }}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-        >
-          {GAME_RIVERS.map((river) => {
-            if (!placedIds.includes(river.id)) return null;
-            const midPoint = river.coordinates[Math.floor(river.coordinates.length / 2)];
-            return (
-              <Marker key={`marker-${river.id}`} coordinates={midPoint}>
-                <g transform="translate(0, -10)">
-                  <rect x="-30" y="-12" width="60" height="16" rx="4" fill="white" className="dark:fill-slate-800" stroke="#3b82f6" strokeWidth="2" />
-                  <text textAnchor="middle" y="-1" style={{ fontFamily: "inherit", fontSize: "10px", fontWeight: "bold", fill: "#1e293b" }} className="dark:fill-white">
-                    {river.name}
-                  </text>
-                </g>
-              </Marker>
-            );
-          })}
-        </ComposableMap>
+          <X className="w-8 h-8" />
+        </button>
+        <ProgressBar progress={progress} total={total} />
+        <div className="w-8 h-8 flex items-center justify-center font-black text-gray-400">
+          {progress}/{total}
+        </div>
       </div>
+
+      {/* ── Map Content ── */}
+      <div className="flex-1 w-full overflow-hidden flex flex-col items-center justify-center relative z-0 pb-32">
+        
+        <div 
+          className="relative w-full h-full flex items-center justify-center" 
+          style={{ maxHeight: "calc(100vh - 200px)" }}
+        >
+          <div className="relative w-full" style={{ aspectRatio: `${VIEW_W}/${VIEW_H}`, maxHeight: "100%", maxWidth: "100%" }}>
+            <ComposableMap
+              width={VIEW_W}
+              height={VIEW_H}
+              projection="geoMercator"
+              projectionConfig={{ center: MAP_CENTER, scale: MAP_SCALE }}
+              style={{ width: "100%", height: "100%" }}
+            >
+              {/* Turkey Base Land with city names */}
+              <Geographies geography={GEO_URL}>
+                {({ geographies }) =>
+                  geographies.map((geo) => {
+                    const centroid = geoCentroid(geo);
+                    return (
+                      <g key={geo.rsmKey}>
+                        <Geography
+                          geography={geo}
+                          fill="#e2e8f0"
+                          stroke="#cbd5e1"
+                          strokeWidth={0.8}
+                          className="outline-none dark:fill-[#1e293b] dark:stroke-slate-700 pointer-events-none"
+                          style={{
+                            default: { outline: "none" },
+                            hover: { outline: "none" },
+                            pressed: { outline: "none" },
+                          }}
+                        />
+                        <Marker coordinates={centroid} className="pointer-events-none">
+                          <text
+                            textAnchor="middle"
+                            y={3}
+                            style={{ fontSize: "10px", fontWeight: 800, userSelect: "none" }}
+                            className="fill-slate-400 dark:fill-slate-600"
+                          >
+                            {geo.properties.name}
+                          </text>
+                        </Marker>
+                      </g>
+                    );
+                  })
+                }
+              </Geographies>
+
+              {/* Rivers */}
+              {gameRivers.map((river) => {
+                const isPlaced = placedIds.includes(river.id);
+                const isTarget = river.id === targetRiver?.id;
+                
+                let strokeColor = "#94a3b8"; // subtle default in light mode
+                let strokeWidth = 2.5;
+                let opacity = 0.5;
+
+                if (isPlaced) {
+                  strokeColor = "#1cb0f6"; // Duolingo blue when placed
+                  strokeWidth = 4;
+                  opacity = 1;
+                } else if (errorId === river.id) {
+                  strokeColor = "#ff4b4b"; // red for error
+                  strokeWidth = 5;
+                  opacity = 1;
+                } else if (isTarget && showHint) {
+                  strokeColor = "#ffc800"; // glowing gold hint
+                  strokeWidth = 5;
+                  opacity = 1;
+                }
+
+                return (
+                  <g key={river.id} onClick={() => handleRiverClick(river)} className="cursor-pointer outline-none group">
+                    <Line
+                      from={river.coordinates[0]}
+                      to={river.coordinates[river.coordinates.length - 1]}
+                      coordinates={river.coordinates}
+                      stroke={strokeColor}
+                      strokeWidth={strokeWidth}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={`transition-all ${
+                        errorId === river.id 
+                          ? "duration-75" 
+                          : isPlaced 
+                            ? "duration-200" 
+                            : "duration-200 dark:stroke-slate-500 hover:stroke-[#1cb0f6] dark:hover:stroke-[#38bdf8]"
+                      }`}
+                      style={{ opacity }}
+                    />
+                  </g>
+                );
+              })}
+
+              {/* Labels for placed rivers */}
+              {gameRivers.map((river) => {
+                if (!placedIds.includes(river.id)) return null;
+                const midPoint = river.coordinates[Math.floor(river.coordinates.length / 2)];
+                
+                // Çok yakın olan nehirlerin etiketlerinin çakışmaması için ince ayarlar
+                const LABEL_OFFSETS: Record<string, { x: number, y: number }> = {
+                  "aksu": { x: -25, y: -15 },
+                  "kopru_cayi": { x: 0, y: -25 },
+                  "manavgat": { x: 25, y: 15 },
+                  "buyuk_menderes": { x: 0, y: 15 },
+                  "kucuk_menderes": { x: 0, y: -15 },
+                  "seyhan": { x: -15, y: -15 },
+                  "ceyhan": { x: 15, y: 15 },
+                };
+
+                const offset = LABEL_OFFSETS[river.id] || { x: 0, y: 0 };
+                
+                // Uzun isimlerin kutuya sığması için dinamik genişlik hesaplaması
+                const labelWidth = Math.max(72, river.name.length * 6.5);
+                const rectX = -(labelWidth / 2);
+
+                return (
+                  <Marker key={`label-${river.id}`} coordinates={midPoint}>
+                    <g transform={`translate(${offset.x}, ${offset.y})`}>
+                      <rect 
+                        x={rectX} 
+                        y="-9" 
+                        width={labelWidth} 
+                        height="18" 
+                        rx="6" 
+                        fill="white" 
+                        className="dark:fill-slate-900" 
+                        stroke="#1cb0f6" 
+                        strokeWidth="2" 
+                      />
+                      <text 
+                        textAnchor="middle" 
+                        y="3" 
+                        style={{ fontFamily: "inherit", fontSize: "10px", fontWeight: "900" }} 
+                        className="fill-[#1cb0f6]"
+                      >
+                        {river.name}
+                      </text>
+                    </g>
+                  </Marker>
+                );
+              })}
+            </ComposableMap>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Bottom Drawer / Floating Card ── */}
+      <AnimatePresence mode="wait">
+        {!isGameOver && targetRiver && (
+          <motion.div
+            key={targetRiver.id}
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
+            className="fixed bottom-0 left-0 w-full z-50 pointer-events-auto border-t-2 border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+          >
+            <div className="max-w-4xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+              
+              <div className="flex items-center gap-6">
+                <div className="w-20 h-20 rounded-[1.5rem] flex items-center justify-center shadow-sm bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white">
+                  <Droplets className="w-10 h-10" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
+                    Haritada Bul
+                  </span>
+                  <h3 className="text-3xl font-black text-[#1cb0f6]">
+                    {targetRiver.name}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:items-end">
+                {fails >= 3 && !showHint ? (
+                  <button
+                    onClick={() => setShowHint(true)}
+                    className="px-6 py-3 rounded-2xl bg-[#ffc800] text-white font-black uppercase tracking-widest text-sm border-b-4 border-[#e0b000] hover:-translate-y-1 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+                  >
+                    💡 İPUCU İSTER MİSİN?
+                  </button>
+                ) : (
+                  <div className="flex flex-col items-center sm:items-end gap-1">
+                    <div className="px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 font-bold text-slate-500 uppercase tracking-widest text-xs border-2 border-slate-200 dark:border-slate-700">
+                      Akarsu
+                    </div>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Completion Modal ── */}
+      <AnimatePresence>
+        {isGameOver && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed bottom-0 left-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-gray-200 dark:border-slate-800 p-6 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.1)]"
+          >
+            <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+              
+              <div className="flex items-center gap-6">
+                <div className="w-20 h-20 bg-[#58cc02] rounded-[1.5rem] border-b-[6px] border-[#46a302] flex items-center justify-center animate-bounce shrink-0">
+                  <Trophy className="w-10 h-10 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black text-[#58cc02] mb-1">Harika İş Çıkardın!</h2>
+                  <p className="text-slate-500 font-bold">
+                    Tüm nehirlerin yerini başarıyla öğrendin. Haritayı inceleyebilir veya devam edebilirsin.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full md:w-auto">
+                <button
+                  onClick={onQuit}
+                  className="w-full md:w-auto px-8 py-4 rounded-2xl font-black text-[#1cb0f6] text-lg border-2 border-[#1cb0f6] bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+                >
+                  Menüye Dön
+                </button>
+                <button
+                  onClick={initGame}
+                  className="w-full md:w-auto px-8 py-4 rounded-2xl font-black text-white text-lg bg-[#1cb0f6] border-b-4 border-[#1899d6] hover:bg-[#1899d6] hover:border-[#1cb0f6] hover:translate-y-1 active:border-b-0 active:translate-y-2 transition-all flex items-center justify-center gap-2"
+                >
+                  Yeniden Oyna
+                </button>
+              </div>
+
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

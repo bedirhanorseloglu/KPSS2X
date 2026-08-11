@@ -28,7 +28,7 @@ function HaritaContent() {
   if (topicId && topic) {
     return (
       <main className="min-h-[100dvh] bg-white dark:bg-[#0f172a] pt-24 pb-8 px-2 lg:px-4 flex flex-col">
-        <TurkeyMapGame topic={topic} onQuit={() => router.push("/etkinlik/harita")} />
+        <TurkeyMapGame topic={topic} onQuit={() => router.push("/etkinlik")} />
       </main>
     );
   }

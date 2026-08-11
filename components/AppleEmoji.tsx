@@ -9,7 +9,7 @@ import {
   Star, Pin, Lightbulb, AlertTriangle, PartyPopper, Mountain,
   Droplets, Waves, Layers, Gamepad2, Key, Lock, Sprout, Compass,
   User, Mail, Shield, Trash2, BookOpen, Sun, Moon, Ruler, HelpCircle,
-  Building2, Hourglass, Coffee, Swords, Settings2
+  Building2, Hourglass, Coffee, Swords, Settings2, Brain, Vote, FileText, Scroll
 } from "lucide-react";
 
 // Duolingo 3D Vector Icon Mapping for Clean Seamless Rendering
@@ -19,6 +19,10 @@ const EMOJI_VECTOR_MAP: Record<string, { icon: React.ComponentType<{ style?: Rea
   "⚔️": { icon: Swords, defaultColor: "#ff4b4b" },
   "⚔": { icon: Swords, defaultColor: "#ff4b4b" },
   "☕": { icon: Coffee, defaultColor: "#ff9500" },
+  "🗳️": { icon: Vote, defaultColor: "#5856d6" },
+  "🗳": { icon: Vote, defaultColor: "#5856d6" },
+  "📜": { icon: Scroll, defaultColor: "#5856d6" },
+  "🧠": { icon: Brain, defaultColor: "#ff9500" },
   "👩‍💻": { icon: User, defaultColor: "#af52de" },
   "💻": { icon: User, defaultColor: "#1cb0f6" },
   "❓": { icon: HelpCircle, defaultColor: "#1cb0f6" },
@@ -67,7 +71,6 @@ const EMOJI_VECTOR_MAP: Record<string, { icon: React.ComponentType<{ style?: Rea
   "📭": { icon: Inbox, defaultColor: "#1cb0f6" },
   "⚡": { icon: Zap, defaultColor: "#ff9500" },
   "🚀": { icon: Rocket, defaultColor: "#1cb0f6" },
-  "🧠": { icon: GraduationCap, defaultColor: "#1cb0f6" },
   "⏱️": { icon: Clock, defaultColor: "#1cb0f6" },
   "⏱": { icon: Clock, defaultColor: "#1cb0f6" },
   "🌟": { icon: Star, defaultColor: "#ff9500" },

@@ -144,17 +144,25 @@ export type RiverPath = {
   coordinates: [number, number][]; // [lng, lat]
 };
 
-// Yaklaşık koordinatlar (Haritada nehirleri çizmek için görsel temsiller)
+// Gerçekçi kavisler ve doğal akış rotaları eklenmiş koordinatlar
 export const RIVER_PATHS: RiverPath[] = [
   {
     id: "kizilirmak",
     name: "Kızılırmak",
     coordinates: [
       [38.0, 39.8], // Sivas
+      [37.5, 39.5], 
+      [36.8, 39.2],
       [36.0, 39.0], // Kayseri civarı
+      [35.3, 38.8],
+      [34.8, 38.9],
       [34.0, 39.2], // Kırşehir civarı
-      [33.5, 40.0], // Ankara civarı kıvrım
+      [33.5, 39.6], 
+      [33.4, 40.0], // Ankara civarı kıvrım
+      [33.8, 40.5],
       [34.5, 41.0], // Çorum
+      [35.0, 41.4],
+      [35.5, 41.6],
       [36.0, 41.7]  // Bafra Deltası (Samsun)
     ]
   },
@@ -163,8 +171,12 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Yeşilırmak",
     coordinates: [
       [38.5, 40.2], // Sivas kuzeyi
+      [38.0, 40.4],
+      [37.4, 40.5],
       [37.0, 40.6], // Tokat
+      [36.5, 40.8],
       [36.2, 41.0], // Amasya
+      [36.4, 41.2],
       [36.6, 41.4]  // Çarşamba Deltası
     ]
   },
@@ -173,9 +185,14 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Sakarya",
     coordinates: [
       [31.0, 39.0], // Afyonkarahisar / Eskişehir sınırı
+      [30.8, 39.4],
       [30.5, 39.8], // Eskişehir
+      [30.8, 40.0],
       [31.2, 40.2], // Ankara batısı
+      [31.0, 40.5],
+      [30.7, 40.7],
       [30.4, 40.8], // Adapazarı
+      [30.5, 40.95],
       [30.6, 41.1]  // Karadeniz (Karasu)
     ]
   },
@@ -184,7 +201,11 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Susurluk",
     coordinates: [
       [29.0, 39.2], // Kütahya/Balıkesir
+      [28.7, 39.5],
+      [28.4, 39.7],
       [28.2, 39.8], // Susurluk
+      [28.1, 40.1],
+      [28.3, 40.3],
       [28.4, 40.4]  // Marmara Denizi
     ]
   },
@@ -193,7 +214,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Bakırçay",
     coordinates: [
       [28.0, 39.2], // Manisa kuzeyi
+      [27.6, 39.15],
       [27.3, 39.1], // Bergama
+      [27.1, 39.0],
       [26.9, 38.9]  // Çandarlı Körfezi
     ]
   },
@@ -202,8 +225,11 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Gediz",
     coordinates: [
       [29.0, 39.0], // Murat Dağı
+      [28.6, 38.8],
       [28.2, 38.6], // Salihli
+      [27.8, 38.55],
       [27.4, 38.6], // Manisa
+      [27.1, 38.65],
       [26.8, 38.6]  // İzmir Körfezi
     ]
   },
@@ -212,7 +238,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Küçük Menderes",
     coordinates: [
       [28.2, 38.2], // Bozdağlar
+      [27.9, 38.15],
       [27.7, 38.1], // Ödemiş
+      [27.5, 38.0],
       [27.3, 37.9]  // Selçuk / Ege Denizi
     ]
   },
@@ -221,8 +249,11 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Büyük Menderes",
     coordinates: [
       [30.0, 38.0], // Dinar / Afyon
+      [29.5, 37.9],
       [29.0, 37.8], // Denizli
+      [28.4, 37.85],
       [27.8, 37.8], // Aydın
+      [27.5, 37.7],
       [27.2, 37.5]  // Milet / Ege Denizi
     ]
   },
@@ -231,9 +262,14 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Fırat",
     coordinates: [
       [41.5, 39.9], // Erzurum (Karasu/Murat)
+      [40.8, 39.5],
+      [40.0, 39.2],
       [39.0, 38.8], // Elazığ (Keban)
+      [38.5, 38.4],
       [38.0, 37.8], // Adıyaman (Atatürk)
+      [37.9, 37.3],
       [38.0, 36.8], // Suriye sınırı çıkışı
+      [38.5, 36.0],
       [40.0, 34.0]  // Irak'a doğru uzantı
     ]
   },
@@ -242,9 +278,13 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Dicle",
     coordinates: [
       [39.5, 38.5], // Elazığ Hazar gölü
+      [39.7, 38.2],
       [40.0, 37.9], // Diyarbakır
+      [40.5, 37.7],
       [41.0, 37.5], // Batman
+      [41.8, 37.3],
       [42.5, 37.2], // Şırnak/Cizre Suriye/Irak sınırı
+      [42.8, 36.6],
       [43.0, 36.0]  // Irak içine
     ]
   },
@@ -253,7 +293,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Çoruh",
     coordinates: [
       [40.0, 40.2], // Bayburt
+      [40.5, 40.5],
       [41.0, 40.8], // Artvin
+      [41.3, 41.2],
       [41.6, 41.5]  // Gürcistan Batum Karadeniz
     ]
   },
@@ -262,7 +304,10 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Meriç",
     coordinates: [
       [26.3, 42.0], // Bulgaristan
+      [26.4, 41.8],
       [26.5, 41.6], // Edirne
+      [26.4, 41.2],
+      [26.2, 40.9],
       [26.1, 40.7]  // Enez Ege Denizi
     ]
   },
@@ -271,8 +316,11 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Aras",
     coordinates: [
       [41.5, 39.5], // Erzurum Bingöl dağları
+      [42.2, 39.8],
       [43.0, 40.0], // Kars Arpaçay birleşimi
+      [43.8, 39.9],
       [44.5, 39.8], // Iğdır Ermenistan sınırı
+      [45.2, 39.6],
       [46.0, 39.5]  // Hazar'a doğru
     ]
   },
@@ -281,8 +329,11 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Kura",
     coordinates: [
       [42.5, 41.0], // Ardahan Göle
+      [42.8, 41.05],
       [43.0, 41.1], // Ardahan
+      [43.2, 41.15],
       [43.5, 41.2], // Gürcistan sınırı
+      [44.2, 40.8],
       [45.0, 40.5]  // Hazar'a doğru
     ]
   },
@@ -291,7 +342,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Seyhan",
     coordinates: [
       [36.0, 38.5], // Kayseri/Sivas güneyi
+      [35.8, 38.0],
       [35.5, 37.5], // Adana Toroslar
+      [35.2, 37.1],
       [34.9, 36.7]  // Çukurova
     ]
   },
@@ -300,8 +353,11 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Ceyhan",
     coordinates: [
       [37.5, 38.2], // Elbistan / Maraş kuzeyi
+      [37.2, 37.9],
       [36.9, 37.5], // Maraş
+      [36.4, 37.2],
       [35.8, 37.0], // Osmaniye batısı
+      [35.7, 36.8],
       [35.6, 36.6]  // İskenderun Körfezi / Çukurova
     ]
   },
@@ -310,7 +366,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Göksu",
     coordinates: [
       [32.5, 37.0], // Hadim / Konya güneyi
+      [32.8, 36.8],
       [33.2, 36.5], // Mut
+      [33.6, 36.4],
       [34.0, 36.3]  // Silifke
     ]
   },
@@ -319,8 +377,11 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Asi",
     coordinates: [
       [36.5, 34.0], // Lübnan
+      [36.6, 35.0], 
       [36.5, 36.0], // Suriye
+      [36.3, 36.1],
       [36.2, 36.2], // Hatay
+      [36.0, 36.15],
       [35.9, 36.1]  // Samandağ Akdeniz
     ]
   },
@@ -329,7 +390,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Köprü Çayı",
     coordinates: [
       [31.2, 37.5], // Isparta / Antalya sınırı
+      [31.1, 37.3],
       [31.2, 37.1], // Beşkonak / Köprülü Kanyon
+      [31.15, 36.9],
       [31.2, 36.8]  // Antalya Körfezi
     ]
   },
@@ -338,6 +401,7 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Manavgat",
     coordinates: [
       [31.8, 37.3], // Toroslar
+      [31.6, 37.1],
       [31.4, 36.8], // Manavgat şelalesi
       [31.4, 36.7]  // Akdeniz
     ]
@@ -347,7 +411,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Aksu",
     coordinates: [
       [30.8, 37.6], // Eğirdir güneyi
+      [30.7, 37.3],
       [30.8, 37.0], // Antalya ovası
+      [30.85, 36.9],
       [30.9, 36.8]  // Akdeniz
     ]
   },
@@ -356,7 +422,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Bartın",
     coordinates: [
       [32.5, 41.5], // Küre Dağları
+      [32.4, 41.55],
       [32.3, 41.6], // Bartın
+      [32.25, 41.65],
       [32.2, 41.7]  // Karadeniz
     ]
   },
@@ -365,7 +433,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Filyos",
     coordinates: [
       [32.6, 40.6], // Gerede / Karabük civarı
+      [32.3, 40.9],
       [32.0, 41.2], // Çaycuma
+      [32.05, 41.4],
       [32.0, 41.6]  // Filyos Karadeniz
     ]
   },
@@ -374,7 +444,9 @@ export const RIVER_PATHS: RiverPath[] = [
     name: "Dalaman",
     coordinates: [
       [29.4, 37.2], // Gölhisar / Burdur
+      [29.1, 37.0],
       [28.8, 36.8], // Dalaman
+      [28.75, 36.75],
       [28.7, 36.7]  // Akdeniz
     ]
   }

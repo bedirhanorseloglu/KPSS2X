@@ -249,12 +249,13 @@ export default function TurkeyMapGame({ topic, onQuit }: { topic: MapTopic, onQu
                       <g key={geo.rsmKey}>
                         <Geography
                           geography={geo}
-                          fill="url(#mapGrad)"
-                          stroke="#ffffff"
+                          fill="#e2e8f0"
+                          stroke="#cbd5e1"
                           strokeWidth={0.8}
+                          className="outline-none dark:fill-[#1e293b] dark:stroke-slate-700 pointer-events-none"
                           style={{
                             default: { outline: "none" },
-                            hover: { fill: "#d1d5db", outline: "none", transition: "fill 0.2s" },
+                            hover: { outline: "none" },
                             pressed: { outline: "none" },
                           }}
                         />
@@ -262,7 +263,8 @@ export default function TurkeyMapGame({ topic, onQuit }: { topic: MapTopic, onQu
                           <text
                             textAnchor="middle"
                             y={3}
-                            style={{ fontSize: "10px", fill: "rgba(107, 114, 128, 0.5)", fontWeight: 800, userSelect: "none" }}
+                            style={{ fontSize: "10px", fontWeight: 800, userSelect: "none" }}
+                            className="fill-slate-400 dark:fill-slate-600"
                           >
                             {geo.properties.name}
                           </text>
