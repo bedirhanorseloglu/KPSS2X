@@ -27,6 +27,7 @@ interface ActivityItem {
   description: string;
   href: string;
   isLocked?: boolean;
+  kavramCount?: string;
 }
 
 const ACTIVITIES: ActivityItem[] = [
