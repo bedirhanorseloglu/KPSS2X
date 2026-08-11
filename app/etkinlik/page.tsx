@@ -275,7 +275,7 @@ export default function EtkinlikIndexPage() {
                   <button
                     key={cat.id}
                     type="button"
-                    onClick={() => setSelectedSubject(cat.id)}
+                    onClick={() => setSelectedSubject(cat.id as SubjectTab)}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-black text-xs transition-all cursor-pointer relative ${
                       !isActive
                         ? "bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-200 border-2 border-b-4 border-transparent hover:border-slate-300 dark:hover:border-slate-700"
