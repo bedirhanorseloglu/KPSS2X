@@ -146,9 +146,9 @@ export default function KPSSCountdown() {
   const isDanger = timeLeft.days < 7;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-[2.25rem] p-6 sm:p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-md flex flex-col justify-between relative overflow-hidden h-full group">
+    <div className="bg-white dark:bg-slate-800 rounded-[2.25rem] p-6 sm:p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-md flex flex-col justify-between relative h-full group z-20">
       {/* Target Badge Header */}
-      <div className="flex items-center justify-between gap-4 mb-4 relative z-20">
+      <div className="flex items-center justify-between gap-4 mb-4 relative z-30">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-sky-50 dark:bg-sky-950/60 border-2 border-b-4 border-sky-200 dark:border-sky-800/80 flex items-center justify-center shrink-0 shadow-2xs">
             <AppleEmoji emoji={currentExam.emoji} size={22} color="#1cb0f6" />
@@ -164,7 +164,7 @@ export default function KPSSCountdown() {
         </div>
 
         {/* Interactive Exam Selector Dropdown Button */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative z-50" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 dark:bg-sky-500/10 border-2 border-b-4 border-sky-200 dark:border-sky-500/30 rounded-xl text-[11px] font-black uppercase tracking-widest text-[#1cb0f6] hover:bg-sky-100 dark:hover:bg-sky-500/20 active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
@@ -181,7 +181,7 @@ export default function KPSSCountdown() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.95 }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
-                className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl z-50 overflow-hidden p-1.5 space-y-1"
+                className="absolute right-0 mt-2 w-60 bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-50 overflow-hidden p-1.5 space-y-1 max-h-72 overflow-y-auto"
               >
                 <div className="px-3 py-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700/60 mb-1">
                   Sınav Türü Seçin

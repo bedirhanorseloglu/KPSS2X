@@ -119,9 +119,9 @@ export default function DenemeAnalytics({
   }, [viewType, availableBransSubjects, selectedBransSubjectId, activeSubjectTab]);
 
   const active = useMemo(() => {
-    const list = [...denemeler];
+    const list = viewType === "genel" ? denemeler.filter(d => d.examType !== "brans") : denemeler;
     return range === "all" ? list : list.slice(0, parseInt(range, 10));
-  }, [denemeler, range]);
+  }, [denemeler, range, viewType]);
 
   /* ── General Mode Stats ── */
   const stats = useMemo(() => {
@@ -142,13 +142,10 @@ export default function DenemeAnalytics({
           cnt++;
         }
       });
-      const rawAc = cnt ? tc / cnt : 0;
-      const rawAw = cnt ? tw / cnt : 0;
-      const rawAe = cnt ? te / cnt : 0;
+      const ac = cnt ? tc / cnt : 0;
+      const aw = cnt ? tw / cnt : 0;
+      const ae = cnt ? te / cnt : 0;
 
-      const ac = Math.round(rawAc * 10) / 10;
-      const aw = Math.round(rawAw * 10) / 10;
-      const ae = Math.round(rawAe * 10) / 10;
       const net = cnt ? Math.round((ac - aw / 4) * 100) / 100 : 0;
       const accuracy = sub.questionCount > 0 ? Math.max(0, (net / sub.questionCount) * 100) : 0;
       return { ...sub, avgCorrect: ac, avgWrong: aw, avgEmpty: ae, avgNet: net, accuracy };

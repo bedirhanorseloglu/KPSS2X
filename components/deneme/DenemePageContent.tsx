@@ -53,11 +53,14 @@ export default function DenemePageContent() {
   const persistData = useCallback(async (newDenemeler: DenemeRecord[], newTargetNet: number) => {
     if (!user?.uid) return;
 
+    // Filter out temporary mock test data so it NEVER gets saved to Firebase or Leaderboards
+    const realDenemeler = newDenemeler.filter(d => !((d as any).isMock || d.id?.startsWith("mock-") || d.name?.startsWith("Mock ")));
+
     // 1. Firebase'e doğrudan kaydet (YENİ İZOLE YAPI)
-    await saveDenemeYeniden(user.uid, newDenemeler, newTargetNet);
+    await saveDenemeYeniden(user.uid, realDenemeler, newTargetNet);
 
     // 2. Liderlik tablolarını güncelle
-    const genelDenemeler = newDenemeler.filter((d) => d.examType !== "brans");
+    const genelDenemeler = realDenemeler.filter((d) => d.examType !== "brans");
     if (genelDenemeler.length > 0) {
       const nets = genelDenemeler.map((d) => evaluateDeneme(d.scores).totalNet);
       const avg = averageNet(genelDenemeler);
@@ -67,7 +70,7 @@ export default function DenemePageContent() {
       await removeFromLeaderboard(user.uid);
     }
 
-    const bransDenemeler = newDenemeler.filter((d) => d.examType === "brans" && d.bransSubjectId);
+    const bransDenemeler = realDenemeler.filter((d) => d.examType === "brans" && d.bransSubjectId);
     const bransGroups = bransDenemeler.reduce((acc: any, d: any) => {
       if (!acc[d.bransSubjectId]) acc[d.bransSubjectId] = [];
       acc[d.bransSubjectId].push(d);
@@ -338,52 +341,71 @@ export default function DenemePageContent() {
               <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
                 {tab === "yeni" ? "Sınav Girişi" : tab === "gecmis" ? "Kayıt Defteri" : "Gelişim Analizi"}
               </h1>
-              <div className="flex items-center gap-3 mt-2">
+              <div className="flex items-center gap-3 mt-2 flex-wrap">
                 {typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const mocks: DenemeRecord[] = [];
-                      for (let i = 1; i <= 3; i++) {
-                        mocks.push({
-                          id: crypto.randomUUID(),
-                          name: `Mock Genel Deneme ${i}`,
-                          date: new Date(Date.now() - i * 86400000).toISOString().split("T")[0],
-                          examType: "genel",
-                          scores: DENEME_SUBJECTS.map(s => ({
-                            subjectId: s.id,
-                            correct: Math.floor(s.questionCount * (0.6 + Math.random() * 0.3)),
-                            wrong: Math.floor(s.questionCount * (0.1 + Math.random() * 0.2)),
-                            empty: 0,
-                          })).map(s => ({ ...s, empty: DENEME_SUBJECTS.find(x => x.id === s.subjectId)!.questionCount - s.correct - s.wrong }))
-                        });
-                      }
-                      DENEME_SUBJECTS.forEach((sub) => {
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const mocks: DenemeRecord[] = [];
                         for (let i = 1; i <= 3; i++) {
-                          const correct = Math.floor(sub.questionCount * (0.5 + Math.random() * 0.4));
-                          const wrong = Math.floor(sub.questionCount * (0.1 + Math.random() * 0.2));
                           mocks.push({
-                            id: crypto.randomUUID(),
-                            name: `Mock ${sub.title} Branş ${i}`,
+                            id: `mock-${crypto.randomUUID()}`,
+                            isMock: true,
+                            name: `Mock Genel Deneme ${i}`,
                             date: new Date(Date.now() - i * 86400000).toISOString().split("T")[0],
-                            examType: "brans",
-                            bransSubjectId: sub.id,
-                            scores: [{
-                              subjectId: sub.id,
-                              correct,
-                              wrong,
-                              empty: sub.questionCount - correct - wrong
-                            }]
-                          });
+                            examType: "genel",
+                            scores: DENEME_SUBJECTS.map(s => ({
+                              subjectId: s.id,
+                              correct: Math.floor(s.questionCount * (0.6 + Math.random() * 0.3)),
+                              wrong: Math.floor(s.questionCount * (0.1 + Math.random() * 0.2)),
+                              empty: 0,
+                            })).map(s => ({ ...s, empty: DENEME_SUBJECTS.find(x => x.id === s.subjectId)!.questionCount - s.correct - s.wrong }))
+                          } as any);
                         }
-                      });
-                      setDenemeler(prev => [...prev, ...mocks]);
-                      toast.success("Test verileri başarıyla eklendi!");
-                    }}
-                    className="px-3.5 py-1.5 bg-[#ffebeb] dark:bg-rose-500/20 text-[#ff4b4b] dark:text-rose-400 font-extrabold rounded-xl text-xs uppercase tracking-wider border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b] hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
-                  >
-                    🧪 Test Verisi Yükle
-                  </button>
+                        DENEME_SUBJECTS.forEach((sub) => {
+                          for (let i = 1; i <= 3; i++) {
+                            const correct = Math.floor(sub.questionCount * (0.5 + Math.random() * 0.4));
+                            const wrong = Math.floor(sub.questionCount * (0.1 + Math.random() * 0.2));
+                            mocks.push({
+                              id: `mock-${crypto.randomUUID()}`,
+                              isMock: true,
+                              name: `Mock ${sub.title} Branş ${i}`,
+                              date: new Date(Date.now() - i * 86400000).toISOString().split("T")[0],
+                              examType: "brans",
+                              bransSubjectId: sub.id,
+                              scores: [{
+                                subjectId: sub.id,
+                                correct,
+                                wrong,
+                                empty: sub.questionCount - correct - wrong
+                              }]
+                            } as any);
+                          }
+                        });
+                        setDenemeler(prev => [...prev, ...mocks]);
+                        toast.success("Geçici test verileri eklendi! (Veritabanına kaydedilmez)");
+                      }}
+                      className="px-3.5 py-1.5 bg-[#ffebeb] dark:bg-rose-500/20 text-[#ff4b4b] dark:text-rose-400 font-extrabold rounded-xl text-xs uppercase tracking-wider border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b] hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+                    >
+                      🧪 Test Verisi Yükle
+                    </button>
+
+                    {denemeler.some(d => (d as any).isMock || d.id?.startsWith("mock-") || d.name?.startsWith("Mock ")) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const clean = denemeler.filter(d => !((d as any).isMock || d.id?.startsWith("mock-") || d.name?.startsWith("Mock ")));
+                          setDenemeler(clean);
+                          persistData(clean, targetNet);
+                          toast.success("Test verileri silindi ve veritabanı temizlendi! 🧹");
+                        }}
+                        className="px-3.5 py-1.5 bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-2 border-b-4 border-[#58cc02] border-b-[#46a302] font-extrabold rounded-xl text-xs uppercase tracking-wider hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+                      >
+                        🧹 Test Verilerini Temizle
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>

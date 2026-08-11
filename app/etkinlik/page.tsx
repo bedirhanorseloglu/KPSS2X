@@ -36,13 +36,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "vatandaslik",
     subjectName: "Vatandaşlık",
     color: "#5856d6",
-    badgeBg: "bg-[#f8f0fc] dark:bg-[#5856d6]/10",
+    badgeBg: "bg-[#5856d6]/10 dark:bg-[#5856d6]/20",
     badgeBorder: "border-[#5856d6]/30",
     badgeTextColor: "text-[#5856d6]",
-    iconBg: "bg-[#5856d6]",
-    iconBorder: "border-2 border-b-4 border-[#5856d6] border-b-[#4744b8]",
+    iconBg: "bg-[#5856d6]/10 dark:bg-[#5856d6]/20",
+    iconBorder: "border-2 border-b-4 border-[#5856d6]/30",
     buttonBg: "bg-[#5856d6]",
-    buttonBorder: "border-[#4744b8]",
+    buttonBorder: "border-[#5856d6] border-b-[#4744b8]",
     emoji: "⚖️",
     tag: "ÖSYM Tuzakları • Yüksek Yargı",
     title: "Yüksek Mahkeme Üyeleri Seçimi",
@@ -54,13 +54,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "vatandaslik",
     subjectName: "Vatandaşlık",
     color: "#5856d6",
-    badgeBg: "bg-[#f8f0fc] dark:bg-[#5856d6]/10",
+    badgeBg: "bg-[#5856d6]/10 dark:bg-[#5856d6]/20",
     badgeBorder: "border-[#5856d6]/30",
     badgeTextColor: "text-[#5856d6]",
-    iconBg: "bg-[#5856d6]",
-    iconBorder: "border-2 border-b-4 border-[#5856d6] border-b-[#4744b8]",
+    iconBg: "bg-[#5856d6]/10 dark:bg-[#5856d6]/20",
+    iconBorder: "border-2 border-b-4 border-[#5856d6]/30",
     buttonBg: "bg-[#5856d6]",
-    buttonBorder: "border-[#4744b8]",
+    buttonBorder: "border-[#5856d6] border-b-[#4744b8]",
     emoji: "🗳️",
     tag: "Mekânsal Görsel Hafıza",
     title: "TBMM Yeter Sayıları Arenası",
@@ -70,15 +70,15 @@ const ACTIVITIES: ActivityItem[] = [
   {
     id: "guncel-bilgiler",
     subject: "vatandaslik",
-    subjectName: "Vatandaşlık",
-    color: "#5856d6",
-    badgeBg: "bg-[#f8f0fc] dark:bg-[#5856d6]/10",
-    badgeBorder: "border-[#5856d6]/30",
-    badgeTextColor: "text-[#5856d6]",
-    iconBg: "bg-[#5856d6]",
-    iconBorder: "border-2 border-b-4 border-[#5856d6] border-b-[#4744b8]",
-    buttonBg: "bg-[#5856d6]",
-    buttonBorder: "border-[#4744b8]",
+    subjectName: "Güncel & GK",
+    color: "#1cb0f6",
+    badgeBg: "bg-[#1cb0f6]/10 dark:bg-[#1cb0f6]/20",
+    badgeBorder: "border-[#1cb0f6]/30",
+    badgeTextColor: "text-[#1cb0f6]",
+    iconBg: "bg-[#1cb0f6]/10 dark:bg-[#1cb0f6]/20",
+    iconBorder: "border-2 border-b-4 border-[#1cb0f6]/30",
+    buttonBg: "bg-[#1cb0f6]",
+    buttonBorder: "border-[#1cb0f6] border-b-[#1899d6]",
     emoji: "🌍",
     tag: "Genel Kültür",
     title: "Güncel Bilgiler & Genel Kültür",
@@ -90,13 +90,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "vatandaslik",
     subjectName: "Vatandaşlık",
     color: "#5856d6",
-    badgeBg: "bg-[#f8f0fc] dark:bg-[#5856d6]/10",
+    badgeBg: "bg-[#5856d6]/10 dark:bg-[#5856d6]/20",
     badgeBorder: "border-[#5856d6]/30",
     badgeTextColor: "text-[#5856d6]",
-    iconBg: "bg-[#5856d6]",
-    iconBorder: "border-2 border-b-4 border-[#5856d6] border-b-[#4744b8]",
+    iconBg: "bg-[#5856d6]/10 dark:bg-[#5856d6]/20",
+    iconBorder: "border-2 border-b-4 border-[#5856d6]/30",
     buttonBg: "bg-[#5856d6]",
-    buttonBorder: "border-[#4744b8]",
+    buttonBorder: "border-[#5856d6] border-b-[#4744b8]",
     emoji: "📘",
     tag: "80 Soru Test",
     title: "Vatandaşlık & Anayasa Hukuku",
@@ -108,13 +108,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "cografya",
     subjectName: "Coğrafya",
     color: "#10B981",
-    badgeBg: "bg-[#ecfdf5] dark:bg-[#10B981]/10",
+    badgeBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
     badgeBorder: "border-[#10B981]/30",
     badgeTextColor: "text-[#10B981]",
-    iconBg: "bg-[#10B981]",
-    iconBorder: "border-b-[4px] border-[#059669]",
+    iconBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
+    iconBorder: "border-2 border-b-4 border-[#10B981]/30",
     buttonBg: "bg-[#10B981]",
-    buttonBorder: "border-[#059669]",
+    buttonBorder: "border-[#10B981] border-b-[#059669]",
     emoji: "🏔️",
     tag: "Harita Aktivitesi",
     kavramCount: "49",
@@ -127,13 +127,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "cografya",
     subjectName: "Coğrafya",
     color: "#10B981",
-    badgeBg: "bg-[#ecfdf5] dark:bg-[#10B981]/10",
+    badgeBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
     badgeBorder: "border-[#10B981]/30",
     badgeTextColor: "text-[#10B981]",
-    iconBg: "bg-[#10B981]",
-    iconBorder: "border-b-[4px] border-[#059669]",
+    iconBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
+    iconBorder: "border-2 border-b-4 border-[#10B981]/30",
     buttonBg: "bg-[#10B981]",
-    buttonBorder: "border-[#059669]",
+    buttonBorder: "border-[#10B981] border-b-[#059669]",
     emoji: "🗺️",
     tag: "Eşleştirme",
     kavramCount: "18",
@@ -146,14 +146,14 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "cografya",
     subjectName: "Coğrafya",
     color: "#10B981",
-    badgeBg: "bg-[#ecfdf5] dark:bg-[#10B981]/10",
+    badgeBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
     badgeBorder: "border-[#10B981]/30",
     badgeTextColor: "text-[#10B981]",
-    iconBg: "bg-[#10B981]",
-    iconBorder: "border-b-[4px] border-[#059669]",
+    iconBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
+    iconBorder: "border-2 border-b-4 border-[#10B981]/30",
     buttonBg: "bg-[#10B981]",
-    buttonBorder: "border-[#059669]",
-    emoji: "🗺️",
+    buttonBorder: "border-[#10B981] border-b-[#059669]",
+    emoji: "🏞️",
     tag: "Delta & Tektonik",
     kavramCount: "29",
     title: "Türkiye'nin Ovaları",
@@ -165,13 +165,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "cografya",
     subjectName: "Coğrafya",
     color: "#10B981",
-    badgeBg: "bg-[#ecfdf5] dark:bg-[#10B981]/10",
+    badgeBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
     badgeBorder: "border-[#10B981]/30",
     badgeTextColor: "text-[#10B981]",
-    iconBg: "bg-[#10B981]",
-    iconBorder: "border-b-[4px] border-[#059669]",
+    iconBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
+    iconBorder: "border-2 border-b-4 border-[#10B981]/30",
     buttonBg: "bg-[#10B981]",
-    buttonBorder: "border-[#059669]",
+    buttonBorder: "border-[#10B981] border-b-[#059669]",
     emoji: "💧",
     tag: "Göller",
     kavramCount: "53",
@@ -184,13 +184,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "cografya",
     subjectName: "Coğrafya",
     color: "#10B981",
-    badgeBg: "bg-[#ecfdf5] dark:bg-[#10B981]/10",
+    badgeBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
     badgeBorder: "border-[#10B981]/30",
     badgeTextColor: "text-[#10B981]",
-    iconBg: "bg-[#10B981]",
-    iconBorder: "border-b-[4px] border-[#059669]",
+    iconBg: "bg-[#10B981]/10 dark:bg-[#10B981]/20",
+    iconBorder: "border-2 border-b-4 border-[#10B981]/30",
     buttonBg: "bg-[#10B981]",
-    buttonBorder: "border-[#059669]",
+    buttonBorder: "border-[#10B981] border-b-[#059669]",
     emoji: "🌊",
     tag: "Barajlar",
     kavramCount: "42",
@@ -203,13 +203,13 @@ const ACTIVITIES: ActivityItem[] = [
     subject: "tarih",
     subjectName: "Tarih",
     color: "#ff9500",
-    badgeBg: "bg-[#fff8ed] dark:bg-[#ff9500]/10",
+    badgeBg: "bg-[#ff9500]/10 dark:bg-[#ff9500]/20",
     badgeBorder: "border-[#ff9500]/30",
     badgeTextColor: "text-[#ff9500]",
-    iconBg: "bg-[#ff9500]",
-    iconBorder: "border-2 border-b-4 border-[#ff9500] border-b-[#e08400]",
+    iconBg: "bg-[#ff9500]/10 dark:bg-[#ff9500]/20",
+    iconBorder: "border-2 border-b-4 border-[#ff9500]/30",
     buttonBg: "bg-[#ff9500]",
-    buttonBorder: "border-[#e08400]",
+    buttonBorder: "border-[#ff9500] border-b-[#e08400]",
     emoji: "🏛️",
     tag: "Çok Yakında",
     title: "Tarih Kronoloji & Antlaşmalar",
@@ -237,7 +237,7 @@ export default function EtkinlikIndexPage() {
     : ACTIVITIES.filter(a => a.subject === selectedSubject);
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-28 pb-20 px-4 sm:px-6">
+    <main className="min-h-screen bg-slate-50 dark:bg-[#0a0f1a] pt-28 pb-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         
         {/* ━━━ ASYMMETRICAL 2-COLUMN APP DASHBOARD LAYOUT ━━━ */}
@@ -247,19 +247,22 @@ export default function EtkinlikIndexPage() {
           <aside className="lg:col-span-3 space-y-6 lg:sticky lg:top-20">
             
             {/* User Progress Mini Chip */}
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border-2 border-b-4 border-slate-200 dark:border-slate-800 p-5 shadow-xs flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#1cb0f6] border-2 border-b-4 border-[#1899d6] flex items-center justify-center text-white font-black text-lg shadow-2xs shrink-0">
+            <div className="bg-white dark:bg-slate-800 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 p-5 shadow-xs flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center text-white font-black text-lg shadow-2xs shrink-0">
                 {user?.displayName?.charAt(0)?.toUpperCase() || "K"}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-sm font-black text-slate-800 dark:text-white truncate">
                   {user?.displayName || "KPSS Öğrencisi"}
                 </div>
+                <div className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                  Pratikte İlerle
+                </div>
               </div>
             </div>
 
             {/* Vertical Segmented Subject Filters */}
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] border-2 border-b-4 border-slate-200 dark:border-slate-800 p-3 shadow-xs space-y-1.5">
+            <div className="bg-white dark:bg-slate-800 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 p-3 shadow-xs space-y-1.5">
               <div className="px-3 pt-2 pb-1 text-[11px] font-black uppercase tracking-wider text-slate-400">
                 Pratik Kategorisi
               </div>
@@ -267,7 +270,7 @@ export default function EtkinlikIndexPage() {
               {[
                 { id: "all", label: "Tüm Pratikler", emoji: "🌟", color: "#1cb0f6", borderColor: "#1899d6", count: ACTIVITIES.length },
                 { id: "vatandaslik", label: "Vatandaşlık", emoji: "⚖️", color: "#5856d6", borderColor: "#4744b8", count: ACTIVITIES.filter(a => a.subject === "vatandaslik").length },
-                { id: "cografya", label: "Coğrafya", emoji: "🗺️", color: "#58cc02", borderColor: "#46a302", count: ACTIVITIES.filter(a => a.subject === "cografya").length },
+                { id: "cografya", label: "Coğrafya", emoji: "🗺️", color: "#10B981", borderColor: "#059669", count: ACTIVITIES.filter(a => a.subject === "cografya").length },
                 { id: "tarih", label: "Tarih", emoji: "🏛️", color: "#ff9500", borderColor: "#e08400", count: ACTIVITIES.filter(a => a.subject === "tarih").length }
               ].map((cat) => {
                 const isActive = selectedSubject === cat.id;
@@ -278,8 +281,8 @@ export default function EtkinlikIndexPage() {
                     onClick={() => setSelectedSubject(cat.id as SubjectTab)}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-black text-xs transition-all cursor-pointer relative ${
                       !isActive
-                        ? "bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-200 border-2 border-b-4 border-transparent hover:border-slate-300 dark:hover:border-slate-700"
-                        : "border-0"
+                        ? "bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-200 border-2 border-b-4 border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                        : "border-0 text-white"
                     }`}
                     style={isActive ? { padding: "10px 16px 14px 16px" } : {}}
                   >
@@ -298,7 +301,7 @@ export default function EtkinlikIndexPage() {
                       <AppleEmoji emoji={cat.emoji} size={18} color={isActive ? "#ffffff" : undefined} />
                       <span>{cat.label}</span>
                     </div>
-                    <span className={`relative z-10 text-[10px] px-2 py-0.5 rounded-lg font-bold ${isActive ? "bg-black/20 text-white" : "bg-black/10"}`}>
+                    <span className={`relative z-10 text-[10px] px-2 py-0.5 rounded-lg font-bold ${isActive ? "bg-black/20 text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300"}`}>
                       {cat.count}
                     </span>
                   </button>
@@ -311,10 +314,10 @@ export default function EtkinlikIndexPage() {
           <main className="lg:col-span-9 space-y-6">
             
             {/* REGULAR ACTIVITIES STREAM */}
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="flex items-center justify-between px-1">
                 <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-                  <AppleEmoji emoji="🎯" size={22} />
+                  <AppleEmoji emoji="🎯" size={24} color="#1cb0f6" />
                   <span>Pratik Aktivite Modülleri</span>
                 </h3>
                 <span className="text-xs font-bold text-slate-400">
@@ -329,20 +332,18 @@ export default function EtkinlikIndexPage() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -12, scale: 0.99 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-6"
                 >
                   {filteredActivities.map((act) => {
-                    // Ekran görüntüsündeki modern kart tasarımı
-                    
                     if (act.isLocked) {
                       return (
                         <div
                           key={act.id}
-                          className="bg-white/40 dark:bg-[#1e2532]/60 rounded-[2rem] p-6 border-2 border-dashed border-slate-300 dark:border-slate-700/50 opacity-75 flex flex-col justify-between cursor-not-allowed"
+                          className="bg-white/40 dark:bg-slate-800/40 rounded-[2.25rem] p-6 sm:p-7 border-2 border-dashed border-slate-300 dark:border-slate-700 opacity-60 flex flex-col justify-between cursor-not-allowed"
                         >
                           <div className="flex items-start gap-4 mb-4">
-                            <div className="w-[72px] h-[72px] rounded-[1.25rem] bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0 border-b-[4px] border-slate-300 dark:border-slate-900">
-                              <Lock className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+                            <div className="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0 border-2 border-b-4 border-slate-300 dark:border-slate-600">
+                              <Lock className="w-7 h-7 text-slate-400 dark:text-slate-500" />
                             </div>
                             <div className="flex flex-col pt-1">
                               <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-0.5">
@@ -355,12 +356,12 @@ export default function EtkinlikIndexPage() {
                           </div>
 
                           <div className="mb-6 flex-grow">
-                            <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500/80 leading-relaxed">
+                            <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500 leading-relaxed">
                               {act.description}
                             </p>
                           </div>
 
-                          <div className="w-full py-3.5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-black text-sm text-center border-b-[4px] border-slate-300 dark:border-slate-900">
+                          <div className="w-full py-3.5 rounded-2xl bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-black text-sm text-center border-2 border-b-4 border-slate-300 dark:border-slate-600">
                             YAKINDA
                           </div>
                         </div>
@@ -374,17 +375,22 @@ export default function EtkinlikIndexPage() {
                         whileTap={{ scale: 0.98 }}
                         transition={{ type: "spring", stiffness: 350, damping: 25 }}
                         onClick={() => handleLaunch(act)}
-                        className="group bg-white dark:bg-[#1e2634] rounded-[2rem] p-6 border-2 border-slate-200 dark:border-[#2a3441] hover:border-slate-300 dark:hover:border-[#3a4554] transition-all flex flex-col justify-between cursor-pointer select-none h-full shadow-sm"
+                        className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-6 sm:p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-600 transition-all flex flex-col justify-between cursor-pointer select-none h-full"
                       >
                         <div className="flex items-start gap-4 mb-4">
-                          <div className={`w-[72px] h-[72px] rounded-[1.25rem] ${act.iconBg} flex items-center justify-center shrink-0 ${act.iconBorder} group-hover:scale-105 transition-transform`}>
-                            <AppleEmoji emoji={act.emoji} size={36} color="#ffffff" />
+                          <div className={`w-16 h-16 rounded-2xl ${act.iconBg} flex items-center justify-center shrink-0 ${act.iconBorder} shadow-2xs group-hover:scale-105 transition-transform`}>
+                            <AppleEmoji emoji={act.emoji} size={32} color={act.color} />
                           </div>
-                          <div className="flex flex-col pt-1">
-                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-0.5">
-                              {act.kavramCount || "10"} KAVRAM
-                            </span>
-                            <h3 className="text-xl font-black leading-tight" style={{ color: act.color }}>
+                          <div className="flex flex-col pt-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-lg border-2 border-b-2 shadow-2xs ${act.badgeBg} ${act.badgeBorder} ${act.badgeTextColor}`}>
+                                {act.kavramCount || "10"} KAVRAM
+                              </span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                                {act.subjectName}
+                              </span>
+                            </div>
+                            <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-[#1cb0f6] transition-colors">
                               {act.title}
                             </h3>
                           </div>
@@ -396,9 +402,13 @@ export default function EtkinlikIndexPage() {
                           </p>
                         </div>
 
-                        <div className={`w-full py-3.5 rounded-2xl ${act.buttonBg} text-white font-black text-sm text-center border-b-[4px] ${act.buttonBorder} group-active:border-b-0 group-active:translate-y-[4px] transition-all`}>
-                          BAŞLA
-                        </div>
+                        <button
+                          type="button"
+                          className={`w-full py-3.5 rounded-2xl text-white font-black text-sm text-center border-2 border-b-4 ${act.buttonBg} ${act.buttonBorder} active:translate-y-0.5 transition-all shadow-sm flex items-center justify-center gap-2 group-hover:scale-[1.01]`}
+                        >
+                          <span>BAŞLA</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
                       </motion.div>
                     );
                   })}

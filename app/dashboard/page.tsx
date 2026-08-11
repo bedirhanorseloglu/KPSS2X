@@ -508,7 +508,7 @@ function HomeContent() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-                  className="lg:col-span-5"
+                  className="lg:col-span-5 relative z-30"
                 >
                   <KPSSCountdown />
                 </motion.div>
