@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/contexts/AuthContext";
 import AuthGuard from "@/components/auth/AuthGuard";
 import GlobalPomodoro from "@/components/GlobalPomodoro";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Nunito } from "next/font/google";
 import "./globals.css";
@@ -14,6 +15,13 @@ const nunito = Nunito({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#1cb0f6",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
   title: {
     template: "%s | KPSS2X — 2 Kat Hızlı Hazırlık",
@@ -22,6 +30,11 @@ export const metadata: Metadata = {
   description: "KPSS2X — 2 Kat Hızlı KPSS Hazırlık Platformu. Deneme analizleri, pomodoro, liderlik tablosu ve yapay zeka destekli hedef takibi.",
   keywords: ["KPSS2X", "KPSS 2026", "KPSS Çalışma", "Deneme Takibi", "Pomodoro", "KPSS Lisans", "Sınav Takip"],
   authors: [{ name: "KPSS2X Uzmanı" }],
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/kpss2x_final_logo.png",
+  },
   openGraph: {
     title: "KPSS2X — 2 Kat Hızlı KPSS Hazırlık Platformu",
     description: "Premium KPSS2X ders takip paneli. Kendi netlerini gir, rakiplerinle yarış, başarını 2'ye katla.",
@@ -50,8 +63,10 @@ export default function RootLayout({
       <body className="antialiased min-h-screen flex flex-col font-sans">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AuthProvider>
-            {children}
-            <GlobalPomodoro />
+            <ErrorBoundary>
+              {children}
+              <GlobalPomodoro />
+            </ErrorBoundary>
           </AuthProvider>
         </ThemeProvider>
         <Toaster

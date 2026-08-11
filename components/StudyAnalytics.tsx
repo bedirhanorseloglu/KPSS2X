@@ -143,7 +143,7 @@ export default function StudyAnalytics() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
         whileHover={{ y: -4, transition: { duration: 0.25 } }}
-        className={`bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 flex flex-col justify-between items-start gap-5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md hover:border-[#1cb0f6] transition-all relative overflow-hidden group cursor-pointer select-none ${
+        className={`bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 flex flex-col justify-between items-start gap-5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] transition-all relative overflow-hidden group cursor-pointer select-none ${
           isExpanded ? 'border-[#1cb0f6] shadow-md' : ''
         }`}
       >

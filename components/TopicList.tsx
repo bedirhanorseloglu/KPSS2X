@@ -62,7 +62,7 @@ function DraggableTopicItem({
           className={`w-7 h-7 rounded-xl flex items-center justify-center border-2 transition-all shrink-0 cursor-pointer ${
             topic.done
               ? "bg-[#58cc02] border-2 border-b-4 border-[#58cc02] border-b-[#46a302] text-white shadow-2xs"
-              : "border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 group-hover:border-[#58cc02]"
+              : "border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 group-hover:border-[#58cc02] dark:group-hover:border-[#58cc02]"
           }`}
         >
           {topic.done && (

@@ -243,7 +243,7 @@ export default function YuksekYargiGame() {
 
           {selectorSolved.length === 0 && (
             <div className="my-auto py-2 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-[11px] font-bold text-slate-400 group-hover:border-[#5856d6] group-hover:text-[#5856d6] transition-colors">
-              Seçmek için tıkla 🎯
+              Seçmek için tıkla
             </div>
           )}
         </div>
@@ -258,7 +258,7 @@ export default function YuksekYargiGame() {
       <div className="flex items-center justify-between gap-4">
         <Link
           href="/etkinlik"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-black text-xs uppercase tracking-widest hover:border-[#5856d6] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-black text-xs uppercase tracking-widest hover:border-[#5856d6] dark:hover:border-[#5856d6] hover:bg-[#5856d6]/10 dark:hover:bg-[#5856d6]/20 active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Etkinlikler</span>
@@ -307,7 +307,6 @@ export default function YuksekYargiGame() {
       {/* ━━━ VISUAL MEMORY MAP TRIGGER BUTTON ━━━ */}
       <div className="flex items-center justify-between gap-3 bg-white dark:bg-slate-900 p-2.5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="flex items-center gap-2 pl-2">
-          <AppleEmoji emoji="⚖️" size={22} />
           <span className="font-black text-xs sm:text-sm text-slate-800 dark:text-white">
             Yüksek Mahkeme Üyeleri Seçim Kaynakları Simülatörü
           </span>
@@ -316,11 +315,9 @@ export default function YuksekYargiGame() {
         <button
           type="button"
           onClick={() => setShowVisualMemoryModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-black text-xs sm:text-sm rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 hover:border-[#ff9500] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
+          className="inline-flex items-center px-4 py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-black text-xs sm:text-sm rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 hover:border-[#ff9500] dark:hover:border-[#ff9500] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
         >
-          <Sparkles className="w-4 h-4 text-[#ff9500]" />
           <span>Seçim Kaynakları Tablosu</span>
-          <AppleEmoji emoji="🧠" size={18} />
         </button>
       </div>
 
@@ -404,11 +401,6 @@ export default function YuksekYargiGame() {
                     : "border-slate-200 dark:border-slate-800"
                 }`}
               >
-                <div className="inline-flex items-center gap-2 bg-[#f8f0fc] dark:bg-[#5856d6]/10 text-[#5856d6] font-black px-3.5 py-1.5 rounded-xl text-xs border-2 border-b-2 border-[#5856d6]/30 shadow-2xs">
-                  <AppleEmoji emoji={currentItem.courtIcon} size={16} />
-                  <span>{currentItem.court} • Üye Seçim Kaynağı</span>
-                </div>
-
                 <div className="space-y-1 max-w-2xl">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Aşağıdaki Soru İçin Doğru Seçim Kaynağı Kutusuna Tıkla!</span>
                   <h3 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white leading-relaxed tracking-tight">
@@ -520,16 +512,13 @@ export default function YuksekYargiGame() {
               className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 sm:p-8 max-w-4xl w-full border-2 border-b-4 border-slate-200 dark:border-slate-800 shadow-2xl space-y-6 max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between border-b-2 border-slate-100 dark:border-slate-800 pb-4">
-                <div className="flex items-center gap-3">
-                  <AppleEmoji emoji="🧠" size={32} />
-                  <div>
-                    <h3 className="text-xl font-black text-slate-800 dark:text-white">
-                      Yüksek Mahkeme Üyeleri Seçim Kaynakları Tablosu
-                    </h3>
-                    <p className="text-xs font-semibold text-slate-400">
-                      Ders notunuzdaki görsel hafıza şeması ve ÖSYM çıkmış soru tuzakları
-                    </p>
-                  </div>
+                <div>
+                  <h3 className="text-xl font-black text-slate-800 dark:text-white">
+                    Yüksek Mahkeme Üyeleri Seçim Kaynakları Tablosu
+                  </h3>
+                  <p className="text-xs font-semibold text-slate-400">
+                    Ders notunuzdaki görsel hafıza şeması ve ÖSYM çıkmış soru tuzakları
+                  </p>
                 </div>
 
                 <button

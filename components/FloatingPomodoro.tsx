@@ -444,7 +444,7 @@ export default function FloatingPomodoro() {
                   ? (mode === 'stopwatch' 
                       ? "bg-white dark:bg-slate-900 border-[#1cb0f6] border-b-[#1899d6] text-slate-800 dark:text-white" 
                       : "bg-white dark:bg-slate-900 border-[#58cc02] border-b-[#46a302] text-slate-800 dark:text-white")
-                  : "bg-white dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-800 dark:text-white hover:border-[#1cb0f6]"
+                  : "bg-white dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
               }`}
             >
               {/* Ultra-Sleek Bottom Progress Line Bar when Active */}
@@ -465,7 +465,7 @@ export default function FloatingPomodoro() {
                   ? (mode === 'stopwatch'
                       ? "bg-[#e8f7ff] dark:bg-slate-800 border-[#1cb0f6]/30 text-[#1cb0f6] group-hover:bg-[#1cb0f6] group-hover:text-white group-hover:border-[#1cb0f6]"
                       : "bg-[#e5f9e7] dark:bg-slate-800 border-[#58cc02]/30 text-[#58cc02] group-hover:bg-[#58cc02] group-hover:text-white group-hover:border-[#58cc02]")
-                  : "bg-slate-100 dark:bg-slate-700/80 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 group-hover:border-[#1cb0f6] group-hover:text-[#1cb0f6]"
+                  : "bg-slate-100 dark:bg-slate-700/80 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 group-hover:border-[#1cb0f6] dark:group-hover:border-[#1cb0f6] group-hover:text-[#1cb0f6]"
               }`}>
                 <ChevronUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={3} />
               </div>
@@ -541,7 +541,7 @@ export default function FloatingPomodoro() {
                   className={`w-9 h-9 flex items-center justify-center rounded-xl border-2 border-b-2 transition-all shadow-2xs active:translate-y-0.5 cursor-pointer ${
                     showSettings 
                       ? 'bg-[#1cb0f6] text-white border-[#1cb0f6] border-b-[#1899d6]' 
-                      : 'bg-slate-100 dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-[#1cb0f6]'
+                      : 'bg-slate-100 dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]'
                   }`}
                   title="Ayarlar"
                 >
@@ -550,7 +550,7 @@ export default function FloatingPomodoro() {
                 <button 
                   type="button"
                   onClick={() => { setIsOpen(false); setShowSettings(false); }}
-                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-b-2 border-slate-200 border-b-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-[#ff4b4b] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
+                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-b-2 border-slate-200 border-b-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-[#ff4b4b] dark:hover:border-[#ff4b4b] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
                   title="Kapat"
                 >
                   <X className="w-4 h-4" strokeWidth={2.5} />
@@ -589,7 +589,7 @@ export default function FloatingPomodoro() {
                         <button 
                           type="button"
                           onClick={() => setPendingMode(null)}
-                          className="flex-1 py-3 px-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-white font-black text-[11px] uppercase tracking-wider rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 dark:border-b-slate-700 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
+                          className="flex-1 py-3 px-2 bg-white dark:bg-slate-700 text-slate-700 dark:text-white font-black text-[11px] uppercase tracking-wider rounded-2xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-600 dark:border-b-slate-700 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
                         >
                           <span>{mode === "stopwatch" ? "DEVAM ET" : "VAZGEÇ"}</span>
                         </button>
@@ -888,7 +888,7 @@ export default function FloatingPomodoro() {
                        <button 
                          type="button"
                          onClick={resetTimer}
-                         className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer shrink-0"
+                         className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer shrink-0"
                          title="Sıfırla"
                        >
                          <RotateCcw className="w-5 h-5" />

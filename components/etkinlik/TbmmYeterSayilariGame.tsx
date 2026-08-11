@@ -253,7 +253,7 @@ export default function TbmmYeterSayilariGame() {
 
           {bucketSolved.length === 0 && (
             <div className="my-auto py-2 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-[11px] font-bold text-slate-400 group-hover:border-[#5856d6] group-hover:text-[#5856d6] transition-colors">
-              Seçmek için buraya tıkla 🎯
+              Seçmek için buraya tıkla
             </div>
           )}
         </div>
@@ -269,7 +269,7 @@ export default function TbmmYeterSayilariGame() {
         {/* Back Button */}
         <Link
           href="/etkinlik"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-black text-xs uppercase tracking-widest hover:border-[#5856d6] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-black text-xs uppercase tracking-widest hover:border-[#5856d6] dark:hover:border-[#5856d6] hover:bg-[#5856d6]/10 dark:hover:bg-[#5856d6]/20 active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Etkinlikler</span>
@@ -318,7 +318,6 @@ export default function TbmmYeterSayilariGame() {
       {/* ━━━ VISUAL MEMORY MAP TRIGGER BUTTON ━━━ */}
       <div className="flex items-center justify-between gap-3 bg-white dark:bg-slate-900 p-2.5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="flex items-center gap-2 pl-2">
-          <AppleEmoji emoji="🏛️" size={22} />
           <span className="font-black text-xs sm:text-sm text-slate-800 dark:text-white">
             Mekânsal Hafıza Arenası (Sürükle & Bırak)
           </span>
@@ -327,11 +326,9 @@ export default function TbmmYeterSayilariGame() {
         <button
           type="button"
           onClick={() => setShowVisualMemoryModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-black text-xs sm:text-sm rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 hover:border-[#ff9500] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
+          className="inline-flex items-center px-4 py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-black text-xs sm:text-sm rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 hover:border-[#ff9500] dark:hover:border-[#ff9500] active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
         >
-          <Sparkles className="w-4 h-4 text-[#ff9500]" />
           <span>Görsel Hafıza Haritası</span>
-          <AppleEmoji emoji="🧠" size={18} />
         </button>
       </div>
 

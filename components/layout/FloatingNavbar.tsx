@@ -121,7 +121,7 @@ export default function FloatingNavbar() {
             {/* Theme Toggle Button */}
             <button 
               type="button"
-              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               title="Tema Değiştir"
             >
@@ -131,7 +131,7 @@ export default function FloatingNavbar() {
             {/* Notification Bell */}
             <button 
               type="button"
-              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all relative cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all relative cursor-pointer"
               title="Bildirimler"
             >
               <Bell className="w-4 h-4" />

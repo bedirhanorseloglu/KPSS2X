@@ -246,7 +246,7 @@ export default function ExamSimulatorPage() {
            <button 
              type="button"
              onClick={() => setupStep === "mode" ? router.back() : setSetupStep("mode")}
-             className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-2.5 font-black text-xs text-slate-700 dark:text-slate-200 shadow-2xs hover:border-[#1cb0f6] active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+             className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-2.5 font-black text-xs text-slate-700 dark:text-slate-200 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
            >
              <ArrowLeft className="w-4 h-4 text-[#1cb0f6]" />
              <span>Geri</span>
@@ -289,7 +289,7 @@ export default function ExamSimulatorPage() {
                       setCustomDuration(130);
                       setSetupStep("duration");
                     }}
-                    className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#58cc02] transition-all text-left flex flex-col justify-between h-full cursor-pointer block"
+                    className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#58cc02] dark:hover:border-[#58cc02] transition-all text-left flex flex-col justify-between h-full cursor-pointer block"
                   >
                     <div className="flex flex-col items-start gap-5">
                       <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-[#58cc02] text-white border-2 border-b-4 border-[#58cc02] border-b-[#46a302] flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
@@ -320,7 +320,7 @@ export default function ExamSimulatorPage() {
                       setCustomDuration(SUBJECTS[0].defaultDuration);
                       setSetupStep("duration");
                     }}
-                    className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] transition-all text-left flex flex-col justify-between h-full cursor-pointer block"
+                    className="group bg-white dark:bg-slate-800 rounded-[2.25rem] p-7 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] transition-all text-left flex flex-col justify-between h-full cursor-pointer block"
                   >
                     <div className="flex flex-col items-start gap-5">
                       <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
@@ -380,7 +380,7 @@ export default function ExamSimulatorPage() {
                           className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl font-black text-xs transition-all cursor-pointer border-2 border-b-4 active:translate-y-0.5 ${
                             isSelected
                               ? `${sub.color} shadow-xs scale-105`
-                              : "bg-white dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#1cb0f6] shadow-2xs"
+                              : "bg-white dark:bg-slate-800 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] shadow-2xs"
                           }`}
                         >
                           <AppleEmoji emoji={sub.emoji} size={18} />

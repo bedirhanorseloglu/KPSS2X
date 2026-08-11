@@ -76,7 +76,7 @@ function DroppableDayCell({
       } ${
         isToday 
           ? 'bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 border-[#1cb0f6] border-b-[#1899d6] shadow-xs' 
-          : 'border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#1cb0f6]'
+          : 'border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]'
       } ${
         isOver ? 'scale-105 z-20 ring-4 ring-[#1cb0f6]/30 bg-[#e8f7ff] border-[#1cb0f6] shadow-xl' : ''
       }`}

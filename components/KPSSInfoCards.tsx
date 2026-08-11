@@ -298,7 +298,7 @@ export default function KPSSInfoCards() {
             className={`flex-shrink-0 px-5 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2.5 border-2 border-b-4 cursor-pointer active:translate-y-0.5 ${
               activeTab === tab.id
                 ? "bg-[#1cb0f6] text-white border-[#1cb0f6] border-b-[#1899d6] shadow-xs"
-                : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-300 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 hover:border-[#1cb0f6]"
+                : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-300 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
             }`}
           >
             <AppleEmoji emoji={tab.icon} size={18} />

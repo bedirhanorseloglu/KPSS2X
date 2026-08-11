@@ -1,0 +1,26 @@
+{
+  "name": "KPSS2X — 2 Kat Hızlı KPSS Hazırlık Platformu",
+  "short_name": "KPSS2X",
+  "description": "Deneme analizleri, pomodoro, liderlik tablosu ve yapay zeka destekli hedef takibi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1a",
+  "theme_color": "#1cb0f6",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/kpss2x_final_logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/kpss2x_final_logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

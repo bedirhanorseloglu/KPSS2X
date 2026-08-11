@@ -66,8 +66,8 @@ function TimeSlot({
           : isCompletedActive
             ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-b-4 border-emerald-300 dark:border-emerald-700/60'
             : topic || (note && note.trim() !== "")
-              ? 'bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] shadow-xs'
-              : 'bg-slate-50/80 dark:bg-slate-900/60 border-b-4 border-slate-200/80 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-[#1cb0f6] shadow-2xs'
+              ? 'bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] shadow-xs'
+              : 'bg-slate-50/80 dark:bg-slate-900/60 border-b-4 border-slate-200/80 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] shadow-2xs'
       } ${isOver ? 'ring-4 ring-[#1cb0f6]/40 border-[#1cb0f6] scale-[1.02] z-10' : ''} ${
         isDragging && !isLocked && !topic ? 'border-dashed border-[#1cb0f6] bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 animate-pulse' : ''
       }`}
@@ -398,7 +398,7 @@ export default function DailyPlanView({
                   className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-2xl border-2 border-b-4 transition-all cursor-pointer shadow-2xs active:translate-y-0.5 ${
                     isHoliday 
                       ? "bg-red-50 text-[#ff4b4b] border-[#ff4b4b] border-b-[#e03030]" 
-                      : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 border-slate-200 border-b-slate-300 dark:border-slate-600 hover:border-[#1cb0f6]"
+                      : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 border-slate-200 border-b-slate-300 dark:border-slate-600 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
                   }`}
                 >
                   {isHoliday ? "🏖️ Tatili İptal Et" : "🏖️ Tatil Modu"}
