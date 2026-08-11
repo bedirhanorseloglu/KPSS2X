@@ -132,19 +132,24 @@ export default function DenemeAnalytics({
     const best = Math.max(...nets);
 
     const subjects = DENEME_SUBJECTS.map((sub) => {
-      let tc = 0, tw = 0, te = 0, tNet = 0, cnt = 0;
+      let tc = 0, tw = 0, te = 0, cnt = 0;
       evals.forEach((e) => {
         const s = e.r.subjects.find((x) => x.subjectId === sub.id);
         if (s) {
           tc += s.correct;
           tw += s.wrong;
           te += s.empty;
-          tNet += s.net;
           cnt++;
         }
       });
-      const ac = cnt ? tc / cnt : 0, aw = cnt ? tw / cnt : 0, ae = cnt ? te / cnt : 0;
-      const net = cnt ? Math.round((tNet / cnt) * 100) / 100 : 0;
+      const rawAc = cnt ? tc / cnt : 0;
+      const rawAw = cnt ? tw / cnt : 0;
+      const rawAe = cnt ? te / cnt : 0;
+
+      const ac = Math.round(rawAc * 10) / 10;
+      const aw = Math.round(rawAw * 10) / 10;
+      const ae = Math.round(rawAe * 10) / 10;
+      const net = cnt ? Math.round((ac - aw / 4) * 100) / 100 : 0;
       const accuracy = sub.questionCount > 0 ? Math.max(0, (net / sub.questionCount) * 100) : 0;
       return { ...sub, avgCorrect: ac, avgWrong: aw, avgEmpty: ae, avgNet: net, accuracy };
     });
