@@ -96,7 +96,7 @@ export default function AkarsularPage() {
                 <h2 className="text-2xl font-black text-slate-800 dark:text-white">Haritada Nehir Avcısı</h2>
                 <button onClick={() => setStage("menu")} className="text-sm font-bold text-slate-400 hover:text-slate-600">Menüye Dön</button>
               </div>
-              <RiverMapGame onRestart={() => setStage("map")} />
+              <RiverMapGame onQuit={() => setStage("menu")} />
             </motion.div>
           )}
         </AnimatePresence>
