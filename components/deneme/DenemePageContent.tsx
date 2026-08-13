@@ -21,6 +21,7 @@ import { getStudyDate } from "@/lib/dateUtils";
 import { format } from "date-fns";
 import { updateLeaderboard, updateBranchLeaderboard, removeFromLeaderboard, removeFromBranchLeaderboard } from "@/lib/leaderboardService";
 import { DENEME_SUBJECTS } from "@/lib/denemeConfig";
+import { getSubjectTopics } from "@/lib/topicUtils";
 
 type Tab = "yeni" | "gecmis" | "analiz";
 
@@ -180,12 +181,12 @@ export default function DenemePageContent() {
 
   const stats = useMemo(() => {
     if (filteredDenemeler.length === 0) return null;
-    const nets = filteredDenemeler.map((d) => evaluateDeneme(d.scores).totalNet);
+    const nets = filteredDenemeler.map((d) => evaluateDeneme(d.scores, d.examType).totalNet);
     return {
       count: filteredDenemeler.length,
       avg: averageNet(filteredDenemeler),
       best: Math.max(...nets),
-      latest: evaluateDeneme(filteredDenemeler[0].scores).totalNet,
+      latest: evaluateDeneme(filteredDenemeler[0].scores, filteredDenemeler[0].examType).totalNet,
     };
   }, [filteredDenemeler]);
 
@@ -355,18 +356,50 @@ export default function DenemePageContent() {
                             name: `Mock Genel Deneme ${i}`,
                             date: new Date(Date.now() - i * 86400000).toISOString().split("T")[0],
                             examType: "genel",
-                            scores: DENEME_SUBJECTS.map(s => ({
-                              subjectId: s.id,
-                              correct: Math.floor(s.questionCount * (0.6 + Math.random() * 0.3)),
-                              wrong: Math.floor(s.questionCount * (0.1 + Math.random() * 0.2)),
-                              empty: 0,
-                            })).map(s => ({ ...s, empty: DENEME_SUBJECTS.find(x => x.id === s.subjectId)!.questionCount - s.correct - s.wrong }))
+                            scores: DENEME_SUBJECTS.map(s => {
+                              const qCount = s.questionCount;
+                              const correct = Math.floor(qCount * (0.6 + Math.random() * 0.25));
+                              const wrong = Math.floor(qCount * (0.1 + Math.random() * 0.15));
+                              const empty = qCount - correct - wrong;
+                              const topics = getSubjectTopics(s.id);
+                              
+                              // Randomly assign some wrong/empty to specific topics
+                              const topicErrors: any[] = [];
+                              if (wrong > 0 && topics.length > 0) {
+                                const t1 = topics[Math.floor(Math.random() * topics.length)];
+                                topicErrors.push({ topicId: t1.id, topicTitle: t1.title, wrongCount: Math.min(wrong, 2) });
+                              }
+                              if (empty > 0 && topics.length > 1) {
+                                const t2 = topics[Math.floor(Math.random() * topics.length)];
+                                topicErrors.push({ topicId: t2.id, topicTitle: t2.title, emptyCount: Math.min(empty, 2) });
+                              }
+
+                              return {
+                                subjectId: s.id,
+                                correct,
+                                wrong,
+                                empty,
+                                topicErrors,
+                              };
+                            })
                           } as any);
                         }
                         DENEME_SUBJECTS.forEach((sub) => {
                           for (let i = 1; i <= 3; i++) {
                             const correct = Math.floor(sub.questionCount * (0.5 + Math.random() * 0.4));
                             const wrong = Math.floor(sub.questionCount * (0.1 + Math.random() * 0.2));
+                            const empty = sub.questionCount - correct - wrong;
+                            const topics = getSubjectTopics(sub.id);
+                            const topicErrors: any[] = [];
+                            if (wrong > 0 && topics.length > 0) {
+                              const t1 = topics[Math.floor(Math.random() * topics.length)];
+                              topicErrors.push({ topicId: t1.id, topicTitle: t1.title, wrongCount: Math.min(wrong, 2) });
+                            }
+                            if (empty > 0 && topics.length > 1) {
+                              const t2 = topics[Math.floor(Math.random() * topics.length)];
+                              topicErrors.push({ topicId: t2.id, topicTitle: t2.title, emptyCount: Math.min(empty, 2) });
+                            }
+
                             mocks.push({
                               id: `mock-${crypto.randomUUID()}`,
                               isMock: true,
@@ -378,13 +411,14 @@ export default function DenemePageContent() {
                                 subjectId: sub.id,
                                 correct,
                                 wrong,
-                                empty: sub.questionCount - correct - wrong
+                                empty,
+                                topicErrors,
                               }]
                             } as any);
                           }
                         });
                         setDenemeler(prev => [...prev, ...mocks]);
-                        toast.success("Geçici test verileri eklendi! (Veritabanına kaydedilmez)");
+                        toast.success("Geçici test verileri ve konu analiz matrisi yüklendi!");
                       }}
                       className="px-3.5 py-1.5 bg-[#ffebeb] dark:bg-rose-500/20 text-[#ff4b4b] dark:text-rose-400 font-extrabold rounded-xl text-xs uppercase tracking-wider border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b] hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
                     >

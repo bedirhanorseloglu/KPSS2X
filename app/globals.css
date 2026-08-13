@@ -83,6 +83,26 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: rgba(0, 0, 0, 0.22);
 }
 
+/* Bright Visible 3D Scrollbar for Topic Matrix Grid */
+.custom-matrix-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-matrix-scrollbar::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+}
+.dark .custom-matrix-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+.custom-matrix-scrollbar::-webkit-scrollbar-thumb {
+  background: #1cb0f6;
+  border-radius: 999px;
+  box-shadow: 0 2px 4px rgba(28, 176, 246, 0.3);
+}
+.custom-matrix-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #009be3;
+}
+
 /* Glassmorphism Classes (Premium Apple Translucent Glass) */
 .glass {
   background: var(--color-card);

@@ -545,6 +545,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       key={subject.subjectId}
                       subject={subject}
                       index={i}
+                      topicErrors={scores.find(s => s.subjectId === subject.subjectId)?.topicErrors || []}
+                      onTopicErrorsChange={(topicErrors) => {
+                        setScores(prev => prev.map(s => s.subjectId === subject.subjectId ? { ...s, topicErrors } : s));
+                      }}
                       onChange={(field, value) => updateScore(subject.subjectId, field, value)}
                     />
                   ))}
@@ -575,6 +579,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       key={subject.subjectId}
                       subject={subject}
                       index={i}
+                      topicErrors={scores.find(s => s.subjectId === subject.subjectId)?.topicErrors || []}
+                      onTopicErrorsChange={(topicErrors) => {
+                        setScores(prev => prev.map(s => s.subjectId === subject.subjectId ? { ...s, topicErrors } : s));
+                      }}
                       onChange={(field, value) => updateScore(subject.subjectId, field, value)}
                     />
                   ))}

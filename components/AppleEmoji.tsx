@@ -76,6 +76,8 @@ const EMOJI_VECTOR_MAP: Record<string, { icon: React.ComponentType<{ style?: Rea
   "🌟": { icon: Star, defaultColor: "#ff9500" },
   "📌": { icon: Pin, defaultColor: "#ff9500" },
   "💡": { icon: Lightbulb, defaultColor: "#ff9500" },
+  "🚨": { icon: AlertTriangle, defaultColor: "#ff4b4b" },
+  "🚨️": { icon: AlertTriangle, defaultColor: "#ff4b4b" },
   "⚠️": { icon: AlertTriangle, defaultColor: "#ff4b4b" },
   "🎉": { icon: PartyPopper, defaultColor: "#ff9500" },
   "⛰️": { icon: Mountain, defaultColor: "#ff9500" },

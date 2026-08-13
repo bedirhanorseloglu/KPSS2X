@@ -5,11 +5,19 @@ import {
   getSubjectQuestionCount,
 } from "./denemeConfig";
 
+export type TopicErrorEntry = {
+  topicId: string;
+  topicTitle: string;
+  wrongCount?: number;
+  emptyCount?: number;
+};
+
 export type SubjectScoreInput = {
   subjectId: string;
   correct: number;
   wrong: number;
   empty: number;
+  topicErrors?: TopicErrorEntry[];
 };
 
 export type DenemeRecord = {
@@ -167,7 +175,7 @@ export function formatNet(value: number): string {
 export function averageNet(denemeler: DenemeRecord[]): number {
   if (denemeler.length === 0) return 0;
   const sum = denemeler.reduce(
-    (acc, d) => acc + evaluateDeneme(d.scores).totalNet,
+    (acc, d) => acc + evaluateDeneme(d.scores, d.examType).totalNet,
     0
   );
   return Math.round((sum / denemeler.length) * 100) / 100;

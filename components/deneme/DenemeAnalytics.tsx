@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   DenemeRecord,
   evaluateDeneme,
@@ -50,6 +51,8 @@ import { BarChart3, TrendingUp, Target, BookOpen, CheckCircle2, XCircle, MinusCi
 import AppleEmoji from "../AppleEmoji";
 import * as Slider from "@radix-ui/react-slider";
 import RankSimulator from "./RankSimulator";
+import { initialData } from "@/lib/data";
+import { getSubjectTopics } from "@/lib/topicUtils";
 
 type Props = { 
   denemeler: DenemeRecord[]; 
@@ -465,52 +468,71 @@ export default function DenemeAnalytics({
             isReadOnly={isReadOnly}
           />
 
-          {/* ━━━ 4 · Ders Bazlı Kırılım (Cards) ━━━ */}
+          {/* ━━━ 4 · Ders Bazlı Kırılım (Compact Single Row 5-Column Grid) ━━━ */}
           <Section title="Ders Karnen" desc="Derslerin detaylı analizleri. En yüksek ve en düşük başarı oranlarını incele." icon={<AppleEmoji emoji="📚" size={32} color="#1cb0f6" />}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
               {stats.subjects.map((s, i) => {
                 const pct = s.questionCount > 0 ? (s.avgNet / s.questionCount) * 100 : 0;
                 
                 return (
-                  <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className="p-6 rounded-[2rem] bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] transition-all flex flex-col justify-between relative overflow-hidden group">
-                    <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: s.color }} />
-                    <div className="flex justify-between items-start mb-5 pt-1">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-2xl flex items-center justify-center border-2 border-b-4 shadow-xs" style={{ backgroundColor: `${s.color}15`, borderColor: s.color }}>
-                          <AppleEmoji emoji={s.icon} size={22} color={s.color} />
+                  <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                    className="p-4 sm:p-4.5 rounded-[1.75rem] bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:scale-[1.02] flex flex-col justify-between relative overflow-hidden group">
+                    <div>
+                      {/* Top Header */}
+                      <div className="flex justify-between items-start mb-3 gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center border-2 border-b-4 shrink-0 shadow-xs" style={{ backgroundColor: `${s.color}15`, borderColor: `${s.color}60` }}>
+                            <AppleEmoji emoji={s.icon} size={20} color={s.color} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-black text-slate-800 dark:text-white leading-tight truncate">{s.title}</p>
+                            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-300 mt-0.5">{s.questionCount} Soru</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[15px] font-black text-slate-800 dark:text-white leading-tight">{s.title}</p>
-                          <p className="text-[11px] font-bold text-slate-400 mt-0.5">{s.category} • {s.questionCount} Soru</p>
+
+                        <div className={`px-2 py-0.5 rounded-lg text-[10px] font-black shrink-0 border border-b-2 shadow-2xs ${
+                          s.accuracy >= 70 ? "bg-[#58cc02] text-white border-green-700" : 
+                          s.accuracy >= 45 ? "bg-[#ff9500] text-white border-amber-700" : 
+                          "bg-[#ff4b4b] text-white border-rose-700"
+                        }`}>
+                          %{Math.round(s.accuracy)}
                         </div>
                       </div>
-                      <div className={`px-3 py-1 rounded-xl text-xs font-black flex flex-col items-center justify-center border-2 border-b-2 shadow-2xs ${
-                        s.accuracy >= 70 ? "bg-[#e5f9e7] border-[#58cc02] text-[#58cc02] dark:bg-[#58cc02]/20" : 
-                        s.accuracy >= 45 ? "bg-amber-50 border-amber-400 text-amber-600 dark:bg-amber-500/20" : 
-                        "bg-[#ffebeb] border-[#ff4b4b] text-[#ff4b4b] dark:bg-[#ff4b4b]/20"
-                      }`}>
-                        <span className="opacity-70 text-[9px] uppercase tracking-wider mb-0.5">Başarı</span>
-                        <span>%{Math.round(s.accuracy)}</span>
+
+                      {/* Net & Recessed Progress Track */}
+                      <div className="space-y-1.5 my-3">
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-[10px] font-black text-slate-400 dark:text-slate-300 uppercase tracking-wider">Ort. Net</span>
+                          <div className="flex items-baseline gap-0.5">
+                            <span className="text-2xl font-black font-mono leading-none" style={{ color: s.color }}>{formatNet(s.avgNet)}</span>
+                            <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-300">/{s.questionCount}</span>
+                          </div>
+                        </div>
+
+                        <div className="h-3.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[1.5px] shadow-inner overflow-hidden flex items-center">
+                          <motion.div className="h-full rounded-full relative flex items-center justify-end pr-0.5" style={{ backgroundColor: s.color }}
+                            initial={{ width: 0 }} animate={{ width: `${Math.min(100, pct)}%` }} transition={{ type: "spring", stiffness: 60, damping: 15 }}>
+                            <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/25 rounded-t-full pointer-events-none" />
+                            {pct > 5 && <div className="w-2 h-2 rounded-full bg-white shadow-md shrink-0 relative z-10" />}
+                          </motion.div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-end mb-2">
-                      <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Ortalama Net</p>
-                      <div className="flex items-baseline gap-1">
-                        <p className="text-2xl font-black font-mono leading-none" style={{ color: s.color }}>{formatNet(s.avgNet)}</p>
+                    {/* 3D Doğru / Yanlış / Boş Compact Chips */}
+                    <div className="grid grid-cols-3 gap-1.5 pt-2 border-t-2 border-slate-100 dark:border-slate-700/60 text-[10px] font-black font-mono text-center">
+                      <div className="px-1.5 py-1 rounded-lg bg-[#58cc02] text-white border border-b-2 border-green-700 shadow-2xs flex items-center justify-center gap-0.5" title="Doğru">
+                        <AppleEmoji emoji="✅" size={10} color="white" />
+                        <span>{s.avgCorrect.toFixed(1)}</span>
                       </div>
-                    </div>
-
-                    <div className="h-3.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[2px] shadow-inner overflow-hidden mb-4 flex">
-                      <motion.div className="h-full rounded-full" style={{ backgroundColor: s.color }}
-                        initial={{ width: 0 }} animate={{ width: `${Math.min(100, pct)}%` }} transition={{ type: "spring", stiffness: 60, damping: 15 }} />
-                    </div>
-
-                    <div className="flex justify-between text-xs font-black font-mono pt-1">
-                      <span className="px-2.5 py-1 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-2 border-b-2 border-[#58cc02]">{s.avgCorrect.toFixed(1)} D</span>
-                      <span className="px-2.5 py-1 rounded-xl bg-[#ffebeb] dark:bg-[#ff4b4b]/20 text-[#ff4b4b] border-2 border-b-2 border-[#ff4b4b]">{s.avgWrong.toFixed(1)} Y</span>
-                      <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-2 border-b-2 border-slate-200 dark:border-slate-600">{s.avgEmpty.toFixed(1)} B</span>
+                      <div className="px-1.5 py-1 rounded-lg bg-[#ff4b4b] text-white border border-b-2 border-rose-700 shadow-2xs flex items-center justify-center gap-0.5" title="Yanlış">
+                        <AppleEmoji emoji="❌" size={10} color="white" />
+                        <span>{s.avgWrong.toFixed(1)}</span>
+                      </div>
+                      <div className="px-1.5 py-1 rounded-lg bg-[#ff9500] text-white border border-b-2 border-amber-700 shadow-2xs flex items-center justify-center gap-0.5" title="Boş">
+                        <AppleEmoji emoji="⚪" size={10} color="white" />
+                        <span>{s.avgEmpty.toFixed(1)}</span>
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -518,7 +540,14 @@ export default function DenemeAnalytics({
             </div>
           </Section>
 
-          {/* ━━━ Yayınevi Bazlı Başarı & Performans Analizi ━━━ */}
+          {/* ━━━ 5 · Müfredat & Konu Hata Matrisi ━━━ */}
+          <TopicErrorMatrixSection
+            denemeler={denemeler}
+            viewType={viewType}
+            selectedBransSubjectId={selectedBransSubjectId}
+          />
+
+          {/* ━━━ 6 · Yayınevi Bazlı Başarı & Performans Analizi (Signature 3D Cards) ━━━ */}
           {publisherStats.length > 0 && (
             <Section 
               title="Yayınevi Bazlı Performans Analizi" 
@@ -535,24 +564,20 @@ export default function DenemeAnalytics({
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
+                      className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all hover:scale-[1.01] ${
                         idx === 0 
-                          ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-white" 
+                          ? "bg-white dark:bg-slate-800 border-[#1cb0f6] border-b-[#1899d6] text-slate-800 dark:text-white shadow-md" 
                           : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
                       }`}
-                      style={
-                        idx === 0
-                          ? { borderColor: themeColor, borderBottomColor: themeColor }
-                          : {}
-                      }
                     >
                       <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0">
                           <span 
-                            className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
-                              idx === 0 ? "text-white shadow-xs" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
+                            className={`w-8 h-8 rounded-xl font-black text-xs flex items-center justify-center border-2 border-b-4 shrink-0 shadow-xs ${
+                              idx === 0 
+                                ? "bg-[#1cb0f6] text-white border-[#1899d6]" 
+                                : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 border-slate-200 dark:border-slate-600"
                             }`}
-                            style={idx === 0 ? { backgroundColor: themeColor, borderColor: themeColor } : {}}
                           >
                             #{idx + 1}
                           </span>
@@ -563,40 +588,46 @@ export default function DenemeAnalytics({
 
                         {idx === 0 && (
                           <span 
-                            className="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1 border"
-                            style={{ backgroundColor: `${themeColor}18`, borderColor: `${themeColor}40`, color: themeColor }}
+                            className="px-3 py-1 text-[10px] font-black rounded-2xl uppercase tracking-wider flex items-center gap-1 bg-sky-50 dark:bg-sky-950/60 text-[#1cb0f6] border-2 border-b-2 border-sky-200 dark:border-sky-800 shadow-2xs"
                           >
-                            <AppleEmoji emoji="👑" size={12} color={themeColor} /> En Yüksek Başarı
+                            <AppleEmoji emoji="👑" size={12} color="#1cb0f6" /> En Yüksek Başarı
                           </span>
                         )}
                       </div>
 
-                      <div className="space-y-3 mb-4">
+                      <div className="space-y-2 mb-4">
                         <div className="flex justify-between items-baseline">
-                          <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
-                          <span className="text-2xl font-black font-mono leading-none" style={{ color: themeColor }}>{formatNet(pub.avgNet)}</span>
+                          <span className="text-xs font-black text-slate-400 dark:text-slate-300 uppercase tracking-wider">Ortalama Net</span>
+                          <span className="text-3xl font-black font-mono leading-none text-[#1cb0f6]">{formatNet(pub.avgNet)}</span>
                         </div>
 
-                        <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
-                          <div 
-                            className="h-full rounded-full transition-all duration-700" 
-                            style={{ width: `${Math.min(100, (pub.avgNet / 120) * 100)}%`, backgroundColor: themeColor }} 
-                          />
+                        {/* Recessed 3D Progress Bar */}
+                        <div className="h-4 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[1.5px] shadow-inner overflow-hidden flex items-center">
+                          <motion.div 
+                            className="h-full bg-gradient-to-r from-[#1cb0f6] to-[#0284c7] rounded-full relative flex items-center justify-end pr-0.5" 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.min(100, (pub.avgNet / 120) * 100)}%` }} 
+                            transition={{ type: "spring", stiffness: 60, damping: 15 }}
+                          >
+                            <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/25 rounded-t-full pointer-events-none" />
+                            {(pub.avgNet / 120) * 100 > 5 && <div className="w-2 h-2 rounded-full bg-white shadow-md shrink-0 relative z-10" />}
+                          </motion.div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
-                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
+                      {/* 3D Alt Metrik Kutuları */}
+                      <div className="grid grid-cols-3 gap-2 pt-3 border-t-2 border-slate-100 dark:border-slate-700/60 text-center font-mono">
+                        <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs">
+                          <span className="text-[9px] font-black text-slate-400 dark:text-slate-300 uppercase tracking-widest block mb-0.5">Sınav</span>
                           <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
-                          <span className="text-xs font-black" style={{ color: themeColor }}>{formatNet(pub.bestNet)}</span>
+                        <div className="p-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border-2 border-b-4 border-amber-300 dark:border-amber-800 shadow-2xs">
+                          <span className="text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest block mb-0.5">Rekor</span>
+                          <span className="text-xs font-black text-amber-600 dark:text-amber-400">{formatNet(pub.bestNet)}</span>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
-                          <span className="text-xs font-black text-slate-700 dark:text-slate-200">%{Math.round(pub.accuracy)}</span>
+                        <div className="p-2.5 rounded-2xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] shadow-2xs">
+                          <span className="text-[9px] font-black text-[#58cc02] uppercase tracking-widest block mb-0.5">Başarı</span>
+                          <span className="text-xs font-black text-[#58cc02]">%{Math.round(pub.accuracy)}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -606,61 +637,8 @@ export default function DenemeAnalytics({
             </Section>
           )}
 
-          {/* ━━━ 5 · Tavsiyeler ━━━ */}
-          <Section title="Akıllı Tavsiyeler" desc="Sonuçlarına göre oluşturulan kişisel koçluk notların." icon={<AppleEmoji emoji="💡" size={32} color="#1cb0f6" />}>
-            <div className="grid md:grid-cols-2 gap-5">
-              {stats.mostWrong && (
-                <Tip 
-                  emoji="⚠️" 
-                  title="Dikkat: Çok Hata Yapıyorsun" 
-                  accentColor="#ff4b4b"
-                  badgeColor={{ bg: "#ffebeb", border: "#ff4b4b", borderBottom: "#ea2b2b" }}
-                >
-                  <span className="font-black px-2 py-0.5 rounded-lg text-white text-xs inline-block mr-1" style={{ backgroundColor: stats.mostWrong.color }}>
-                    {stats.mostWrong.title}
-                  </span>
-                  dersinde soruların <strong className="font-black font-mono text-[#ff4b4b]">%{Math.round(stats.mostWrong.wr * 100)}</strong>'ini yanlış yapıyorsun. Yanlış yaptığın konuları tekrar etmeden yeni denemeye geçme!
-                </Tip>
-              )}
-              {stats.mostEmpty && (
-                <Tip 
-                  emoji="⏱️" 
-                  title="Süre veya Bilgi Eksikliği" 
-                  accentColor="#f59e0b"
-                  badgeColor={{ bg: "#fffbeb", border: "#f59e0b", borderBottom: "#d97706" }}
-                >
-                  <span className="font-black px-2 py-0.5 rounded-lg text-white text-xs inline-block mr-1" style={{ backgroundColor: stats.mostEmpty.color }}>
-                    {stats.mostEmpty.title}
-                  </span>
-                  dersinde soruların <strong className="font-black font-mono text-amber-600 dark:text-amber-400">%{Math.round(stats.mostEmpty.er * 100)}</strong>'ini boş bırakıyorsun. Turlama tekniğini daha iyi kullanarak süreni yönetebilirsin.
-                </Tip>
-              )}
-              <Tip 
-                emoji="⚖️" 
-                title="GY / GK Dengen" 
-                accentColor="#1cb0f6"
-                badgeColor={{ bg: "#ddf4ff", border: "#1cb0f6", borderBottom: "#1899d6" }}
-              >
-                {stats.gyAvg < stats.gkAvg ? (
-                  <>
-                    Genel Yetenek puanın daha düşük. <span className="font-black text-[#F43F5E]">Türkçe</span> paragraf ve <span className="font-black text-[#af52de]">Matematik</span> çözme hızını artırmaya odaklan.
-                  </>
-                ) : (
-                  <>
-                    Genel Kültür puanın daha düşük. <span className="font-black text-[#ff9500]">Tarih</span>, <span className="font-black text-[#10B981]">Coğrafya</span> ve <span className="font-black text-[#5856d6]">Vatandaşlık</span> okumalarını sıklaştır.
-                  </>
-                )}
-              </Tip>
-              <Tip 
-                emoji="✨" 
-                title="Gizli Potansiyelin" 
-                accentColor="#58cc02"
-                badgeColor={{ bg: "#e5f9e7", border: "#58cc02", borderBottom: "#46a302" }}
-              >
-                Tüm yanlış ve boş sorularını doğruya çevirirsen <span className="inline-block px-2.5 py-0.5 rounded-lg bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-2 border-[#58cc02] font-black font-mono text-[#2b6801] dark:text-[#58cc02]">+{formatNet(120 - stats.avg)} net</span> kazanabilirsin. Hatalarından öğrenmek en büyük sıçramayı yaptırır!
-              </Tip>
-            </div>
-          </Section>
+          {/* ━━━ 7 · Akıllı Tavsiyeler (EN ALT BÖLÜM - Kullanıcı Konu Hata Verileri Entegre Edildi) ━━━ */}
+          <SmartTopicRecommendationsSection denemeler={denemeler} stats={stats} viewType={viewType} />
         </>
       )}
 
@@ -810,95 +788,114 @@ export default function DenemeAnalytics({
           {/* ━━━ Gelişim Eğrisi (Recharts Ultra Modern Interaktif Trend Grafiği) ━━━ */}
           <BransRechartsTrend bransStats={bransStats} />
 
-          {/* ━━━ Yayınevi Bazlı Başarı & Performans Analizi ━━━ */}
+          {/* ━━━ Müfredat & Konu Hata Matrisi ━━━ */}
+          <TopicErrorMatrixSection
+            denemeler={denemeler}
+            viewType={viewType}
+            selectedBransSubjectId={selectedBransSubjectId}
+          />
+
+          {/* ━━━ Yayınevi Bazlı Başarı & Performans Analizi (Signature 3D Cards) ━━━ */}
           {publisherStats.length > 0 && (
-            <div className="mt-14">
-              <Section 
-                title={`${bransStats.config?.title} - Yayınevi Bazlı Analiz`} 
-                desc="Seçili branşta çözdüğünüz yayınlara göre net ortalamalarınız." 
-                icon={<AppleEmoji emoji={bransStats.config?.icon || "🏷️"} size={32} color={bransStats.config?.color} />}
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {publisherStats.map((pub, idx) => {
-                    const subColor = bransStats.config?.color || "#1cb0f6";
+            <Section 
+              title={`${bransStats.config?.title} - Yayınevi Bazlı Analiz`} 
+              desc="Seçili branşta çözdüğünüz yayınlara göre net ortalamalarınız ve başarı karşılaştırmanız." 
+              icon={<AppleEmoji emoji={bransStats.config?.icon || "🏷️"} size={32} color={bransStats.config?.color} />}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {publisherStats.map((pub, idx) => {
+                  const subColor = bransStats.config?.color || "#1cb0f6";
 
-                    return (
-                      <motion.div
-                        key={pub.name}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all ${
-                          idx === 0 
-                            ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-white" 
-                            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
-                        }`}
-                        style={
-                          idx === 0
-                            ? { borderColor: subColor, borderBottomColor: subColor }
-                            : {}
-                        }
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            <span 
-                              className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center border-2 ${
-                                idx === 0 ? "text-white shadow-xs" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600"
-                              }`}
-                              style={idx === 0 ? { backgroundColor: subColor, borderColor: subColor } : {}}
-                            >
-                              #{idx + 1}
-                            </span>
-                            <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
-                              {pub.name}
-                            </h4>
-                          </div>
-
-                          {idx === 0 && (
-                            <span 
-                              className="px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1 border"
-                              style={{ backgroundColor: `${subColor}18`, borderColor: `${subColor}40`, color: subColor }}
-                            >
-                              <AppleEmoji emoji="👑" size={12} color={subColor} /> En Yüksek Başarı
-                            </span>
-                          )}
+                  return (
+                    <motion.div
+                      key={pub.name}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all hover:scale-[1.01] ${
+                        idx === 0 
+                          ? "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white shadow-md" 
+                          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
+                      }`}
+                      style={
+                        idx === 0
+                          ? { borderColor: subColor, borderBottomColor: subColor }
+                          : {}
+                      }
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span 
+                            className="w-8 h-8 rounded-xl font-black text-xs flex items-center justify-center border-2 border-b-4 shrink-0 text-white shadow-xs"
+                            style={{ backgroundColor: subColor, borderColor: subColor }}
+                          >
+                            #{idx + 1}
+                          </span>
+                          <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
+                            {pub.name}
+                          </h4>
                         </div>
 
-                        <div className="space-y-3 mb-4">
-                          <div className="flex justify-between items-baseline">
-                            <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Ortalama Net</span>
-                            <span className="text-2xl font-black font-mono leading-none" style={{ color: subColor }}>{formatNet(pub.avgNet)}</span>
-                          </div>
+                        {idx === 0 && (
+                          <span 
+                            className="px-3 py-1 text-[10px] font-black rounded-2xl uppercase tracking-wider flex items-center gap-1 border-2 border-b-2 shadow-2xs"
+                            style={{ backgroundColor: `${subColor}18`, borderColor: `${subColor}40`, color: subColor }}
+                          >
+                            <AppleEmoji emoji="👑" size={12} color={subColor} /> En Yüksek Başarı
+                          </span>
+                        )}
+                      </div>
 
-                          <div className="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-700 overflow-hidden flex">
-                            <div 
-                              className="h-full rounded-full transition-all duration-700" 
-                              style={{ width: `${Math.min(100, (pub.avgNet / bransStats.maxQuestions) * 100)}%`, backgroundColor: subColor }} 
-                            />
-                          </div>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs font-black text-slate-400 dark:text-slate-300 uppercase tracking-wider">Ortalama Net</span>
+                          <span className="text-3xl font-black font-mono leading-none" style={{ color: subColor }}>{formatNet(pub.avgNet)}</span>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-center font-mono">
-                          <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Sınav</span>
-                            <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Rekor</span>
-                            <span className="text-xs font-black" style={{ color: subColor }}>{formatNet(pub.bestNet)}</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700/50">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Başarı</span>
-                            <span className="text-xs font-black text-slate-700 dark:text-slate-200">%{Math.round(pub.accuracy)}</span>
-                          </div>
+                        {/* Recessed 3D Progress Bar */}
+                        <div className="h-4 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[1.5px] shadow-inner overflow-hidden flex items-center">
+                          <motion.div 
+                            className="h-full rounded-full relative flex items-center justify-end pr-0.5" 
+                            style={{ backgroundColor: subColor }}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.min(100, (pub.avgNet / bransStats.maxQuestions) * 100)}%` }} 
+                            transition={{ type: "spring", stiffness: 60, damping: 15 }}
+                          >
+                            <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/25 rounded-t-full pointer-events-none" />
+                            {(pub.avgNet / bransStats.maxQuestions) * 100 > 5 && <div className="w-2 h-2 rounded-full bg-white shadow-md shrink-0 relative z-10" />}
+                          </motion.div>
                         </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </Section>
-            </div>
+                      </div>
+
+                      {/* 3D Alt Metrik Kutuları */}
+                      <div className="grid grid-cols-3 gap-2 pt-3 border-t-2 border-slate-100 dark:border-slate-700/60 text-center font-mono">
+                        <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs">
+                          <span className="text-[9px] font-black text-slate-400 dark:text-slate-300 uppercase tracking-widest block mb-0.5">Sınav</span>
+                          <span className="text-xs font-black text-slate-800 dark:text-white">{pub.count} Adet</span>
+                        </div>
+                        <div className="p-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border-2 border-b-4 border-amber-300 dark:border-amber-800 shadow-2xs">
+                          <span className="text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest block mb-0.5">Rekor</span>
+                          <span className="text-xs font-black text-amber-600 dark:text-amber-400" style={{ color: subColor }}>{formatNet(pub.bestNet)}</span>
+                        </div>
+                        <div className="p-2.5 rounded-2xl bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] shadow-2xs">
+                          <span className="text-[9px] font-black text-[#58cc02] uppercase tracking-widest block mb-0.5">Başarı</span>
+                          <span className="text-xs font-black text-[#58cc02]">%{Math.round(pub.accuracy)}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </Section>
           )}
+
+          {/* ━━━ Akıllı Tavsiyeler (EN ALT BÖLÜM) ━━━ */}
+          <SmartTopicRecommendationsSection
+            denemeler={denemeler}
+            stats={stats}
+            viewType={viewType}
+            selectedBransSubjectId={selectedBransSubjectId}
+          />
         </>
       )}
     </div>
@@ -1123,7 +1120,7 @@ function CategoryBalanceCard({
   subSubjects: any[];
 }) {
   return (
-    <div className="bg-slate-50/70 dark:bg-slate-900/60 p-5 sm:p-6 rounded-3xl border-2 border-b-4 border-slate-200/90 dark:border-slate-700/80 shadow-xs flex flex-col justify-between transition-all hover:border-slate-300 dark:hover:border-slate-600">
+    <div className="bg-slate-50/80 dark:bg-slate-900/80 p-5 sm:p-6 rounded-3xl border-2 border-b-4 border-slate-200/90 dark:border-slate-700/80 shadow-xs flex flex-col justify-between transition-all hover:border-slate-300 dark:hover:border-slate-600">
       <div>
         {/* Header */}
         <div className="flex justify-between items-start mb-3 gap-2">
@@ -1135,7 +1132,7 @@ function CategoryBalanceCard({
               <span className="font-black text-slate-800 dark:text-slate-100 text-base leading-tight block">
                 {label}
               </span>
-              <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">
+              <span className="text-[11px] font-extrabold text-slate-400 dark:text-slate-300">
                 {max} Soru Üzerinden
               </span>
             </div>
@@ -1146,7 +1143,7 @@ function CategoryBalanceCard({
               <span className="font-black text-2xl font-mono text-slate-800 dark:text-white leading-none">
                 {formatNet(value)}
               </span>
-              <span className="text-xs font-black text-slate-400">/ {max}</span>
+              <span className="text-xs font-black text-slate-400 dark:text-slate-300">/ {max}</span>
             </div>
             <span className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-black rounded-lg border border-b-2 ${badgeBg}`}>
               %{percentage.toFixed(1)} İsabet
@@ -1171,7 +1168,7 @@ function CategoryBalanceCard({
             {/* Top Gloss Reflection */}
             <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/25 rounded-t-full pointer-events-none" />
             {percentage > 5 && (
-              <div className="w-2.5 h-2.5 rounded-full bg-white shadow-md animate-pulse shrink-0 relative z-10" />
+              <div className="w-2.5 h-2.5 rounded-full bg-white shadow-md shrink-0 relative z-10" />
             )}
           </motion.div>
         </div>
@@ -1180,7 +1177,7 @@ function CategoryBalanceCard({
       {/* Sub-subjects Breakdown */}
       {subSubjects && subSubjects.length > 0 && (
         <div className="mt-4 pt-3 border-t-2 border-slate-200/60 dark:border-slate-800/80">
-          <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 flex justify-between items-center">
+          <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-300 mb-2 flex justify-between items-center">
             <span>Ders Net Dağılımı</span>
             <span>Net / Soru</span>
           </div>
@@ -1192,7 +1189,7 @@ function CategoryBalanceCard({
                 <div key={sub.id} className="p-2 bg-white dark:bg-slate-800 rounded-xl border-2 border-b-3 border-slate-200/80 dark:border-slate-700/80 shadow-2xs flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2 min-w-0">
                     <AppleEmoji emoji={sub.icon} size={16} color={sub.color} />
-                    <span className="font-bold text-slate-700 dark:text-slate-200 truncate">
+                    <span className="font-extrabold text-slate-700 dark:text-slate-100 truncate">
                       {sub.title}
                     </span>
                   </div>
@@ -1205,10 +1202,10 @@ function CategoryBalanceCard({
                       />
                     </div>
 
-                    <span className="font-black text-slate-800 dark:text-slate-100">
+                    <span className="font-black text-slate-800 dark:text-white">
                       {formatNet(sub.avgNet)}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-semibold">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-300 font-extrabold">
                       / {sub.questionCount}
                     </span>
                   </div>
@@ -1223,31 +1220,32 @@ function CategoryBalanceCard({
 }
 
 function Tip({ emoji = "💡", title, badgeColor, accentColor, children }: { emoji?: string; title: string; badgeColor?: { bg: string; border: string; borderBottom: string }; accentColor?: string; children: React.ReactNode; }) {
-  const bg = badgeColor?.bg || "#ddf4ff";
-  const border = badgeColor?.border || "#1cb0f6";
-  const borderBottom = badgeColor?.borderBottom || "#1899d6";
-  const barColor = accentColor || border;
+  const barColor = accentColor || badgeColor?.border || "#1cb0f6";
 
   return (
     <motion.div
       whileHover={{ y: -3 }}
       transition={{ type: "spring", stiffness: 400, damping: 20 }}
-      className="bg-white dark:bg-slate-800 p-6 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs hover:border-[#1cb0f6] transition-all flex items-start gap-4 sm:gap-5 relative overflow-hidden group"
+      className="bg-white dark:bg-slate-800 p-6 rounded-[2.25rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-sm flex items-start gap-4 sm:gap-5 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-600 transition-all"
     >
+      {/* Top Accent Line */}
       <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: barColor }} />
+
+      {/* 3D Icon Box */}
       <div 
         className="w-13 h-13 rounded-2xl flex items-center justify-center border-2 border-b-4 shrink-0 shadow-2xs mt-0.5"
         style={{
-          backgroundColor: bg,
-          borderColor: border,
-          borderBottomColor: borderBottom,
+          backgroundColor: `${barColor}15`,
+          borderColor: `${barColor}50`,
+          borderBottomColor: barColor,
         }}
       >
-        <AppleEmoji emoji={emoji} size={26} color={border} />
+        <AppleEmoji emoji={emoji} size={24} color={barColor} />
       </div>
+
       <div className="flex-1 min-w-0">
-        <h4 className="text-base font-black text-slate-800 dark:text-white mb-1.5 leading-snug">{title}</h4>
-        <div className="text-xs font-semibold leading-relaxed text-slate-500 dark:text-slate-400">{children}</div>
+        <h4 className="text-base font-black text-slate-800 dark:text-white mb-2 leading-snug tracking-tight">{title}</h4>
+        <div className="text-xs font-bold leading-relaxed text-slate-600 dark:text-slate-300">{children}</div>
       </div>
     </motion.div>
   );
@@ -1831,6 +1829,716 @@ function BransRechartsTrend({ bransStats }: { bransStats: any }) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   AKILLI TAVSİYELER BÖLÜMÜ (DERS & BRANŞ FİLTRELİ KOÇLUK)
+   ───────────────────────────────────────────────────────────── */
+
+function SmartTopicRecommendationsSection({
+  denemeler,
+  stats,
+  viewType = "genel",
+  selectedBransSubjectId,
+}: {
+  denemeler: DenemeRecord[];
+  stats: any;
+  viewType?: "genel" | "brans";
+  selectedBransSubjectId?: string;
+}) {
+  const topicStats: Record<string, { topicId: string; topicTitle: string; subjectId: string; totalWrong: number; totalEmpty: number }> = {};
+
+  const recordsToProcess = useMemo(() => {
+    if (viewType === "brans" && selectedBransSubjectId) {
+      return denemeler.filter((d) => d.examType === "brans" && d.bransSubjectId === selectedBransSubjectId);
+    }
+    return denemeler.filter((d) => d.examType !== "brans");
+  }, [denemeler, viewType, selectedBransSubjectId]);
+
+  recordsToProcess.forEach((d) => {
+    d.scores.forEach((s) => {
+      if (viewType === "brans" && selectedBransSubjectId && s.subjectId !== selectedBransSubjectId) {
+        return;
+      }
+      if (s.topicErrors && s.topicErrors.length > 0) {
+        s.topicErrors.forEach((te) => {
+          if (!topicStats[te.topicId]) {
+            topicStats[te.topicId] = {
+              topicId: te.topicId,
+              topicTitle: te.topicTitle,
+              subjectId: s.subjectId,
+              totalWrong: te.wrongCount || 0,
+              totalEmpty: te.emptyCount || 0,
+            };
+          } else {
+            topicStats[te.topicId].totalWrong += te.wrongCount || 0;
+            topicStats[te.topicId].totalEmpty += te.emptyCount || 0;
+          }
+        });
+      }
+    });
+  });
+
+  const activeSubjectConfig = DENEME_SUBJECTS.find((s) => s.id === selectedBransSubjectId);
+  const recColor = (viewType === "brans" && activeSubjectConfig) ? activeSubjectConfig.color : "#1cb0f6";
+  const recIcon = (viewType === "brans" && activeSubjectConfig) ? activeSubjectConfig.icon : "💡";
+  const list = Object.values(topicStats);
+  const topWrongTopic = [...list].sort((a, b) => b.totalWrong - a.totalWrong).find((t) => t.totalWrong > 0);
+  const topEmptyTopic = [...list].sort((a, b) => b.totalEmpty - a.totalEmpty).find((t) => t.totalEmpty > 0);
+  const top3Topics = [...list].sort((a, b) => (b.totalWrong + b.totalEmpty) - (a.totalWrong + a.totalEmpty)).slice(0, 3);
+  const potentialNetGain = top3Topics.reduce((acc, t) => acc + (t.totalWrong * 1.25) + (t.totalEmpty * 1.0), 0);
+
+  return (
+    <Section 
+      title={viewType === "brans" && activeSubjectConfig ? `${activeSubjectConfig.title} - Akıllı Tavsiyeler` : "Akıllı Tavsiyeler"} 
+      desc={viewType === "brans" && activeSubjectConfig ? `Seçili ${activeSubjectConfig.title} branşındaki konu hatalarınız ve kişisel koçluk tavsiyeleri.` : "İşaretlediğiniz konu hatalarınız ve genel sınav sonuçlarınıza göre oluşturulan kişisel koçluk tavsiyeleri."} 
+      icon={<AppleEmoji emoji={recIcon} size={32} color={recColor} />}
+    >
+      <div className="grid md:grid-cols-2 gap-5">
+        {/* 1. Konu Bazlı Kritik Hata Uyarısı */}
+        {topWrongTopic ? (
+          <Tip 
+            emoji="🚨" 
+            title={`Öncelikli Konu Tekrarı: ${topWrongTopic.topicTitle.split("(")[0]}`} 
+            accentColor="#ff4b4b"
+          >
+            <span className="font-black px-2.5 py-0.5 rounded-lg text-white text-xs inline-block mr-1.5 shadow-2xs" style={{ backgroundColor: DENEME_SUBJECTS.find(s => s.id === topWrongTopic.subjectId)?.color || "#ff4b4b" }}>
+              {DENEME_SUBJECTS.find(s => s.id === topWrongTopic.subjectId)?.title || topWrongTopic.subjectId}
+            </span>
+            dersinde <strong className="font-black text-slate-800 dark:text-white">&quot;{topWrongTopic.topicTitle}&quot;</strong> konusunda toplam <strong className="font-mono font-black text-[#ff4b4b]">{topWrongTopic.totalWrong} Yanlış</strong> yaptın. Bu konuyu soru bankasından tekrar etmeden yeni denemeye geçme!
+          </Tip>
+        ) : stats?.mostWrong ? (
+          <Tip 
+            emoji="⚠️" 
+            title="Dikkat: Çok Hata Yapıyorsun" 
+            accentColor="#ff4b4b"
+          >
+            <span className="font-black px-2 py-0.5 rounded-lg text-white text-xs inline-block mr-1.5 shadow-2xs" style={{ backgroundColor: stats.mostWrong.color }}>
+              {stats.mostWrong.title}
+            </span>
+            dersinde soruların <strong className="font-black font-mono text-[#ff4b4b]">%{Math.round(stats.mostWrong.wr * 100)}</strong>'ini yanlış yapıyorsun. Yanlış yaptığın konuları tekrar etmeden yeni denemeye geçme!
+          </Tip>
+        ) : null}
+
+        {/* 2. Konu Bazlı Boş Uyarısı */}
+        {topEmptyTopic ? (
+          <Tip 
+            emoji="⚪" 
+            title={`Boş Bırakılan Konu Analizi: ${topEmptyTopic.topicTitle.split("(")[0]}`} 
+            accentColor="#ff9500"
+          >
+            <span className="font-black px-2.5 py-0.5 rounded-lg text-white text-xs inline-block mr-1.5 shadow-2xs" style={{ backgroundColor: DENEME_SUBJECTS.find(s => s.id === topEmptyTopic.subjectId)?.color || "#ff9500" }}>
+              {DENEME_SUBJECTS.find(s => s.id === topEmptyTopic.subjectId)?.title || topEmptyTopic.subjectId}
+            </span>
+            dersinde <strong className="font-black text-slate-800 dark:text-white">&quot;{topEmptyTopic.topicTitle}&quot;</strong> konusundan <strong className="font-mono font-black text-[#ff9500]">{topEmptyTopic.totalEmpty} soru</strong> boş bıraktın. 15 dakikalık konu özetiyle bu boşları nete çevirebilirsin.
+          </Tip>
+        ) : stats?.mostEmpty ? (
+          <Tip 
+            emoji="⏱️" 
+            title="Süre veya Bilgi Eksikliği" 
+            accentColor="#ff9500"
+          >
+            <span className="font-black px-2 py-0.5 rounded-lg text-white text-xs inline-block mr-1.5 shadow-2xs" style={{ backgroundColor: stats.mostEmpty.color }}>
+              {stats.mostEmpty.title}
+            </span>
+            dersinde soruların <strong className="font-black font-mono text-[#ff9500]">%{Math.round(stats.mostEmpty.er * 100)}</strong>'ini boş bırakıyorsun. Turlama tekniğini daha iyi kullanabilirsin.
+          </Tip>
+        ) : null}
+
+        {/* 3. Denge veya Branş Koçluğu */}
+        {viewType === "brans" && activeSubjectConfig ? (
+          <Tip 
+            emoji={activeSubjectConfig.icon} 
+            title={`${activeSubjectConfig.title} Branş Odağı`} 
+            accentColor={activeSubjectConfig.color}
+          >
+            <span className="font-black text-slate-800 dark:text-white">{activeSubjectConfig.title}</span> branşında nokta atışı konu analizi yaparak eksiklerinizi tamamlayabilir, soru bankası tekrarlarıyla isabet oranınızı yükseltebilirsiniz.
+          </Tip>
+        ) : (
+          <Tip 
+            emoji="⚖️" 
+            title="GY / GK Dengen" 
+            accentColor="#1cb0f6"
+          >
+            {stats?.gyAvg < stats?.gkAvg ? (
+              <>
+                Genel Yetenek puanın daha düşük. <span className="font-black text-[#F43F5E]">Türkçe</span> paragraf ve <span className="font-black text-[#af52de]">Matematik</span> çözme hızını artırmaya odaklan.
+              </>
+            ) : (
+              <>
+                Genel Kültür puanın daha düşük. <span className="font-black text-[#ff9500]">Tarih</span>, <span className="font-black text-[#10B981]">Coğrafya</span> ve <span className="font-black text-[#5856d6]">Vatandaşlık</span> okumalarını sıklaştır.
+              </>
+            )}
+          </Tip>
+        )}
+
+        {/* 4. Konu Bazlı Net Kazanımı ve Potansiyel */}
+        <Tip 
+          emoji="✨" 
+          title="Konu Hatalarından Net Kazanımı" 
+          accentColor="#58cc02"
+        >
+          {top3Topics.length > 0 ? (
+            <>
+              En çok hata yaptığın <strong className="font-black text-slate-800 dark:text-white">{top3Topics.map(t => t.topicTitle.split("(")[0]).join(", ")}</strong> konularındaki eksiklerini kapatırsan doğrudan <span className="inline-flex items-center px-3 py-1 rounded-xl bg-[#58cc02] text-white border-2 border-b-4 border-green-700 font-mono font-black text-xs shadow-2xs ml-1">+{formatNet(potentialNetGain)} net</span> kazanabilirsin!
+            </>
+          ) : stats ? (
+            <>
+              Tüm yanlış ve boş sorularını doğruya çevirirsen <span className="inline-flex items-center px-3 py-1 rounded-xl bg-[#58cc02] text-white border-2 border-b-4 border-green-700 font-mono font-black text-xs shadow-2xs ml-1">+{formatNet(120 - stats.avg)} net</span> kazanabilirsin. Hatalarından öğrenmek en büyük sıçramayı yaptırır!
+            </>
+          ) : (
+            <>
+              Denemelerdeki konu hatalarını işaretledikçe burada doğrudan sana özel net kazanım tavsiyeleri görüntülenecektir.
+            </>
+          )}
+        </Tip>
+      </div>
+    </Section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MÜFREDAT & KONU HATA MATRİSİ BÖLÜMÜ
+   ───────────────────────────────────────────────────────────── */
+
+function TopicErrorMatrixSection({
+  denemeler,
+  viewType,
+  selectedBransSubjectId,
+}: {
+  denemeler: DenemeRecord[];
+  viewType: "genel" | "brans";
+  selectedBransSubjectId?: string;
+}) {
+  const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>("all");
+  const [filterMode, setFilterMode] = useState<"all" | "errorsOnly" | "wrongOnly" | "emptyOnly">("errorsOnly");
+
+  useEffect(() => {
+    if (viewType === "brans" && selectedBransSubjectId) {
+      setSelectedSubjectFilter(selectedBransSubjectId);
+    } else if (viewType === "genel") {
+      setSelectedSubjectFilter("all");
+    }
+  }, [viewType, selectedBransSubjectId]);
+
+  const topicMatrixData = useMemo(() => {
+    const recordsToProcess = viewType === "genel"
+      ? denemeler.filter(d => d.examType !== "brans")
+      : (selectedBransSubjectId ? denemeler.filter(d => d.examType === "brans" && d.bransSubjectId === selectedBransSubjectId) : denemeler);
+
+    const topicStats: Record<string, { topicId: string; topicTitle: string; subjectId: string; totalWrong: number; totalEmpty: number; testCount: number }> = {};
+
+    // Load curriculum topics from initialData (Filtered strictly by selectedBransSubjectId if in Branş mode)
+    initialData.forEach((sub) => {
+      if (viewType === "brans" && selectedBransSubjectId && sub.id !== selectedBransSubjectId) {
+        return;
+      }
+      sub.topics.forEach((top) => {
+        topicStats[top.id] = {
+          topicId: top.id,
+          topicTitle: top.title,
+          subjectId: sub.id,
+          totalWrong: 0,
+          totalEmpty: 0,
+          testCount: 0,
+        };
+      });
+    });
+
+    // Populate with actual recorded deneme errors
+    recordsToProcess.forEach((d) => {
+      d.scores.forEach((s) => {
+        if (viewType === "brans" && selectedBransSubjectId && s.subjectId !== selectedBransSubjectId) {
+          return;
+        }
+        if (s.topicErrors && s.topicErrors.length > 0) {
+          s.topicErrors.forEach((te) => {
+            if (topicStats[te.topicId]) {
+              topicStats[te.topicId].totalWrong += te.wrongCount || 0;
+              topicStats[te.topicId].totalEmpty += te.emptyCount || 0;
+              topicStats[te.topicId].testCount += 1;
+            } else {
+              topicStats[te.topicId] = {
+                topicId: te.topicId,
+                topicTitle: te.topicTitle,
+                subjectId: s.subjectId,
+                totalWrong: te.wrongCount || 0,
+                totalEmpty: te.emptyCount || 0,
+                testCount: 1,
+              };
+            }
+          });
+        }
+      });
+    });
+
+    const list = Object.values(topicStats);
+    const topWrong = [...list].sort((a, b) => b.totalWrong - a.totalWrong).filter((t) => t.totalWrong > 0);
+    const topEmpty = [...list].sort((a, b) => b.totalEmpty - a.totalEmpty).filter((t) => t.totalEmpty > 0);
+    const totalErrors = list.reduce((acc, t) => acc + t.totalWrong + t.totalEmpty, 0);
+
+    return {
+      all: list,
+      topWrong: topWrong.slice(0, 3),
+      topEmpty: topEmpty.slice(0, 3),
+      totalErrors,
+      totalRecordedTests: recordsToProcess.length,
+    };
+  }, [denemeler, viewType, selectedBransSubjectId]);
+
+  const filteredTopics = useMemo(() => {
+    return topicMatrixData.all.filter((t) => {
+      if (selectedSubjectFilter !== "all" && t.subjectId !== selectedSubjectFilter) {
+        return false;
+      }
+      if (filterMode === "errorsOnly") {
+        return t.totalWrong > 0 || t.totalEmpty > 0;
+      }
+      if (filterMode === "wrongOnly") {
+        return t.totalWrong > 0;
+      }
+      if (filterMode === "emptyOnly") {
+        return t.totalEmpty > 0;
+      }
+      return true;
+    });
+  }, [topicMatrixData.all, selectedSubjectFilter, filterMode]);
+
+  const activeSubjectConfig = DENEME_SUBJECTS.find((s) => s.id === selectedBransSubjectId);
+  const matrixColor = (viewType === "brans" && activeSubjectConfig) ? activeSubjectConfig.color : "#1cb0f6";
+  const matrixIcon = (viewType === "brans" && activeSubjectConfig) ? activeSubjectConfig.icon : "🎯";
+
+  return (
+    <Section
+      title={viewType === "brans" && activeSubjectConfig ? `${activeSubjectConfig.title} - Müfredat & Konu Hata Matrisi` : "Müfredat & Konu Hata Matrisi"}
+      desc={viewType === "brans" && activeSubjectConfig ? `Seçili ${activeSubjectConfig.title} branşındaki sınav sorularının konu bazlı detay analizi.` : "Sınavlarda işaretlediğiniz yanlış ve boş soruların ders ve konu bazlı detay analizi."}
+      icon={<AppleEmoji emoji={matrixIcon} size={32} color={matrixColor} />}
+    >
+      {/* ━━━ SIGNATURE 3D ÖZET KARTLARI ━━━ */}
+      {topicMatrixData.totalErrors > 0 && (
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* En Çok Yanlış Yapılanlar */}
+          <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-rose-200 dark:border-rose-900/50 rounded-[2rem] p-6 shadow-sm">
+            <div className="flex items-center gap-3.5 mb-4 pb-3.5 border-b-2 border-slate-100 dark:border-slate-700/60">
+              <div className="w-11 h-11 rounded-2xl bg-rose-500/10 dark:bg-rose-500/20 border-2 border-b-4 border-rose-300 dark:border-rose-800 flex items-center justify-center shadow-xs">
+                <AppleEmoji emoji="🚨" size={22} />
+              </div>
+              <div>
+                <h4 className="text-base font-black text-slate-800 dark:text-white">Kritik Yanlış Yapılan Konular</h4>
+                <p className="text-xs font-bold text-slate-400">En çok net kaybettiğin müfredat konuların</p>
+              </div>
+            </div>
+
+            {topicMatrixData.topWrong.length > 0 ? (
+              <div className="space-y-3">
+                {topicMatrixData.topWrong.map((t, idx) => {
+                  const subjectConfig = DENEME_SUBJECTS.find((s) => s.id === t.subjectId);
+                  const color = subjectConfig?.color || "#F43F5E";
+
+                  return (
+                    <div key={t.topicId} className="flex items-center justify-between gap-3 p-3.5 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-2xs">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="w-7 h-7 rounded-xl bg-[#ff4b4b] text-white font-mono font-black text-xs flex items-center justify-center shrink-0 border-2 border-b-4 border-rose-700 shadow-xs">
+                          #{idx + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg text-white shrink-0 border border-white/20 shadow-2xs" style={{ backgroundColor: color }}>
+                              {subjectConfig?.title || t.subjectId}
+                            </span>
+                            <span className="text-xs font-black text-slate-800 dark:text-white truncate">{t.topicTitle}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <span className="font-mono text-xs font-black text-white shrink-0 px-3 py-1.5 rounded-xl bg-[#ff4b4b] border-2 border-b-4 border-rose-700 shadow-xs flex items-center gap-1">
+                        <AppleEmoji emoji="❌" size={12} color="white" />
+                        <span>{t.totalWrong} Yanlış</span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs font-bold text-slate-400 py-4 text-center">İşaretlenmiş yanlış konusu bulunmuyor.</p>
+            )}
+          </div>
+
+          {/* En Çok Boş Bırakılanlar */}
+          <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-amber-200 dark:border-amber-900/50 rounded-[2rem] p-6 shadow-sm">
+            <div className="flex items-center gap-3.5 mb-4 pb-3.5 border-b-2 border-slate-100 dark:border-slate-700/60">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-300 dark:border-amber-800 flex items-center justify-center shadow-xs">
+                <AppleEmoji emoji="⚪" size={22} />
+              </div>
+              <div>
+                <h4 className="text-base font-black text-slate-800 dark:text-white">En Çok Boş Bırakılan Konular</h4>
+                <p className="text-xs font-bold text-slate-400">Yeterli süre ayıramadığın veya tereddüt ettiğin alanlar</p>
+              </div>
+            </div>
+
+            {topicMatrixData.topEmpty.length > 0 ? (
+              <div className="space-y-3">
+                {topicMatrixData.topEmpty.map((t, idx) => {
+                  const subjectConfig = DENEME_SUBJECTS.find((s) => s.id === t.subjectId);
+                  const color = subjectConfig?.color || "#ff9500";
+
+                  return (
+                    <div key={t.topicId} className="flex items-center justify-between gap-3 p-3.5 bg-slate-50 dark:bg-slate-900/80 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700/80 shadow-2xs">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="w-7 h-7 rounded-xl bg-amber-500 text-white font-mono font-black text-xs flex items-center justify-center shrink-0 border-2 border-b-4 border-amber-700 shadow-xs">
+                          #{idx + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg text-white shrink-0 border border-white/20 shadow-2xs" style={{ backgroundColor: color }}>
+                              {subjectConfig?.title || t.subjectId}
+                            </span>
+                            <span className="text-xs font-black text-slate-800 dark:text-white truncate">{t.topicTitle}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <span className="font-mono text-xs font-black text-white shrink-0 px-3 py-1.5 rounded-xl bg-amber-500 border-2 border-b-4 border-amber-700 shadow-xs flex items-center gap-1">
+                        <AppleEmoji emoji="⚪" size={12} color="white" />
+                        <span>{t.totalEmpty} Boş</span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs font-bold text-slate-400 py-4 text-center">İşaretlenmiş boş konusu bulunmuyor.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ━━━ SIGNATURE 3D DERS VE GÖRÜNÜM FİLTRELERİ ━━━ */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
+        {/* Ders Sekmeleri (Sadece Genel Denemeler Modunda Görüntülenir) */}
+        {viewType === "genel" && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+            {DENEME_SUBJECTS.map((s) => {
+              const isSelected = selectedSubjectFilter === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setSelectedSubjectFilter(isSelected ? "all" : s.id)}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer shrink-0 flex items-center gap-1.5 border-2 border-b-4 active:translate-y-0.5 ${
+                    isSelected
+                      ? "text-white shadow-xs"
+                      : "bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                  }`}
+                  style={{
+                    backgroundColor: isSelected ? s.color : undefined,
+                    borderColor: isSelected ? s.color : undefined,
+                  }}
+                >
+                  <AppleEmoji emoji={s.icon} size={15} color={isSelected ? "white" : s.color} />
+                  <span>{s.title}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Görünüm Filtresi */}
+        <div className="flex p-1 bg-slate-100 dark:bg-slate-900/90 rounded-2xl border-2 border-slate-200 dark:border-slate-700 text-xs font-black shrink-0 shadow-2xs">
+          <button
+            type="button"
+            onClick={() => setFilterMode("errorsOnly")}
+            className={`px-3.5 py-2 rounded-xl transition-all ${
+              filterMode === "errorsOnly" 
+                ? "bg-white dark:bg-slate-800 text-[#ff4b4b] border-2 border-b-4 border-rose-200 dark:border-rose-800/60 shadow-xs font-black" 
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
+          >
+            ❌ Sadece Hatalılar ({topicMatrixData.all.filter(t => t.totalWrong > 0 || t.totalEmpty > 0).length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterMode("all")}
+            className={`px-3.5 py-2 rounded-xl transition-all ${
+              filterMode === "all" 
+                ? "bg-white dark:bg-slate-800 text-[#1cb0f6] border-2 border-b-4 border-sky-200 dark:border-sky-800/60 shadow-xs font-black" 
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
+          >
+            📚 Tüm Müfredat ({topicMatrixData.all.length})
+          </button>
+        </div>
+      </div>
+
+      {/* ━━━ SIGNATURE 3D KONU KARTLARI MATRİSİ GRID (TÜM TEMALARDA UYUMLU) ━━━ */}
+      {filteredTopics.length > 0 ? (
+        <div className="space-y-3">
+          <div className="max-h-[500px] overflow-y-auto pr-2 space-y-4 rounded-2xl custom-matrix-scrollbar border-2 border-slate-200 dark:border-slate-700/60 p-3.5 bg-slate-100/70 dark:bg-slate-900/60">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5">
+            {filteredTopics.map((t) => {
+              const subjectConfig = DENEME_SUBJECTS.find((s) => s.id === t.subjectId);
+              const color = subjectConfig?.color || "#1cb0f6";
+              const totalIssue = t.totalWrong + t.totalEmpty;
+              
+              let statusBadge = {
+                label: "Temiz",
+                emoji: "✅",
+                className: "bg-[#58cc02] text-white border-2 border-b-4 border-green-700 shadow-xs"
+              };
+
+              if (t.totalWrong > 2) {
+                statusBadge = {
+                  label: "Kritik Eksik",
+                  emoji: "🚨",
+                  className: "bg-[#ff4b4b] text-white border-2 border-b-4 border-rose-700 shadow-xs"
+                };
+              } else if (totalIssue > 0) {
+                statusBadge = {
+                  label: "İncele",
+                  emoji: "💡",
+                  className: "bg-[#ff9500] text-white border-2 border-b-4 border-amber-700 shadow-xs"
+                };
+              }
+
+              return (
+                <div
+                  key={t.topicId}
+                  className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2rem] p-5.5 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all hover:scale-[1.015] hover:border-slate-300 dark:hover:border-slate-600 group"
+                >
+                  {/* Top Subject Color Strip */}
+                  <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: color }} />
+
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3 pt-0.5">
+                      {/* 3D Subject Badge */}
+                      <span className="text-xs font-black uppercase px-3 py-1 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-b-2 border-slate-200/80 dark:border-slate-700/80 shadow-2xs flex items-center gap-1.5">
+                        <AppleEmoji emoji={subjectConfig?.icon || "📘"} size={14} color={color} />
+                        <span style={{ color: color }}>{subjectConfig?.title || t.subjectId}</span>
+                      </span>
+
+                      {/* 3D Status Push Badge */}
+                      <span className={`text-[11px] font-mono font-black px-2.5 py-1 rounded-xl flex items-center gap-1 ${statusBadge.className}`}>
+                        <AppleEmoji emoji={statusBadge.emoji} size={12} color="white" />
+                        <span>{statusBadge.label}</span>
+                      </span>
+                    </div>
+
+                    <h5 className="text-[15px] font-black text-slate-800 dark:text-white leading-snug line-clamp-2 my-3 group-hover:text-[#1cb0f6] transition-colors">
+                      {t.topicTitle}
+                    </h5>
+                  </div>
+
+                  <div className="pt-3 border-t-2 border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs font-mono font-black">
+                    {t.totalWrong > 0 ? (
+                      <span className="px-2.5 py-1 rounded-xl bg-[#ff4b4b] text-white border-2 border-b-4 border-rose-700 shadow-2xs flex items-center gap-1">
+                        <AppleEmoji emoji="❌" size={12} color="white" />
+                        <span>{t.totalWrong} Yanlış</span>
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-700/60 text-slate-400 dark:text-slate-300 border-2 border-b-2 border-slate-200 dark:border-slate-600">
+                        0 Yanlış
+                      </span>
+                    )}
+
+                    {t.totalEmpty > 0 ? (
+                      <span className="px-2.5 py-1 rounded-xl bg-[#ff9500] text-white border-2 border-b-4 border-amber-700 shadow-2xs flex items-center gap-1">
+                        <AppleEmoji emoji="⚪" size={12} color="white" />
+                        <span>{t.totalEmpty} Boş</span>
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-700/60 text-slate-400 dark:text-slate-300 border-2 border-b-2 border-slate-200 dark:border-slate-600">
+                        0 Boş
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            </div>
+          </div>
+          {/* ━━━ GITHUB TARZI MÜFREDAT HATA HARİTASI (HEATMAP MATRIX) ━━━ */}
+          <div className="mt-8 pt-8 border-t-2 border-slate-200/80 dark:border-slate-700/80">
+            <GithubTopicHeatmap topicMatrixData={topicMatrixData} viewType={viewType} selectedBransSubjectId={selectedBransSubjectId} />
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-10 text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950/50 border-2 border-b-4 border-[#1cb0f6] flex items-center justify-center mx-auto shadow-sm">
+            <AppleEmoji emoji="✨" size={32} />
+          </div>
+          <h4 className="text-lg font-black text-slate-800 dark:text-white">
+            {filterMode === "errorsOnly" ? "Harika! Bu filtrede kayıtlı bir hata bulunmuyor." : "Henüz konu bazlı hata kaydı bulunmuyor."}
+          </h4>
+          <p className="text-xs font-bold text-slate-400 max-w-md mx-auto">
+            Sınav girişi yaparken &quot;Hangi konularda takıldın?&quot; menüsünü kullanarak hangi sorularda takıldığınızı işaretleyebilirsiniz.
+          </p>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+{/* ━━━ SİTEMİZE UYGUN MÜFREDAT KONU HATA HARİTASI MATRİSİ ━━━ */}
+function GithubTopicHeatmap({
+  topicMatrixData,
+  viewType,
+  selectedBransSubjectId,
+}: {
+  topicMatrixData: any;
+  viewType?: "genel" | "brans";
+  selectedBransSubjectId?: string;
+}) {
+  const [hoveredTopic, setHoveredTopic] = useState<any | null>(null);
+
+  const activeSubjectConfig = DENEME_SUBJECTS.find((s) => s.id === selectedBransSubjectId);
+  const themeColor = (viewType === "brans" && activeSubjectConfig) ? activeSubjectConfig.color : "#1cb0f6";
+  const themeIcon = (viewType === "brans" && activeSubjectConfig) ? activeSubjectConfig.icon : "🎯";
+
+  const subjectsWithData = DENEME_SUBJECTS.map((sub) => {
+    const topics = topicMatrixData.all.filter((t: any) => t.subjectId === sub.id);
+    const totalWrong = topics.reduce((acc: number, t: any) => acc + t.totalWrong, 0);
+    const totalEmpty = topics.reduce((acc: number, t: any) => acc + t.totalEmpty, 0);
+    return {
+      ...sub,
+      topics,
+      totalWrong,
+      totalEmpty,
+    };
+  }).filter((sub) => sub.topics.length > 0);
+
+  return (
+    <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 sm:p-8 shadow-sm space-y-6">
+      {/* Sitemize Uygun 3D Başlık & Lejant */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-slate-100 dark:border-slate-700/60 pb-6">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl border-2 border-b-4 flex items-center justify-center shadow-xs shrink-0" style={{ backgroundColor: `${themeColor}15`, borderColor: `${themeColor}60` }}>
+            <AppleEmoji emoji={themeIcon} size={24} color={themeColor} />
+          </div>
+          <div>
+            <h4 className="text-lg font-black text-slate-800 dark:text-white tracking-tight">Müfredat & Konu Hata Haritası</h4>
+            <p className="text-xs font-bold text-slate-400">Sınavlarda işaretlediğiniz yanlış ve boş soruların ders bazlı görsel matrisi</p>
+          </div>
+        </div>
+
+        {/* Sitemize Uygun 3D Lejant */}
+        <div className="flex items-center gap-2.5 text-xs font-black text-slate-500 dark:text-slate-400 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+          <span>Az Hata</span>
+          <div className="flex items-center gap-1.5 mx-1">
+            <span className="w-5 h-5 rounded-lg bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-800 shadow-2xs flex items-center justify-center text-[10px] font-mono text-slate-400 font-bold" title="0 Hata">0</span>
+            <span className="w-5 h-5 rounded-lg bg-amber-100 dark:bg-amber-950/60 border-2 border-b-4 border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 shadow-2xs flex items-center justify-center text-[10px] font-mono font-black" title="1 Boş">1B</span>
+            <span className="w-5 h-5 rounded-lg bg-amber-500 text-white border-2 border-b-4 border-amber-700 shadow-2xs flex items-center justify-center text-[10px] font-mono font-black" title="1 Yanlış">1Y</span>
+            <span className="w-5 h-5 rounded-lg bg-[#ff4b4b] text-white border-2 border-b-4 border-rose-700 shadow-2xs flex items-center justify-center text-[10px] font-mono font-black" title="2 Yanlış">2Y</span>
+            <span className="w-5 h-5 rounded-lg bg-rose-700 text-white border-2 border-b-4 border-rose-950 shadow-xs flex items-center justify-center text-[10px] font-mono font-black" title="3+ Yanlış (Kritik)">3+</span>
+          </div>
+          <span>Çok Hata</span>
+        </div>
+      </div>
+
+      {/* Ders Ders 3D Matris Blokları */}
+      <div className="space-y-4">
+        {subjectsWithData.map((sub) => (
+          <div key={sub.id} className="p-4.5 rounded-2xl bg-slate-50/70 dark:bg-slate-900/60 border-2 border-slate-200/80 dark:border-slate-700/80 space-y-3">
+            {/* Ders Başlık & Metrik Satırı */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase px-3 py-1 rounded-xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700/80 shadow-2xs flex items-center gap-1.5">
+                  <AppleEmoji emoji={sub.icon} size={14} color={sub.color} />
+                  <span style={{ color: sub.color }}>{sub.title}</span>
+                  <span className="text-[10px] font-mono font-bold text-slate-400 lowercase">({sub.topics.length} konu)</span>
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2.5 font-mono text-xs font-black">
+                <span className="px-3 py-1 rounded-xl bg-[#ff4b4b] text-white border-2 border-b-4 border-rose-700 shadow-xs flex items-center gap-1.5">
+                  <AppleEmoji emoji="❌" size={13} color="white" />
+                  <span>{sub.totalWrong} Yanlış</span>
+                </span>
+                <span className="px-3 py-1 rounded-xl bg-[#ff9500] text-white border-2 border-b-4 border-amber-700 shadow-xs flex items-center gap-1.5">
+                  <AppleEmoji emoji="⚪" size={13} color="white" />
+                  <span>{sub.totalEmpty} Boş</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Konu 3D Kare Kutucukları Matrisi */}
+            <div className="flex items-center gap-2 flex-wrap pt-0.5">
+              {sub.topics.map((t: any) => {
+                let squareStyle = "bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-400";
+                let displayVal = "0";
+
+                if (t.totalWrong > 2) {
+                  squareStyle = "bg-rose-700 text-white border-2 border-b-4 border-rose-950 shadow-xs font-black";
+                  displayVal = `${t.totalWrong}`;
+                } else if (t.totalWrong === 2) {
+                  squareStyle = "bg-[#ff4b4b] text-white border-2 border-b-4 border-rose-700 shadow-2xs font-black";
+                  displayVal = "2";
+                } else if (t.totalWrong === 1) {
+                  squareStyle = "bg-amber-500 text-white border-2 border-b-4 border-amber-700 shadow-2xs font-black";
+                  displayVal = "1";
+                } else if (t.totalEmpty > 0) {
+                  squareStyle = "bg-amber-400 text-amber-950 border-2 border-b-4 border-amber-600 shadow-2xs font-black";
+                  displayVal = `${t.totalEmpty}B`;
+                }
+
+                return (
+                  <div
+                    key={t.topicId}
+                    onMouseEnter={() => setHoveredTopic({ ...t, subjectTitle: sub.title, subjectIcon: sub.icon, color: sub.color })}
+                    onMouseLeave={() => setHoveredTopic(null)}
+                    className={`w-9 h-9 rounded-xl border-2 border-b-4 cursor-pointer transition-all duration-150 hover:scale-125 hover:z-30 flex items-center justify-center font-mono text-xs font-black ${squareStyle}`}
+                  >
+                    <span>{displayVal}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Sitemize Uygun 3D Hover & İpucu Bilgi Kartı */}
+      {hoveredTopic ? (
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm transition-all animate-fadeIn">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-white px-3 py-1 rounded-xl text-xs uppercase font-black shrink-0 border-2 border-b-4 border-black/20 shadow-xs flex items-center gap-1.5" style={{ backgroundColor: hoveredTopic.color }}>
+              <AppleEmoji emoji={hoveredTopic.subjectIcon} size={14} color="white" />
+              <span>{hoveredTopic.subjectTitle}</span>
+            </span>
+            <span className="text-slate-800 dark:text-white font-black text-sm truncate">{hoveredTopic.topicTitle}</span>
+          </div>
+
+          <div className="flex items-center gap-2.5 font-mono text-xs shrink-0">
+            {hoveredTopic.totalWrong > 0 ? (
+              <span className="px-3 py-1.5 rounded-xl bg-[#ff4b4b] text-white border-2 border-b-4 border-rose-700 font-mono font-black text-xs flex items-center gap-1.5 shadow-xs">
+                <AppleEmoji emoji="❌" size={13} color="white" />
+                <span>{hoveredTopic.totalWrong} Yanlış</span>
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 font-mono font-bold text-xs border-2 border-slate-200 dark:border-slate-700">
+                0 Yanlış
+              </span>
+            )}
+
+            {hoveredTopic.totalEmpty > 0 ? (
+              <span className="px-3 py-1.5 rounded-xl bg-[#ff9500] text-white border-2 border-b-4 border-amber-700 font-mono font-black text-xs flex items-center gap-1.5 shadow-xs">
+                <AppleEmoji emoji="⚪" size={13} color="white" />
+                <span>{hoveredTopic.totalEmpty} Boş</span>
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 font-mono font-bold text-xs border-2 border-slate-200 dark:border-slate-700">
+                0 Boş
+              </span>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 text-xs font-black text-slate-700 dark:text-slate-200 flex items-center justify-center gap-3 shadow-2xs">
+          <div className="w-9 h-9 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-300 dark:border-amber-800 flex items-center justify-center shrink-0 shadow-xs">
+            <AppleEmoji emoji="💡" size={18} color="#ff9500" />
+          </div>
+          <span>Konu başlığını ve detaylı yanlış/boş verilerini görmek için matristeki kutucukların üzerine gelin.</span>
+        </div>
+      )}
     </div>
   );
 }
