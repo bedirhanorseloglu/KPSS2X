@@ -19,6 +19,7 @@ import {
 import { TOTAL_QUESTIONS, getSubjectConfig, getSubjectQuestionCount, DENEME_SUBJECTS } from "@/lib/denemeConfig";
 import DenemeAlert from "./DenemeAlert";
 import AppleEmoji from "../AppleEmoji";
+import CustomDatePicker from "@/components/ui/CustomDatePicker";
 
 type Props = {
   targetNet: number;
@@ -45,6 +46,25 @@ type Props = {
   };
 };
 
+const PUBLISHER_OPTIONS = [
+  "Pegem",
+  "Benim Hocam",
+  "Yargı",
+  "Yediiklim",
+  "İsem",
+  "Hoca Kafası",
+  "Murat",
+  "Doktrin",
+  "Tasarı",
+  "Data",
+  "Krallar Karma",
+  "Bilgi Sarmal",
+  "Evveliyat",
+  "Palme",
+  "ÖSYM",
+  "Diğer"
+];
+
 export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial }: Props) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -54,7 +74,18 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const [hoveredSubjectId, setHoveredSubjectId] = useState<string | null>(null);
   const [name, setName] = useState(initial?.name ?? "");
   const [date, setDate] = useState(initial?.date ?? format(getStudyDate(), "yyyy-MM-dd"));
-  const [publisher, setPublisher] = useState(initial?.publisher ?? "");
+  
+  const initialPub = initial?.publisher?.trim() ?? "";
+  const isKnownPub = PUBLISHER_OPTIONS.includes(initialPub);
+  const [isPubDropdownOpen, setIsPubDropdownOpen] = useState(false);
+  const [selectedPublisher, setSelectedPublisher] = useState<string>(
+    initialPub ? (isKnownPub ? initialPub : "Diğer") : ""
+  );
+  const [customPublisher, setCustomPublisher] = useState<string>(
+    initialPub && !isKnownPub ? initialPub : ""
+  );
+  const publisher = selectedPublisher === "Diğer" ? customPublisher : selectedPublisher;
+
   const [durationMinutes, setDurationMinutes] = useState<number | "">(initial?.durationMinutes ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
   const [scores, setScores] = useState<SubjectScoreInput[]>(initial?.scores ?? createEmptyScores());
@@ -107,7 +138,8 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
       
       if (!initial) {
         setName("");
-        setPublisher("");
+        setSelectedPublisher("");
+        setCustomPublisher("");
         setDurationMinutes("");
         setNote("");
         setScores(createEmptyScores());
@@ -168,7 +200,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
         </div>
 
         {/* Site Style Form Card */}
-        <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 sm:p-10 shadow-sm relative overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 sm:p-10 shadow-sm relative">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.section
@@ -193,12 +225,13 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       type="button"
                       onClick={() => {
                         setExamType("genel");
+                        setStep(1);
                         window.history.replaceState(null, '', "?mode=genel");
                       }}
-                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left focus:outline-none ${
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left outline-none cursor-pointer active:translate-y-0.5 ${
                         examType === "genel"
                           ? "border-[#1cb0f6] border-b-[#1899d6] bg-sky-50/60 dark:bg-sky-950/30"
-                          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
+                          : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
                       }`}
                     >
                       {/* Seçili işareti */}
@@ -251,10 +284,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         setStep(1); 
                         window.history.replaceState(null, '', `?mode=brans${bransSubjectId ? `&subject=${bransSubjectId}` : ""}`);
                       }}
-                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left focus:outline-none ${
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left outline-none cursor-pointer active:translate-y-0.5 ${
                         examType === "brans"
                           ? "border-[#af52de] border-b-[#8e24aa] bg-purple-50/60 dark:bg-purple-950/30"
-                          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
+                          : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#af52de] dark:hover:border-[#af52de]"
                       }`}
                     >
                       {/* Seçili işareti */}
@@ -309,14 +342,18 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         <button
                           type="button"
                           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                          className="w-full flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700 rounded-2xl px-5 py-3.5 text-sm font-bold text-slate-800 dark:text-slate-200 outline-none hover:bg-slate-100/80 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-accent/10 focus:border-accent/40 transition-all text-left"
+                          className={`w-full flex items-center justify-between bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 rounded-2xl px-5 py-3.5 text-sm font-black transition-all shadow-xs text-left cursor-pointer active:translate-y-0.5 ${
+                            isDropdownOpen
+                              ? "border-[#1cb0f6] border-b-[#1899d6] bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
+                              : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 dark:bg-slate-800/80 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
+                          }`}
                         >
-                          <span className={bransSubjectId ? "text-slate-800 dark:text-slate-200" : "text-slate-400 dark:text-slate-500"}>
+                          <span className={`font-black ${bransSubjectId ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}`}>
                             {bransSubjectId 
                               ? result.subjects.find(s => s.subjectId === bransSubjectId)?.title + ` (${getSubjectQuestionCount(bransSubjectId, "brans")} Soru)`
                               : "Lütfen bir branş seçin..."}
                           </span>
-                          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-[#1cb0f6]' : ''}`} />
                         </button>
                         
                         <AnimatePresence>
@@ -327,11 +364,11 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                                 onClick={() => setIsDropdownOpen(false)}
                               />
                               <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.15 }}
-                                className="absolute top-full mt-2 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl overflow-hidden z-50 py-1"
+                                initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                                transition={{ duration: 0.15, ease: "easeOut" }}
+                                className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl overflow-hidden z-50 p-2 max-h-56 overflow-y-auto space-y-1"
                               >
                                 {result.subjects.filter(s => s.subjectId !== "geometri").map((s) => {
                                   const subjectColor = DENEME_SUBJECTS.find(ds => ds.id === s.subjectId)?.color || "#3b82f6";
@@ -377,35 +414,109 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Örn: Pegem 5. Türkiye Geneli"
-                      className="w-full bg-slate-100/70 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:bg-white dark:focus:bg-[#1e293b] focus:ring-4 focus:ring-[#1cb0f6]/20 focus:border-[#1cb0f6] transition-all shadow-xs"
+                      className="w-full bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[#1cb0f6] focus:border-b-[#1899d6] dark:focus:border-[#1cb0f6] dark:focus:border-b-[#1899d6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] transition-all shadow-xs"
                       required
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
-                      <AppleEmoji emoji="📅" size={16} /> Tarih *
-                    </span>
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full bg-slate-100/70 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white outline-none focus:bg-white dark:focus:bg-[#1e293b] focus:ring-4 focus:ring-[#1cb0f6]/20 focus:border-[#1cb0f6] transition-all shadow-xs"
-                      required
-                    />
-                  </div>
+                  <CustomDatePicker
+                    value={date}
+                    onChange={setDate}
+                    label="Tarih *"
+                    required
+                  />
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <span className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
                       <AppleEmoji emoji="🏷️" size={16} /> Yayınevi *
                     </span>
-                    <input
-                      value={publisher}
-                      onChange={(e) => setPublisher(e.target.value)}
-                      placeholder="Örn: Yargı, Yediiklim"
-                      className="w-full bg-slate-100/70 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:bg-white dark:focus:bg-[#1e293b] focus:ring-4 focus:ring-[#1cb0f6]/20 focus:border-[#1cb0f6] transition-all shadow-xs"
-                      required
-                    />
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setIsPubDropdownOpen(!isPubDropdownOpen)}
+                        className={`w-full flex items-center justify-between bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 rounded-2xl px-5 py-3.5 text-sm font-black transition-all shadow-xs text-left cursor-pointer active:translate-y-0.5 ${
+                          isPubDropdownOpen
+                            ? "border-[#1cb0f6] border-b-[#1899d6] bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
+                            : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 dark:bg-slate-800/80 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
+                        }`}
+                      >
+                        <span className={`font-black ${selectedPublisher ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}`}>
+                          {selectedPublisher || "Yayınevi seçin..."}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isPubDropdownOpen ? 'rotate-180 text-[#1cb0f6]' : ''}`} />
+                      </button>
+
+                      <AnimatePresence>
+                        {isPubDropdownOpen && (
+                          <>
+                            <div 
+                              className="fixed inset-0 z-40" 
+                              onClick={() => setIsPubDropdownOpen(false)}
+                            />
+                            <motion.div
+                              initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                              transition={{ duration: 0.15, ease: "easeOut" }}
+                              className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl overflow-hidden z-50 p-2 max-h-56 overflow-y-auto space-y-1"
+                            >
+                              {PUBLISHER_OPTIONS.map((pub) => {
+                                const isSelected = selectedPublisher === pub;
+                                const isOtherOption = pub === "Diğer";
+
+                                return (
+                                  <button
+                                    key={pub}
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedPublisher(pub);
+                                      if (!isOtherOption) {
+                                        setCustomPublisher("");
+                                      }
+                                      setIsPubDropdownOpen(false);
+                                    }}
+                                    className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                                      isSelected
+                                        ? "bg-[#1cb0f6] text-white font-black shadow-xs"
+                                        : isOtherOption
+                                        ? "bg-slate-100 dark:bg-slate-700/60 text-[#1cb0f6] hover:bg-[#1cb0f6] hover:text-white border-t border-slate-200 dark:border-slate-700 mt-1 font-black"
+                                        : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/70 hover:text-[#1cb0f6]"
+                                    }`}
+                                  >
+                                    <span className="flex items-center gap-2">
+                                      {isOtherOption ? <Tag className="w-3.5 h-3.5" /> : null}
+                                      {pub}
+                                    </span>
+                                    {isSelected && <Check className="w-4 h-4 text-white" strokeWidth={3.5} />}
+                                  </button>
+                                );
+                              })}
+                            </motion.div>
+                          </>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    <AnimatePresence>
+                      {selectedPublisher === "Diğer" && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -6, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: "auto" }}
+                          exit={{ opacity: 0, y: -6, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="pt-1 overflow-hidden"
+                        >
+                          <input
+                            value={customPublisher}
+                            onChange={(e) => setCustomPublisher(e.target.value)}
+                            placeholder="Yayınevi girin (Örn: Lider)"
+                            className="w-full bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 rounded-2xl px-5 py-3.5 text-sm font-black text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[#1cb0f6] focus:border-b-[#1899d6] dark:focus:border-[#1cb0f6] dark:focus:border-b-[#1899d6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] transition-all shadow-xs"
+                            required={selectedPublisher === "Diğer"}
+                            autoFocus
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </motion.section>
