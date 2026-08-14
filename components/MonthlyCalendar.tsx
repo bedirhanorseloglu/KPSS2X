@@ -96,7 +96,7 @@ function DroppableDayCell({
 
   const isToday = isSameDay(date, new Date());
   const hasDeneme = denemelerForDay.length > 0;
-  const bestDeneme = hasDeneme ? denemelerForDay.reduce((best, d) => {
+  const bestDeneme = hasDeneme ? denemelerForDay.reduce<{ net: number; name: string; publisher?: string; record: DenemeRecord }>((best, d) => {
     const net = evaluateDeneme(d.scores, d.examType).totalNet;
     return net > best.net ? { net, name: d.name, publisher: d.publisher, record: d } : best;
   }, { net: -999, name: "", publisher: "", record: denemelerForDay[0] }) : null;
