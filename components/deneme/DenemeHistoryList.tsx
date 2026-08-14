@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
-import { Trash2, Edit3, Clock, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { Trash2, Edit3, Clock, ChevronLeft, ChevronRight, ChevronDown, ArrowRight } from "lucide-react";
 import AppleEmoji from "../AppleEmoji";
 import { DenemeRecord, evaluateDeneme, formatNet, formatDuration, estimateP3Score } from "@/lib/denemeUtils";
 import { DENEME_SUBJECTS } from "@/lib/denemeConfig";
@@ -12,6 +12,7 @@ import ConfirmDialog from "./ConfirmDialog";
 
 type Props = {
   denemeler: DenemeRecord[];
+  viewType?: "genel" | "brans";
   activeSubjectTab?: string;
   onActiveSubjectTabChange?: (subId: string) => void;
   onDelete: (id: string) => void;
@@ -21,6 +22,7 @@ type Props = {
 
 export default function DenemeHistoryList({
   denemeler,
+  viewType = "genel",
   activeSubjectTab: externalActiveSubjectTab,
   onActiveSubjectTabChange,
   onDelete,
@@ -96,22 +98,37 @@ export default function DenemeHistoryList({
   const activeSubConfig = DENEME_SUBJECTS.find((s) => s.id === activeSubjectTab);
 
   if (denemeler.length === 0) {
+    const isBrans = viewType === "brans";
     return (
       <>
         {deleteDialog}
-        <div className="flex flex-col items-center justify-center py-20 px-6 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 text-center shadow-xs">
-          <div className="w-16 h-16 bg-[#ddf4ff] dark:bg-[#1cb0f6]/20 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] rounded-2xl flex items-center justify-center mb-4 shadow-xs">
-            <AppleEmoji emoji="📭" size={32} />
+        <div className="flex flex-col items-center justify-center py-16 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 text-center shadow-md max-w-lg mx-auto my-6">
+          <div className={`w-20 h-20 rounded-3xl flex items-center justify-center shadow-xs mb-6 shrink-0 border-2 border-b-4 ${
+            isBrans 
+              ? 'bg-[#f5e8ff] dark:bg-[#af52de]/10 border-[#af52de] border-b-[#9b37c7]' 
+              : 'bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 border-[#1cb0f6] border-b-[#1899d6]'
+          }`}>
+            <AppleEmoji emoji={isBrans ? "🎯" : "🌍"} size={40} color={isBrans ? "#af52de" : "#1cb0f6"} />
           </div>
-          <h3 className="text-xl font-black text-slate-800 dark:text-white">Henüz Deneme Kaydı Yok</h3>
-          <p className="text-slate-500 font-medium mt-2 max-w-sm text-sm">
-            İlk denemenizi ekleyerek ilerlemenizi görselleştirmeye ve istatistiklerinizi oluşturmaya başlayın.
+          <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
+            {isBrans ? "Branş Denemesi Kaydı Bulunmuyor" : "Genel Deneme Kaydı Bulunmuyor"}
+          </h3>
+          <p className="text-sm font-extrabold text-slate-400 mt-2.5 max-w-xs leading-relaxed">
+            {isBrans 
+              ? "Ders bazlı ilerlemenizi ve konu analizlerinizi takip etmek için ilk Branş Denemenizi ekleyin."
+              : "KPSS GY-GK net gelişiminizi ve genel ortalamanızı takip etmek için ilk Genel Denemenizi ekleyin."}
           </p>
           <button
+            type="button"
             onClick={onAdd}
-            className="mt-6 px-6 py-3 bg-[#1cb0f6] hover:bg-[#1899d6] text-white font-black rounded-2xl border-2 border-b-4 border-[#0088cc] active:translate-y-0.5 shadow-xs transition-all cursor-pointer flex items-center gap-2 text-sm"
+            className={`mt-8 px-8 py-4 text-white font-black text-xs uppercase tracking-widest rounded-2xl border-2 border-b-4 active:translate-y-0.5 shadow-xs transition-all cursor-pointer flex items-center gap-2 ${
+              isBrans 
+                ? 'bg-[#af52de] border-[#af52de] border-b-[#9b37c7]' 
+                : 'bg-[#1cb0f6] border-[#1cb0f6] border-b-[#1899d6]'
+            }`}
           >
-            + İlk Denemeyi Ekle
+            <span>{isBrans ? "+ İlk Branş Denemesini Ekle" : "+ İlk Genel Denemeyi Ekle"}</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </>

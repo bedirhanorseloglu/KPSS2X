@@ -309,7 +309,7 @@ export default function DenemePageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0f1a] text-gray-900 dark:text-white pb-20">
+    <div className="min-h-screen bg-bg text-text-main pb-20">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-500/[0.04] via-purple-500/[0.02] to-transparent rounded-full blur-3xl" />
@@ -540,6 +540,7 @@ export default function DenemePageContent() {
                 >
                   <DenemeHistoryList
                     denemeler={filteredDenemeler}
+                    viewType={viewType}
                     activeSubjectTab={activeSubjectTab}
                     onActiveSubjectTabChange={setActiveSubjectTab}
                     onDelete={handleDelete}

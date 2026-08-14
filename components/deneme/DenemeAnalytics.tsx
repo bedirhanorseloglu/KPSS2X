@@ -47,7 +47,7 @@ ChartJS.register(
   ArcElement
 );
 import DenemeScoreRing from "./DenemeScoreRing";
-import { BarChart3, TrendingUp, Target, BookOpen, CheckCircle2, XCircle, MinusCircle, Lightbulb, AlertTriangle, Clock, Scale, Sparkles, BookText, Calculator, Landmark, Globe2, Newspaper } from "lucide-react";
+import { BarChart3, TrendingUp, Target, BookOpen, CheckCircle2, XCircle, MinusCircle, Lightbulb, AlertTriangle, Clock, Scale, Sparkles, BookText, Calculator, Landmark, Globe2, Newspaper, ArrowRight } from "lucide-react";
 import AppleEmoji from "../AppleEmoji";
 import * as Slider from "@radix-ui/react-slider";
 import RankSimulator from "./RankSimulator";
@@ -325,30 +325,54 @@ export default function DenemeAnalytics({
     }).sort((a, b) => b.avgNet - a.avgNet);
   }, [active, denemeler, selectedBransSubjectId, viewType, range]);
 
-  /* ═══ Empty States ═══ */
-  if (viewType === "genel" && !stats) {
+   if (viewType === "genel" && (!stats || stats.count === 0)) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 px-6 bg-white dark:bg-[#1e293b] rounded-3xl shadow-sm border border-slate-100 dark:border-white/5 text-center">
-        <DenemeScoreRing value={0} max={120} size={130} label="Analiz Bekleniyor" />
-        <p className="text-sm font-semibold text-slate-500 mt-6 max-w-xs leading-relaxed">
-          Genel deneme analizlerini görmek için en az bir adet Genel Deneme kaydı {isReadOnly ? "bulunmuyor" : "girmelisiniz"}.
+      <div className="flex flex-col items-center justify-center py-16 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md text-center max-w-lg mx-auto my-6">
+        <div className="w-20 h-20 rounded-3xl bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center shadow-xs mb-6 shrink-0">
+          <AppleEmoji emoji="🌍" size={40} color="#1cb0f6" />
+        </div>
+        <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
+          Analiz Bekleniyor
+        </h3>
+        <p className="text-sm font-extrabold text-slate-400 mt-2.5 max-w-xs leading-relaxed">
+          Genel deneme grafiklerinizi ve performans analizlerinizi görmek için ilk Genel Deneme kaydınızı girin.
         </p>
-        {!isReadOnly && <button onClick={onAdd} className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-500/20">Deneme Girişi Yap</button>}
+        {!isReadOnly && (
+          <button 
+            type="button"
+            onClick={onAdd} 
+            className="mt-8 px-8 py-4 rounded-2xl bg-[#1cb0f6] text-white font-black text-xs uppercase tracking-widest border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <span>Deneme Girişi Yap</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
       </div>
     );
   }
 
   if (viewType === "brans" && availableBransSubjects.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 px-6 bg-white dark:bg-[#1e293b] rounded-3xl shadow-sm border border-slate-100 dark:border-white/5 text-center">
-        <div className="w-16 h-16 bg-violet-50 dark:bg-violet-500/10 text-violet-500 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm">
-          🎯
+      <div className="flex flex-col items-center justify-center py-16 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md text-center max-w-lg mx-auto my-6">
+        <div className="w-20 h-20 rounded-3xl bg-[#f5e8ff] dark:bg-[#af52de]/10 border-2 border-b-4 border-[#af52de] border-b-[#9b37c7] flex items-center justify-center shadow-xs mb-6 shrink-0">
+          <AppleEmoji emoji="🎯" size={40} color="#af52de" />
         </div>
-        <h3 className="text-lg font-black text-slate-800 dark:text-white">Branş Analizi Bekleniyor</h3>
-        <p className="text-sm font-semibold text-slate-500 mt-2 max-w-xs leading-relaxed">
-          Branş deneme grafiklerini ve analizlerini görmek için önce "Yeni Giriş" kısmından bir Branş Denemesi {isReadOnly ? "bulunmuyor" : "kaydetmelisiniz"}.
+        <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
+          Branş Analizi Bekleniyor
+        </h3>
+        <p className="text-sm font-extrabold text-slate-400 mt-2.5 max-w-xs leading-relaxed">
+          Branş deneme grafiklerinizi ve konu analizlerinizi görmek için önce ilk Branş Denemenizi kaydedin.
         </p>
-        {!isReadOnly && <button onClick={onAdd} className="mt-6 px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-black rounded-xl shadow-lg shadow-violet-500/20">Branş Denemesi Gir</button>}
+        {!isReadOnly && (
+          <button 
+            type="button"
+            onClick={onAdd} 
+            className="mt-8 px-8 py-4 rounded-2xl bg-[#af52de] text-white font-black text-xs uppercase tracking-widest border-2 border-b-4 border-[#af52de] border-b-[#9b37c7] shadow-xs active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <span>Branş Denemesi Gir</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
       </div>
     );
   }

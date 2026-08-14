@@ -115,7 +115,14 @@ export function evaluateSubjectScore(
 }
 
 export function evaluateDeneme(scores: SubjectScoreInput[], examType?: "genel" | "brans"): DenemeResult {
-  const subjects = DENEME_SUBJECTS.map((config) => {
+  const enteredSubjectIds = scores.map(s => s.subjectId);
+  const isBrans = examType === "brans" || (enteredSubjectIds.length < DENEME_SUBJECTS.length && enteredSubjectIds.length > 0);
+
+  const targetConfigs = isBrans && enteredSubjectIds.length > 0
+    ? DENEME_SUBJECTS.filter(config => enteredSubjectIds.includes(config.id))
+    : DENEME_SUBJECTS;
+
+  const subjects = targetConfigs.map((config) => {
     const existing = scores.find((s) => s.subjectId === config.id);
     let qCount = getSubjectQuestionCount(config.id, examType);
 
@@ -170,6 +177,36 @@ export function createEmptyScores(): SubjectScoreInput[] {
 
 export function formatNet(value: number): string {
   return value.toFixed(2).replace(/\.?0+$/, "") || "0";
+}
+
+export function getDenemeTheme(deneme: DenemeRecord) {
+  if (deneme.examType === "brans") {
+    const bransId = deneme.bransSubjectId || deneme.scores?.[0]?.subjectId;
+    const config = DENEME_SUBJECTS.find(s => s.id === bransId);
+    if (config) {
+      return {
+        color: config.color,
+        title: `${config.title} Branş Denemesi`,
+        name: deneme.name,
+        icon: config.icon,
+        isBrans: true,
+      };
+    }
+    return {
+      color: "#1cb0f6",
+      title: "Branş Denemesi",
+      name: deneme.name,
+      icon: "🎯",
+      isBrans: true,
+    };
+  }
+  return {
+    color: "#58cc02",
+    title: "Genel Deneme",
+    name: deneme.name,
+    icon: "🎯",
+    isBrans: false,
+  };
 }
 
 export function averageNet(denemeler: DenemeRecord[]): number {

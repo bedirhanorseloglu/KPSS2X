@@ -62,6 +62,7 @@ function HomeContent() {
   const lastSavedDataString = useRef<string>("")
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const dailyPlanRef = useRef<HTMLDivElement>(null)
+  const monthlyCalendarRef = useRef<HTMLDivElement>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -264,6 +265,7 @@ function HomeContent() {
       [scheduledDate, scheduledTime] = targetId.split("_")
     } else {
       scheduledDate = targetId
+      scheduledTime = "09:00"
     }
 
     const newSubjects = safeSubjects.map(subject => {
@@ -316,7 +318,7 @@ function HomeContent() {
             if (dateStr) {
               return { 
                 ...t, 
-                schedules: t.schedules?.filter(s => !(s.date === dateStr && s.time === (timeStr || "")))
+                schedules: t.schedules?.filter(s => s.date !== dateStr)
               }
             }
             return { ...t, schedules: [] }
@@ -438,8 +440,8 @@ function HomeContent() {
       <div className="flex flex-col min-h-screen bg-bg text-text-main font-sans selection:bg-accent/30">
 
           {/* Main Content Area */}
-          <main ref={scrollAreaRef} className="flex-1 px-4 sm:px-6 md:px-12 pb-24">
-            <div className="max-w-7xl mx-auto space-y-12 md:space-y-16">
+          <main ref={scrollAreaRef} className="flex-1 px-4 sm:px-6 md:px-12 pb-16">
+            <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
               
               {/* Overview Section */}
               {/* Responsive 2-Column Hero Header */}
@@ -470,34 +472,6 @@ function HomeContent() {
                         <span className="text-xs font-black uppercase tracking-widest text-slate-400">
                           Sınava Hazırlık Merkezi
                         </span>
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 dark:bg-rose-500/10 rounded-xl border-2 border-b-2 border-rose-200 dark:border-rose-500/30 shadow-2xs">
-                           <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">Busis ❤️</span>
-                        </div>
-                        <AnimatePresence mode="wait">
-                          {isSaving ? (
-                            <motion.div 
-                              key="saving"
-                              initial={{ opacity: 0, scale: 0.9 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.9 }}
-                              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-xl border-2 border-b-2 border-emerald-200 dark:border-emerald-500/30 shadow-2xs"
-                            >
-                              <div className="w-2 h-2 rounded-full bg-[#58cc02] animate-pulse" />
-                              Senkronize ediliyor...
-                            </motion.div>
-                          ) : (
-                            <motion.div 
-                              key="synced"
-                              initial={{ opacity: 0, scale: 0.9 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.9 }}
-                              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-xl border-2 border-b-2 border-emerald-200 dark:border-emerald-500/30 shadow-2xs"
-                            >
-                              <div className="w-2 h-2 rounded-full bg-[#58cc02]" />
-                              Bulutla Eşitlendi ✓
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
                       </div>
                     </div>
                   </div>
@@ -579,19 +553,26 @@ function HomeContent() {
                           : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent'
                       }`}
                     >
-                      <span>Günlük Operasyon</span>
+                      <span>Günlük Takvim</span>
                       {activeView === 'daily' && <div className="w-2 h-2 rounded-full bg-[#1cb0f6]" />}
                     </button>
                     <button 
                       type="button"
-                      onClick={() => setActiveView('monthly')}
+                      onClick={() => {
+                        setActiveView('monthly');
+                        setTimeout(() => {
+                          if (monthlyCalendarRef.current) {
+                            monthlyCalendarRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+                          }
+                        }, 100);
+                      }}
                       className={`flex-1 py-3 px-6 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-200 flex items-center justify-center gap-3 relative cursor-pointer ${
                         activeView === 'monthly' 
                           ? 'bg-white dark:bg-slate-800 text-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs' 
                           : 'text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent'
                       }`}
                     >
-                      <span>Aylık Projeksiyon</span>
+                      <span>Aylık Takvim</span>
                       {activeView === 'monthly' && <div className="w-2 h-2 rounded-full bg-[#1cb0f6]" />}
                     </button>
                   </div>
@@ -625,6 +606,7 @@ function HomeContent() {
                       ) : (
                         <motion.div 
                           key="monthly"
+                          ref={monthlyCalendarRef}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
@@ -635,8 +617,13 @@ function HomeContent() {
                             subjects={safeSubjects} 
                             slotNotes={data.slotNotes || {}}
                             completedNotes={data.completedNotes || {}}
+                            dailyGoals={data.dailyGoals || {}}
+                            dailyGoalTarget={data.dailyGoalTarget || 100}
                             isDragging={!!activeId} 
                             onDayClick={handleDayClick} 
+                            onToggleTopic={toggleTopic}
+                            onToggleNote={toggleNote}
+                            onUpdateDailyGoal={handleUpdateDailyGoal}
                           />
                         </motion.div>
                       )}

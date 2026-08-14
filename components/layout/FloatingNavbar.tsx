@@ -73,10 +73,10 @@ export default function FloatingNavbar() {
         } px-4 md:px-8 flex justify-center pointer-events-none`}
       >
         <div 
-          className={`pointer-events-auto flex items-center justify-between w-full max-w-[90rem] mx-auto rounded-2xl md:rounded-[2rem] pl-5 sm:pl-7 pr-4 sm:pr-6 py-2.5 transition-all duration-300 ${
+          className={`pointer-events-auto flex items-center justify-between w-full max-w-[90rem] mx-auto rounded-2xl md:rounded-[2rem] pl-5 sm:pl-7 pr-4 sm:pr-6 py-2.5 transition-all duration-300 bg-white dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-800 ${
             isScrolled 
-              ? "bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl shadow-md border-2 border-b-4 border-slate-200 dark:border-slate-700" 
-              : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-xs border-2 border-b-4 border-slate-200/80 dark:border-slate-700/80"
+              ? "shadow-xl border-b-slate-300 dark:border-b-slate-700" 
+              : "shadow-md"
           }`}
         >
           {/* Left Side: Logo (Fixed) + Nav (Scrollable) */}
@@ -104,7 +104,7 @@ export default function FloatingNavbar() {
                     href={link.href}
                     className={`relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 xl:px-4 py-1.5 sm:py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap shrink-0 active:translate-y-0.5 ${
                       isActive 
-                        ? "bg-white dark:bg-slate-900 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-sm" 
+                        ? "bg-white dark:bg-slate-800 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-sm" 
                         : "bg-transparent border-2 border-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6]"
                     }`}
                   >

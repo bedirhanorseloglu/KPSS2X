@@ -66,17 +66,17 @@ const tabs = [
           <div className="p-5 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 shadow-2xs">
             <div className="flex justify-between items-start mb-4">
               <h4 className="font-black text-slate-800 dark:text-white text-base">Genel Yetenek (GY)</h4>
-              <span className="px-3 py-1 bg-[#fff8ed] text-[#ff9500] border-2 border-b-2 border-[#ff9500]/30 rounded-xl font-black text-xs shadow-2xs">60 Soru</span>
+              <span className="px-3 py-1 bg-[#fff8ed] dark:bg-[#ff9500]/10 text-[#ff9500] border-2 border-b-2 border-[#ff9500]/30 rounded-xl font-black text-xs shadow-2xs">60 Soru</span>
             </div>
             <ul className="text-sm text-slate-700 dark:text-slate-300 font-bold space-y-3">
               <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#fff1f2] border-2 border-b-2 border-[#F43F5E]/30 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#fff1f2] dark:bg-[#F43F5E]/10 border-2 border-b-2 border-[#F43F5E]/30 flex items-center justify-center">
                   <AppleEmoji emoji="📝" size={16} />
                 </div> 
                 Türkçe (30)
               </li>
               <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#f8f0fc] border-2 border-b-2 border-[#af52de]/30 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#f8f0fc] dark:bg-[#af52de]/10 border-2 border-b-2 border-[#af52de]/30 flex items-center justify-center">
                   <AppleEmoji emoji="🔢" size={16} />
                 </div> 
                 Matematik (30)
@@ -87,17 +87,17 @@ const tabs = [
           <div className="p-5 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 shadow-2xs">
             <div className="flex justify-between items-start mb-4">
               <h4 className="font-black text-slate-800 dark:text-white text-base">Genel Kültür (GK)</h4>
-              <span className="px-3 py-1 bg-[#e5f9e7] text-[#58cc02] border-2 border-b-2 border-[#58cc02]/30 rounded-xl font-black text-xs shadow-2xs">60 Soru</span>
+              <span className="px-3 py-1 bg-[#e5f9e7] dark:bg-[#58cc02]/10 text-[#58cc02] border-2 border-b-2 border-[#58cc02]/30 rounded-xl font-black text-xs shadow-2xs">60 Soru</span>
             </div>
             <ul className="text-sm text-slate-700 dark:text-slate-300 font-bold space-y-3">
               <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#e5f9e7] border-2 border-b-2 border-[#58cc02]/30 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#e5f9e7] dark:bg-[#58cc02]/10 border-2 border-b-2 border-[#58cc02]/30 flex items-center justify-center">
                   <AppleEmoji emoji="🌍" size={16} />
                 </div> 
                 Tarih, Coğrafya
               </li>
               <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#f0f0ff] border-2 border-b-2 border-[#5856d6]/30 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#f0f0ff] dark:bg-[#5856d6]/10 border-2 border-b-2 border-[#5856d6]/30 flex items-center justify-center">
                   <AppleEmoji emoji="⚖️" size={16} />
                 </div> 
                 Vatandaşlık, Güncel

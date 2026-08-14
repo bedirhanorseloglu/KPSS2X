@@ -10,6 +10,9 @@ import { useState, useMemo, useEffect } from "react";
 import { getStudyDate } from "@/lib/dateUtils";
 import { X, Check } from "lucide-react";
 import AppleEmoji from "@/components/AppleEmoji";
+import { DenemeRecord, evaluateDeneme, formatNet, getDenemeTheme } from "@/lib/denemeUtils";
+import { useAuth } from "@/contexts/AuthContext";
+import { loadDenemeYeniden } from "@/lib/firebaseService";
 
 interface DailyPlanViewProps {
   date: Date;
@@ -32,6 +35,7 @@ function TimeSlot({
   hour, 
   dateStr, 
   topic, 
+  deneme,
   revision, 
   isLocked, 
   lockedTitle, 
@@ -140,7 +144,29 @@ function TimeSlot({
                 <span className="text-xs font-black text-slate-700 dark:text-slate-200 leading-tight truncate">{lockedTitle}</span>
              </div>
           </div>
-        ) : topic ? (
+        ) : deneme ? (() => {
+          const theme = getDenemeTheme(deneme);
+          return (
+            <div className="flex items-center justify-between gap-3 p-3 rounded-2xl border-2 border-b-4 transition-all shadow-2xs" style={{ backgroundColor: `${theme.color}15`, borderColor: theme.color }}>
+               <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl text-white flex items-center justify-center shrink-0 border-2 border-b-2 shadow-2xs" style={{ backgroundColor: theme.color, borderColor: theme.color }}>
+                     <AppleEmoji emoji={theme.icon} size={18} />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                     <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color: theme.color }}>
+                       {theme.title}
+                     </span>
+                     <span className="text-xs font-black text-slate-800 dark:text-white leading-tight truncate mt-0.5">
+                       {theme.name}
+                     </span>
+                  </div>
+               </div>
+               <div className="px-3 py-1.5 rounded-xl text-white font-mono font-black text-xs border-2 border-b-2 shrink-0 shadow-2xs" style={{ backgroundColor: theme.color, borderColor: theme.color }}>
+                 {formatNet(evaluateDeneme(deneme.scores, deneme.examType).totalNet)} Net
+               </div>
+            </div>
+          );
+        })() : topic ? (
           <div className="flex items-start gap-3 p-3 rounded-2xl border-2 border-b-4 transition-all shadow-2xs" style={{ backgroundColor: `${subjectColor}12`, borderColor: subjectColor }}>
              <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 border-b-2 shadow-2xs" style={{ backgroundColor: `${subjectColor}25`, borderColor: subjectColor }}>
                 <AppleEmoji emoji={subjectObj?.icon || "📚"} size={18} />
@@ -214,11 +240,45 @@ export default function DailyPlanView({
   const [activeTab, setActiveTab] = useState<'all' | 'morning' | 'afternoon' | 'evening'>('all');
   const [pomodoroFocusMins, setPomodoroFocusMins] = useState(0);
 
+  const { user } = useAuth();
+  const [denemeler, setDenemeler] = useState<DenemeRecord[]>([]);
+
   const dateStr = format(date, "yyyy-MM-dd");
   const isHoliday = holidays.includes(dateStr);
   const isExamDay = dateStr === EXAM_DATE;
   const topicsForDay = topics.filter(t => t.scheduledDate === dateStr);
   const isToday = dateStr === format(getStudyDate(), "yyyy-MM-dd");
+
+  useEffect(() => {
+    const fetchDenemeler = async () => {
+      if (user?.uid) {
+        try {
+          const res = await loadDenemeYeniden(user.uid);
+          if (res?.denemeler && Array.isArray(res.denemeler)) {
+            setDenemeler(res.denemeler as DenemeRecord[]);
+            return;
+          }
+        } catch (e) {}
+      }
+      if (typeof window !== "undefined") {
+        try {
+          const local = localStorage.getItem("kpss_2026_denemeler");
+          if (local) setDenemeler(JSON.parse(local));
+        } catch (e) {}
+      }
+    };
+    fetchDenemeler();
+
+    const handleUpdate = () => fetchDenemeler();
+    window.addEventListener("denemeler_updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("denemeler_updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, [user?.uid, dateStr]);
+
+  const denemelerForDay = denemeler.filter(d => d.date === dateStr);
 
   useEffect(() => {
     const getStudyDay = () => {
@@ -334,7 +394,17 @@ export default function DailyPlanView({
         }
 
         const slotTimeStr = `${hour.toString().padStart(2, '0')}:00`;
-        const topic = topicsForDay.find(t => t.scheduledTime === slotTimeStr);
+        let topic = topicsForDay.find(t => t.scheduledTime === slotTimeStr);
+        if (!topic && !isLocked) {
+          // If topic has no explicit time, place it ONLY in 09:00 (or first open hour slot)
+          const unassignedTopics = topicsForDay.filter(t => !t.scheduledTime || t.scheduledTime === "");
+          if (unassignedTopics.length > 0) {
+            const firstOpenHour = hours.find(h => !UNIVERSITY_CLASSES.some(c => c.date === dateStr && parseInt(c.startTime) <= h && parseInt(c.endTime) > h)) || 9;
+            if (hour === firstOpenHour) {
+              topic = unassignedTopics[0];
+            }
+          }
+        }
         
         let color = "var(--accent)";
         if (topic) {
@@ -351,12 +421,17 @@ export default function DailyPlanView({
           }
         }
 
+        const denemeForDay = denemelerForDay.length > 0 ? denemelerForDay[0] : null;
+        const firstOpenDenemeHour = hours.find(h => !UNIVERSITY_CLASSES.some(c => c.date === dateStr && parseInt(c.startTime) <= h && parseInt(c.endTime) > h)) || 10;
+        const denemeForSlot = (denemeForDay && hour === firstOpenDenemeHour && !topic && !isLocked) ? denemeForDay : null;
+
         return (
           <TimeSlot 
             key={hour} 
             hour={hour} 
             dateStr={dateStr}
             topic={topic}
+            deneme={denemeForSlot}
             revision={revision}
             isLocked={isLocked}
             lockedTitle={lockedTitle}
