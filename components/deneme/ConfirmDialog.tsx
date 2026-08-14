@@ -110,10 +110,10 @@ export default function ConfirmDialog({
                   onConfirm();
                   onClose();
                 }}
-                className={`flex-1 py-3 px-3 font-black text-xs uppercase tracking-wider rounded-2xl active:translate-y-0.5 transition-all cursor-pointer text-center flex items-center justify-center gap-1.5 ${cfg.confirmClass}`}
+                className={`flex-1 py-3.5 px-4 font-black text-xs uppercase tracking-wider rounded-2xl active:translate-y-0.5 transition-all cursor-pointer text-center flex items-center justify-center gap-2 ${cfg.confirmClass}`}
               >
+                <AppleEmoji emoji={cfg.confirmEmoji} size={16} color="white" className="text-white" />
                 <span>{confirmLabel}</span>
-                <AppleEmoji emoji={cfg.confirmEmoji} size={15} />
               </button>
             </div>
           </motion.div>

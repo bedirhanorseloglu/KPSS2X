@@ -64,9 +64,22 @@ export const updateLeaderboard = async (
   }
 };
 
+// Client-side in-memory cache for leaderboard (3 dakika TTL)
+let cachedGeneralLeaderboard: { data: LeaderboardEntry[]; timestamp: number; limit: number } | null = null;
+const cachedBranchLeaderboards: Record<string, { data: BranchLeaderboardEntry[]; timestamp: number; limit: number }> = {};
+
 export const getLeaderboard = async (
   limitCount: number = 10
 ): Promise<LeaderboardEntry[]> => {
+  const now = Date.now();
+  if (
+    cachedGeneralLeaderboard &&
+    cachedGeneralLeaderboard.limit === limitCount &&
+    now - cachedGeneralLeaderboard.timestamp < 180000
+  ) {
+    return cachedGeneralLeaderboard.data;
+  }
+
   try {
     const q = query(
       collection(db, LEADERBOARD_COLLECTION),
@@ -79,15 +92,17 @@ export const getLeaderboard = async (
       results.push(d.data() as LeaderboardEntry);
     });
 
+    cachedGeneralLeaderboard = { data: results, timestamp: now, limit: limitCount };
     return results;
   } catch (error) {
     console.error("❌ Liderlik tablosu yükleme hatası:", error);
-    return [];
+    return cachedGeneralLeaderboard ? cachedGeneralLeaderboard.data : [];
   }
 };
 
 export const removeFromLeaderboard = async (userId: string) => {
   if (!userId) return;
+  cachedGeneralLeaderboard = null;
   try {
     await deleteDoc(doc(db, LEADERBOARD_COLLECTION, userId));
   } catch (error) {
@@ -108,6 +123,7 @@ export const updateBranchLeaderboard = async (
   totalTrials: number
 ) => {
   if (!userId || !subjectId) return;
+  delete cachedBranchLeaderboards[subjectId];
   try {
     const docId = `${userId}_${subjectId}`;
     const docRef = doc(db, BRANCH_LEADERBOARD_COLLECTION, docId);
@@ -135,6 +151,16 @@ export const getBranchLeaderboard = async (
   subjectId: string,
   limitCount: number = 10
 ): Promise<BranchLeaderboardEntry[]> => {
+  const now = Date.now();
+  const cached = cachedBranchLeaderboards[subjectId];
+  if (
+    cached &&
+    cached.limit === limitCount &&
+    now - cached.timestamp < 180000
+  ) {
+    return cached.data;
+  }
+
   try {
     const q = query(
       collection(db, BRANCH_LEADERBOARD_COLLECTION),
@@ -148,10 +174,11 @@ export const getBranchLeaderboard = async (
       results.push(d.data() as BranchLeaderboardEntry);
     });
 
+    cachedBranchLeaderboards[subjectId] = { data: results, timestamp: now, limit: limitCount };
     return results;
   } catch (error) {
     console.error("❌ Branş liderlik tablosu yükleme hatası:", error);
-    return [];
+    return cached ? cached.data : [];
   }
 };
 

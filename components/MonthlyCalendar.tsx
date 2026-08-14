@@ -8,7 +8,8 @@ import { Topic, Subject } from "@/types";
 import { UNIVERSITY_CLASSES } from "@/lib/data";
 import { ChevronLeft, ChevronRight, Check, X, Calendar, ArrowRight, Search } from "lucide-react";
 import AppleEmoji from "@/components/AppleEmoji";
-import { DenemeRecord, evaluateDeneme, formatNet, getDenemeTheme } from "@/lib/denemeUtils";
+import { DenemeRecord, evaluateDeneme, formatNet, getDenemeTheme, inferBransSubjectId } from "@/lib/denemeUtils";
+import { DENEME_SUBJECTS } from "@/lib/denemeConfig";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadDenemeYeniden } from "@/lib/firebaseService";
 
@@ -146,17 +147,26 @@ function DroppableDayCell({
         </div>
 
         {/* Deneme Result */}
-        {hasDeneme && bestDeneme && (
-          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border-2 border-b-2 border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-black">
-            <span className="truncate flex items-center gap-1.5 text-slate-800 dark:text-white">
-              <AppleEmoji emoji="🎯" size={15} />
-              <span className="truncate">{bestDeneme.publisher || "Genel Deneme"}</span>
-            </span>
-            <span className="px-2.5 py-0.5 rounded-lg bg-[#58cc02] text-white font-mono font-black text-[11px] border border-green-600 shadow-2xs shrink-0">
-              {formatNet(bestDeneme.net)} Net
-            </span>
-          </div>
-        )}
+        {hasDeneme && bestDeneme && (() => {
+          const theme = getDenemeTheme(bestDeneme.record);
+          return (
+            <div 
+              className="p-2.5 rounded-xl border-2 border-b-2 flex items-center justify-between text-xs font-black shadow-2xs"
+              style={{ backgroundColor: `${theme.color}12`, borderColor: theme.color }}
+            >
+              <span className="truncate flex items-center gap-1.5 min-w-0" style={{ color: theme.color }}>
+                <AppleEmoji emoji={theme.icon} size={15} />
+                <span className="truncate">{theme.title} · {bestDeneme.record.name}</span>
+              </span>
+              <span 
+                className="px-2.5 py-0.5 rounded-lg text-white font-mono font-black text-[11px] border border-green-600 shadow-2xs shrink-0"
+                style={{ backgroundColor: "#58cc02" }}
+              >
+                {formatNet(bestDeneme.net)} Net
+              </span>
+            </div>
+          );
+        })()}
 
         {/* Topics for Day */}
         {topicsForDay.length > 0 && (
@@ -243,7 +253,7 @@ function DroppableDayCell({
               <div className="text-[10px] font-black px-2 py-1 rounded-lg text-white border-2 border-b-2 shadow-2xs flex items-center justify-between truncate" style={{ backgroundColor: theme.color, borderColor: theme.color }}>
                 <span className="truncate flex items-center gap-1">
                   <AppleEmoji emoji={theme.icon} size={11} />
-                  <span className="truncate">{bestDeneme.publisher || bestDeneme.name || theme.title}</span>
+                  <span className="truncate">{theme.subjectTitle ? `${theme.subjectTitle}: ` : ""}{bestDeneme.record.name}</span>
                 </span>
                 <span className="font-mono text-[10px] shrink-0 ml-1 bg-black/20 px-1 py-0.2 rounded">{formatNet(bestDeneme.net)} Net</span>
               </div>
@@ -442,26 +452,91 @@ function DayActivityModal({
             </h4>
             <div className="space-y-2.5">
               {denemelerForDay.map(d => {
-                const evalRes = evaluateDeneme(d.scores);
+                const evalRes = evaluateDeneme(d.scores, d.examType, d.bransSubjectId);
+                const isBrans = d.examType === "brans";
+                const subId = d.bransSubjectId || inferBransSubjectId(d);
+                const subConfig = isBrans ? DENEME_SUBJECTS.find(s => s.id === subId) : null;
+                const subRes = isBrans ? evalRes.subjects.find(s => s.subjectId === subId) || evalRes.subjects[0] : null;
+
+                const correct = subRes ? subRes.correct : evalRes.totalCorrect;
+                const wrong = subRes ? subRes.wrong : evalRes.totalWrong;
+                const empty = subRes ? subRes.empty : evalRes.totalEmpty;
+                const net = subRes ? subRes.net : evalRes.totalNet;
+                const totalQ = subRes ? subRes.questionCount : 120;
+                const accuracy = totalQ > 0 ? Math.max(0, Math.round((net / totalQ) * 100)) : 0;
+
+                const cardColor = subConfig?.color || (isBrans ? "#af52de" : "#1cb0f6");
+
                 return (
-                  <div key={d.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-sm text-slate-800 dark:text-white">{d.name}</span>
+                  <div 
+                    key={d.id} 
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative overflow-hidden transition-all shadow-2xs"
+                  >
+                    {/* Top Accent Strip */}
+                    <div 
+                      className="absolute top-0 left-0 right-0 h-1" 
+                      style={{ backgroundColor: cardColor }} 
+                    />
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="font-black text-sm text-slate-800 dark:text-white truncate">
+                          {d.name}
+                        </span>
+
                         {d.publisher && (
-                          <span className="px-2 py-0.5 rounded-lg bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                          <span className="px-2 py-0.5 rounded-lg bg-slate-200 dark:bg-slate-800 font-mono text-[10px] font-bold text-slate-600 dark:text-slate-300 shrink-0">
                             {d.publisher}
                           </span>
                         )}
+
+                        {/* Branş veya Genel Deneme Rozeti */}
+                        {isBrans && subConfig ? (
+                          <span 
+                            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black border-2 border-b-2 shadow-2xs shrink-0"
+                            style={{ 
+                              backgroundColor: `${subConfig.color}15`, 
+                              borderColor: subConfig.color, 
+                              color: subConfig.color 
+                            }}
+                          >
+                            <AppleEmoji emoji={subConfig.icon} size={13} />
+                            <span>{subConfig.title} Branş</span>
+                          </span>
+                        ) : isBrans ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black bg-purple-100 dark:bg-purple-950/40 text-[#af52de] border-2 border-b-2 border-[#af52de] shadow-2xs shrink-0">
+                            <AppleEmoji emoji="🎯" size={13} />
+                            <span>Branş Denemesi</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black bg-[#1cb0f6]/10 text-[#1cb0f6] border-2 border-b-2 border-[#1cb0f6] shadow-2xs shrink-0">
+                            <AppleEmoji emoji="🎯" size={13} />
+                            <span>Genel Deneme</span>
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs font-extrabold text-slate-400 mt-1">
-                        {d.examType === "brans" ? "Branş Denemesi" : "Genel Deneme"} · {evalRes.totalCorrect} D / {evalRes.totalWrong} Y / {evalRes.totalEmpty} B
-                      </p>
+
+                      {/* İstatistikler */}
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 mt-1 flex-wrap">
+                        <span className="text-[#58cc02] font-black">{correct} D</span>
+                        <span>·</span>
+                        <span className="text-[#ff4b4b] font-black">{wrong} Y</span>
+                        <span>·</span>
+                        <span className="text-slate-400 font-extrabold">{empty} B</span>
+                        <span className="text-slate-300 dark:text-slate-600">|</span>
+                        <span className="font-extrabold font-mono text-slate-500 dark:text-slate-400">%{accuracy} İsabet</span>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-2.5 shrink-0">
-                      <div className="px-3.5 py-1.5 rounded-xl bg-[#58cc02] text-white border-2 border-b-4 border-green-700 font-mono font-black text-sm shadow-2xs">
-                        {formatNet(evalRes.totalNet)} Net
+                    <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+                      <div 
+                        className="px-3.5 py-1.5 rounded-xl text-white font-mono font-black text-sm shadow-2xs border-2 border-b-4"
+                        style={{ 
+                          backgroundColor: "#58cc02", 
+                          borderColor: "#46a302" 
+                        }}
+                      >
+                        {formatNet(net)} Net
                       </div>
                     </div>
                   </div>

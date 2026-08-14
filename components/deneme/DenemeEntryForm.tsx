@@ -91,7 +91,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const [scores, setScores] = useState<SubjectScoreInput[]>(initial?.scores ?? createEmptyScores());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const result = useMemo(() => evaluateDeneme(scores, examType), [scores, examType]);
+  const result = useMemo(
+    () => evaluateDeneme(scores, examType, bransSubjectId || undefined),
+    [scores, examType, bransSubjectId]
+  );
 
   const updateScore = (subjectId: string, field: "correct" | "wrong" | "empty", value: number) => {
     setScores((prev) =>
@@ -348,10 +351,20 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                               : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 dark:bg-slate-800/80 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
                           }`}
                         >
-                          <span className={`font-black ${bransSubjectId ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}`}>
-                            {bransSubjectId 
-                              ? result.subjects.find(s => s.subjectId === bransSubjectId)?.title + ` (${getSubjectQuestionCount(bransSubjectId, "brans")} Soru)`
-                              : "Lütfen bir branş seçin..."}
+                          <span className={`font-black flex items-center gap-2.5 ${bransSubjectId ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}`}>
+                            {bransSubjectId ? (
+                              (() => {
+                                const sub = DENEME_SUBJECTS.find(s => s.id === bransSubjectId);
+                                return (
+                                  <>
+                                    <AppleEmoji emoji={sub?.icon || "🎯"} size={20} />
+                                    <span>{sub?.title || bransSubjectId} ({getSubjectQuestionCount(bransSubjectId, "brans")} Soru)</span>
+                                  </>
+                                );
+                              })()
+                            ) : (
+                              "Lütfen bir branş seçin..."
+                            )}
                           </span>
                           <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-[#1cb0f6]' : ''}`} />
                         </button>
@@ -364,36 +377,39 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                                 onClick={() => setIsDropdownOpen(false)}
                               />
                               <motion.div
-                                initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                                initial={{ opacity: 0, y: -8, scale: 0.98 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                                exit={{ opacity: 0, y: -8, scale: 0.98 }}
                                 transition={{ duration: 0.15, ease: "easeOut" }}
-                                className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl overflow-hidden z-50 p-2 max-h-56 overflow-y-auto space-y-1"
+                                className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl overflow-hidden z-50 p-2 max-h-64 overflow-y-auto space-y-1"
                               >
-                                {result.subjects.filter(s => s.subjectId !== "geometri").map((s) => {
-                                  const subjectColor = DENEME_SUBJECTS.find(ds => ds.id === s.subjectId)?.color || "#3b82f6";
-                                  const isSelected = bransSubjectId === s.subjectId;
-                                  const isHovered = hoveredSubjectId === s.subjectId;
-                                  const bransCount = getSubjectQuestionCount(s.subjectId, "brans");
+                                {DENEME_SUBJECTS.filter(s => s.id !== "geometri").map((s) => {
+                                  const subjectColor = s.color || "#3b82f6";
+                                  const isSelected = bransSubjectId === s.id;
+                                  const isHovered = hoveredSubjectId === s.id;
+                                  const bransCount = getSubjectQuestionCount(s.id, "brans");
                                   
                                   return (
                                     <button
-                                      key={s.subjectId}
+                                      key={s.id}
                                       type="button"
                                       onClick={() => {
-                                        setBransSubjectId(s.subjectId);
+                                        setBransSubjectId(s.id);
                                         setIsDropdownOpen(false);
-                                        window.history.replaceState(null, '', `?mode=brans&subject=${s.subjectId}`);
+                                        window.history.replaceState(null, '', `?mode=brans&subject=${s.id}`);
                                       }}
-                                      onMouseEnter={() => setHoveredSubjectId(s.subjectId)}
+                                      onMouseEnter={() => setHoveredSubjectId(s.id)}
                                       onMouseLeave={() => setHoveredSubjectId(null)}
-                                      className="w-full text-left px-5 py-3 text-sm font-bold transition-all flex items-center justify-between"
+                                      className="w-full text-left px-4 py-3 rounded-xl text-sm font-black transition-all flex items-center justify-between cursor-pointer"
                                       style={{
                                         backgroundColor: isSelected || isHovered ? `${subjectColor}15` : "transparent",
                                         color: isSelected || isHovered ? subjectColor : undefined
                                       }}
                                     >
-                                      <span>{s.title} ({bransCount} Soru)</span>
+                                      <div className="flex items-center gap-3">
+                                        <AppleEmoji emoji={s.icon} size={20} />
+                                        <span>{s.title} ({bransCount} Soru)</span>
+                                      </div>
                                       {isSelected && <Check className="w-4 h-4" style={{ color: subjectColor }} />}
                                     </button>
                                   );
@@ -644,48 +660,51 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
 
       {/* ━━━ SAĞ PANEL: CANLI SKOR WIDGETLARI ━━━ */}
       <aside className="lg:sticky lg:top-28 h-fit space-y-6">
-        <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-7 shadow-sm relative overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 sm:p-7 shadow-md relative overflow-hidden space-y-6">
           
-          {/* Clean Header Bar */}
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700/60 mb-6">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
+          {/* Header Bar */}
+          <div className="flex items-center justify-between pb-4 border-b-2 border-slate-100 dark:border-slate-700/60">
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: activeColor }} />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: activeColor }} />
+                <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: activeColor }} />
               </span>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-slate-800 dark:text-white">Canlı Skor Paneli</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Canlı Skor Paneli</h4>
             </div>
-            <BarChart3 className="w-5 h-5" style={{ color: activeColor }} />
+            <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700/60 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-2xs">
+              <AppleEmoji emoji="📊" size={16} />
+            </div>
           </div>
 
-          {/* ━━━ CANLI SKOR GÖSTERGE KARTI ━━━ */}
-          <div className="bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2rem] p-6 text-center relative overflow-hidden mb-6">
+          {/* ━━━ CANLI SKOR GÖSTERGE KARTI (3D HERO PEDESTAL) ━━━ */}
+          <div className="bg-slate-50 dark:bg-slate-900/50 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-3xl p-6 text-center relative overflow-hidden shadow-2xs">
+            {/* Top 3D Subject Pill */}
             <div 
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-white text-[11px] font-extrabold uppercase tracking-wider mb-3 shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-white text-xs font-black uppercase tracking-wider mb-3 shadow-xs border-b-2"
               style={{
                 backgroundColor: activeColor,
-                borderBottomWidth: "3px",
-                borderBottomColor: "rgba(0, 0, 0, 0.25)"
+                borderBottomColor: "rgba(0, 0, 0, 0.3)"
               }}
             >
-              <AppleEmoji emoji={examType === "genel" ? "🎯" : (selectedBranchSubject?.icon || "📘")} size={14} />
+              <AppleEmoji emoji={examType === "genel" ? "🎯" : (selectedBranchSubject?.icon || "📘")} size={16} color="white" className="text-white" />
               <span>{examType === "genel" ? "Toplam Canlı Net" : `${selectedBranchSubject?.title || "Ders"} Neti`}</span>
             </div>
 
             <div className="flex items-baseline justify-center gap-2 my-1">
-              <span className="text-5xl sm:text-6xl font-extrabold font-mono tracking-tight text-slate-800 dark:text-white leading-none">
+              <span className="text-6xl sm:text-7xl font-black font-mono tracking-tight text-slate-800 dark:text-white leading-none">
                 {displayNet.toFixed(2).replace(/\.?0+$/, "")}
               </span>
-              <span className="text-base font-extrabold uppercase tracking-wider" style={{ color: activeColor }}>NET</span>
+              <span className="text-lg font-black uppercase tracking-wider" style={{ color: activeColor }}>NET</span>
             </div>
 
-            <p className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
-              {maxQuestions > 0 ? `${maxQuestions} soru üzerinden` : "Soru girişi bekleniyor"}
-            </p>
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-black text-slate-400 mt-3 uppercase tracking-widest bg-white dark:bg-slate-800 px-3 py-1 rounded-xl border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs">
+              <AppleEmoji emoji="📝" size={12} />
+              <span>{maxQuestions > 0 ? `${maxQuestions} Soru Üzerinden` : "Soru Girişi Bekleniyor"}</span>
+            </div>
           </div>
 
-          {/* ━━━ CEVAPLANAN / KALAN BARI ━━━ */}
-          <div className="space-y-2.5 mb-6">
+          {/* ━━━ 3D CEVAPLANAN / KALAN BARI ━━━ */}
+          <div className="space-y-2.5">
             {(() => {
               const correctCount = examType === "genel" ? result.totalCorrect : (selectedBranchSubject?.correct ?? 0);
               const wrongCount = examType === "genel" ? result.totalWrong : (selectedBranchSubject?.wrong ?? 0);
@@ -694,86 +713,76 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
               
               return (
                 <>
-                  <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
-                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                      <span className="w-2 h-2 rounded-full bg-[#58cc02]"></span>
-                      Cevaplanan <span className="text-slate-800 dark:text-white font-mono">{totalAnswered}</span>
+                  <div className="flex justify-between items-center text-[11px] font-black uppercase tracking-wider">
+                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#58cc02] ring-2 ring-[#58cc02]/20"></span>
+                      <span>Cevaplanan</span>
+                      <span className="text-slate-800 dark:text-white font-mono font-black ml-0.5">{totalAnswered}</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                      Kalan <span className="text-slate-800 dark:text-white font-mono">{maxQuestions - totalAnswered}</span>
-                      <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                      <span>Kalan</span>
+                      <span className="text-slate-800 dark:text-white font-mono font-black ml-0.5">{maxQuestions - totalAnswered}</span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                     </div>
                   </div>
-                  <div className="h-3.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[2px] relative overflow-hidden shadow-inner">
-                    <div className="w-full h-full rounded-full overflow-hidden flex">
-                      <motion.div 
-                        className="h-full bg-[#58cc02]"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${correctPct}%` }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
-                      />
-                      <motion.div 
-                        className="h-full bg-[#ff4b4b]"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${wrongPct}%` }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
-                      />
-                    </div>
+                  <div className="h-4 w-full bg-slate-200 dark:bg-slate-950 rounded-full border-2 border-b-2 border-slate-300 dark:border-slate-700 p-0.5 relative overflow-hidden shadow-inner flex gap-1">
+                    <motion.div 
+                      className="h-full bg-[#58cc02] rounded-full shadow-2xs"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${correctPct}%` }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    />
+                    <motion.div 
+                      className="h-full bg-[#ff4b4b] rounded-full shadow-2xs"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${wrongPct}%` }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    />
                   </div>
                 </>
               );
             })()}
           </div>
 
-          {/* ━━━ 4 MİNİ İSTATİSTİK KARTI ━━━ */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* ━━━ 4 SIGNATURE 3D STAT ÇİPİ (2x2 GRID) ━━━ */}
+          <div className="grid grid-cols-2 gap-3.5">
             {examType === "genel" ? (
               <>
-                <SiteStatCard label="G. Yetenek" value={formatNet(result.gyNet)} icon={<BookOpen className="w-4 h-4 text-[#1cb0f6]" />} valueColor="text-[#1cb0f6]" />
-                <SiteStatCard label="G. Kültür" value={formatNet(result.gkNet)} icon={<Landmark className="w-4 h-4 text-[#af52de]" />} valueColor="text-[#af52de]" />
-                <SiteStatCard label="Doğru" value={String(result.totalCorrect)} icon={<CheckCircle2 className="w-4 h-4 text-[#58cc02]" />} valueColor="text-[#58cc02]" />
-                <SiteStatCard label="Yanlış" value={String(result.totalWrong)} icon={<XCircle className="w-4 h-4 text-[#ff4b4b]" />} valueColor="text-[#ff4b4b]" />
+                <Stat3DCard label="G. Yetenek" value={formatNet(result.gyNet)} emoji="📘" variant="blue" />
+                <Stat3DCard label="G. Kültür" value={formatNet(result.gkNet)} emoji="🏛️" variant="purple" />
+                <Stat3DCard label="Toplam Doğru" value={String(result.totalCorrect)} emoji="✅" variant="green" />
+                <Stat3DCard label="Toplam Yanlış" value={String(result.totalWrong)} emoji="❌" variant="red" />
                 
-                {/* P3 Puan Tahmini Kartı */}
-                <div className="col-span-2 rounded-[1.25rem] p-4 bg-amber-500/10 dark:bg-amber-500/15 border-2 border-b-4 border-amber-200 dark:border-amber-500/30 flex items-center justify-between mt-1">
-                  <div className="flex items-center gap-2.5">
-                    <Trophy className="w-5 h-5 text-amber-500" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">P3 Puan Tahmini</span>
+                {/* 3D P3 Puan Tahmini Kartı */}
+                <div className="col-span-2 rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/50 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex items-center justify-between shadow-2xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-[#ff9500] border-2 border-b-4 border-[#ff9500] border-b-[#e08400] text-white flex items-center justify-center shadow-2xs shrink-0">
+                      <AppleEmoji emoji="🏆" size={20} color="white" className="text-white" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-white block">P3 Puan Tahmini</span>
+                      <span className="text-[10px] font-bold text-slate-400">Standart Sapmalı Model</span>
+                    </div>
                   </div>
-                  <span className="text-2xl font-extrabold font-mono text-amber-600 dark:text-amber-400">
+                  <span className="text-3xl font-black font-mono text-[#ff9500] tracking-tight">
                     {estimateP3Score(result.gyNet, result.gkNet).toFixed(3)}
                   </span>
                 </div>
               </>
             ) : (
               <>
-                <SiteStatCard label="Doğru" value={String(selectedBranchSubject?.correct ?? 0)} icon={<CheckCircle2 className="w-4 h-4 text-[#58cc02]" />} valueColor="text-[#58cc02]" />
-                <SiteStatCard label="Yanlış" value={String(selectedBranchSubject?.wrong ?? 0)} icon={<XCircle className="w-4 h-4 text-[#ff4b4b]" />} valueColor="text-[#ff4b4b]" />
-                <SiteStatCard label="Boş" value={String(selectedBranchSubject?.empty ?? 0)} icon={<MinusCircle className="w-4 h-4 text-slate-400" />} valueColor="text-slate-700 dark:text-slate-200" />
-                <SiteStatCard label="İsabet Oranı" value={totalAnswered > 0 ? `%${(successRate % 1 === 0 ? successRate.toFixed(0) : successRate.toFixed(1))}` : "%0"} icon={<Target className="w-4 h-4" style={{ color: activeColor }} />} style={{ color: activeColor }} />
+                <Stat3DCard label="Doğru" value={String(selectedBranchSubject?.correct ?? 0)} emoji="✅" variant="green" />
+                <Stat3DCard label="Yanlış" value={String(selectedBranchSubject?.wrong ?? 0)} emoji="❌" variant="red" />
+                <Stat3DCard label="Boş" value={String(selectedBranchSubject?.empty ?? 0)} emoji="⚪" variant="slate" />
+                <Stat3DCard 
+                  label="İsabet Oranı" 
+                  value={maxQuestions > 0 ? `%${Math.max(0, Math.round(((displayNet) / maxQuestions) * 100))}` : "%0"} 
+                  emoji="🎯" 
+                  variant="orange" 
+                />
               </>
             )}
           </div>
-
-          {examType === "genel" && (
-            <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60 text-center">
-              <div className="flex items-center justify-center gap-1.5 mb-2">
-                <Target className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Hedef Net: {targetNet}</span>
-              </div>
-              <div className="text-xs font-bold">
-                {result.totalNet >= targetNet ? (
-                  <span className="text-[#58cc02] bg-[#58cc02]/10 border border-[#58cc02]/20 px-3 py-1 rounded-full inline-flex items-center gap-1 font-bold">
-                    🎉 Hedef aşıldı! (+{(result.totalNet - targetNet).toFixed(1)} Net)
-                  </span>
-                ) : (
-                  <span className="text-slate-500 dark:text-slate-400">
-                    Hedefe <strong className="text-[#1cb0f6] font-mono text-sm px-1.5 py-0.5 rounded-md bg-[#1cb0f6]/10 font-bold">{(targetNet - result.totalNet).toFixed(1)}</strong> net kaldı.
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
         {examType === "brans" && !bransSubjectId && step > 1 && (
@@ -786,14 +795,63 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   );
 }
 
-function SiteStatCard({ label, value, icon, valueColor, style }: { label: string; value: string; icon: React.ReactNode; valueColor?: string; style?: React.CSSProperties }) {
+function Stat3DCard({ 
+  label, 
+  value, 
+  emoji, 
+  variant = "slate",
+}: { 
+  label: string; 
+  value: string; 
+  emoji: string; 
+  variant?: "green" | "red" | "blue" | "purple" | "orange" | "slate"; 
+}) {
+  const config = {
+    green: {
+      color: "text-[#58cc02]",
+      badgeBg: "bg-emerald-50 dark:bg-[#58cc02]/20 border-2 border-b-2 border-emerald-200 dark:border-[#58cc02]/40",
+      accent: "#58cc02",
+    },
+    red: {
+      color: "text-[#ff4b4b]",
+      badgeBg: "bg-rose-50 dark:bg-[#ff4b4b]/20 border-2 border-b-2 border-rose-200 dark:border-[#ff4b4b]/40",
+      accent: "#ff4b4b",
+    },
+    blue: {
+      color: "text-[#1cb0f6]",
+      badgeBg: "bg-sky-50 dark:bg-[#1cb0f6]/20 border-2 border-b-2 border-sky-200 dark:border-[#1cb0f6]/40",
+      accent: "#1cb0f6",
+    },
+    purple: {
+      color: "text-[#af52de]",
+      badgeBg: "bg-purple-50 dark:bg-[#af52de]/20 border-2 border-b-2 border-purple-200 dark:border-[#af52de]/40",
+      accent: "#af52de",
+    },
+    orange: {
+      color: "text-[#ff9500]",
+      badgeBg: "bg-amber-50 dark:bg-[#ff9500]/20 border-2 border-b-2 border-amber-200 dark:border-[#ff9500]/40",
+      accent: "#ff9500",
+    },
+    slate: {
+      color: "text-slate-700 dark:text-slate-200",
+      badgeBg: "bg-slate-100 dark:bg-slate-800 border-2 border-b-2 border-slate-200 dark:border-slate-700",
+      accent: "#64748b",
+    },
+  }[variant];
+
   return (
-    <div className="bg-white dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 text-center flex flex-col items-center justify-center shadow-xs">
-      <div className="flex items-center justify-center gap-1.5 mb-1">
-        {icon}
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</span>
+    <div className="bg-slate-50 dark:bg-slate-900/50 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl p-4 flex flex-col justify-between items-start gap-3 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] transition-all">
+      <div className="flex items-center gap-2 w-full justify-between">
+        <div className={`w-9 h-9 rounded-xl ${config.badgeBg} flex items-center justify-center shadow-2xs shrink-0`}>
+          <AppleEmoji emoji={emoji} size={18} color={config.accent} />
+        </div>
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 text-right">
+          {label}
+        </span>
       </div>
-      <p className={`text-2xl font-extrabold font-mono leading-none ${valueColor || ""}`} style={style}>{value}</p>
+      <p className={`text-2xl sm:text-3xl font-black font-mono leading-none tracking-tight ${config.color}`}>
+        {value}
+      </p>
     </div>
   );
 }

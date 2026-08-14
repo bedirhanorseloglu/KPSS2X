@@ -5,15 +5,7 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import GlobalPomodoro from "@/components/GlobalPomodoro";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Nunito } from "next/font/google";
 import "./globals.css";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  variable: "--font-nunito",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-});
 
 export const viewport: Viewport = {
   themeColor: "#1cb0f6",
@@ -59,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning className={nunito.variable}>
+    <html lang="tr" suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col font-sans">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AuthProvider>

@@ -8,6 +8,7 @@ import {
   query,
   where,
   getDocs,
+  getCountFromServer,
   serverTimestamp,
   deleteDoc,
 } from "firebase/firestore";
@@ -249,20 +250,31 @@ export const updatePresence = async (userId: string) => {
   }
 };
 
+let cachedOnlineCount: { count: number; timestamp: number } | null = null;
+
 export const getOnlineUsersCount = async (): Promise<number> => {
   try {
-    // Sunucu ve Kota dostu: Son 10 dakika içindeki aktif kullanıcıları sorgular (Write/Read maliyetini %75 düşürür)
+    const now = Date.now();
+    // 2 dakikalık önbellek: Kota tüketimini sıfıra yakın seviyeye indirir
+    if (cachedOnlineCount && now - cachedOnlineCount.timestamp < 120000) {
+      return cachedOnlineCount.count;
+    }
+
     const { Timestamp } = await import("firebase/firestore");
-    const tenMinsAgo = Timestamp.fromMillis(Date.now() - 10 * 60 * 1000);
+    const tenMinsAgo = Timestamp.fromMillis(now - 10 * 60 * 1000);
     const q = query(
       collection(db, "active_users"),
       where("lastActive", ">", tenMinsAgo)
     );
-    const snapshot = await getDocs(q);
-    return Math.max(1, snapshot.size);
+    
+    // getCountFromServer: 1000 doküman için sadece 1 Read harcar (getDocs yerine)
+    const snapshot = await getCountFromServer(q);
+    const count = Math.max(1, snapshot.data().count);
+    cachedOnlineCount = { count, timestamp: now };
+    return count;
   } catch (error) {
     console.error("Online users fetch error:", error);
-    return 1;
+    return cachedOnlineCount ? cachedOnlineCount.count : 1;
   }
 };
 

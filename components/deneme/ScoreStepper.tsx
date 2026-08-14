@@ -14,20 +14,20 @@ const variants = {
   correct: {
     label: "text-[#58cc02]",
     text: "text-[#58cc02]",
-    card: "bg-white dark:bg-slate-900 border-2 border-b-4 border-[#58cc02] border-b-[#46a302]",
-    btn: "bg-[#e5f9e7] dark:bg-[#58cc02]/20 hover:bg-[#58cc02] hover:text-white text-[#58cc02] active:translate-y-0.5 border-b-2 border-b-[#46a302]",
+    card: "bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-emerald-200 dark:border-emerald-800/60 border-b-[#58cc02]",
+    btn: "bg-[#58cc02]/15 text-[#58cc02] border-2 border-b-2 border-[#58cc02]/40 hover:bg-[#58cc02] hover:text-white active:translate-y-0.5 shadow-2xs",
   },
   wrong: {
     label: "text-[#ff4b4b]",
     text: "text-[#ff4b4b]",
-    card: "bg-white dark:bg-slate-900 border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b]",
-    btn: "bg-[#ffebeb] dark:bg-[#ff4b4b]/20 hover:bg-[#ff4b4b] hover:text-white text-[#ff4b4b] active:translate-y-0.5 border-b-2 border-b-[#ea2b2b]",
+    card: "bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-rose-200 dark:border-rose-800/60 border-b-[#ff4b4b]",
+    btn: "bg-[#ff4b4b]/15 text-[#ff4b4b] border-2 border-b-2 border-[#ff4b4b]/40 hover:bg-[#ff4b4b] hover:text-white active:translate-y-0.5 shadow-2xs",
   },
   empty: {
-    label: "text-slate-500 dark:text-slate-400",
+    label: "text-slate-400 dark:text-slate-400",
     text: "text-slate-700 dark:text-slate-200",
-    card: "bg-white dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700",
-    btn: "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 active:translate-y-0.5 border-b-2 border-b-slate-300 dark:border-b-slate-600",
+    card: "bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700",
+    btn: "bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-b-2 border-slate-300 dark:border-slate-600 hover:bg-slate-300 dark:hover:bg-slate-700 active:translate-y-0.5 shadow-2xs",
   },
 };
 

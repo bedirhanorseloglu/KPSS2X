@@ -114,13 +114,32 @@ export function evaluateSubjectScore(
   };
 }
 
-export function evaluateDeneme(scores: SubjectScoreInput[], examType?: "genel" | "brans"): DenemeResult {
-  const enteredSubjectIds = scores.map(s => s.subjectId);
-  const isBrans = examType === "brans" || (enteredSubjectIds.length < DENEME_SUBJECTS.length && enteredSubjectIds.length > 0);
+export function evaluateDeneme(
+  scores: SubjectScoreInput[], 
+  examType?: "genel" | "brans",
+  bransSubjectId?: string
+): DenemeResult {
+  const isBrans = examType === "brans";
 
-  const targetConfigs = isBrans && enteredSubjectIds.length > 0
-    ? DENEME_SUBJECTS.filter(config => enteredSubjectIds.includes(config.id))
-    : DENEME_SUBJECTS;
+  let targetConfigs = DENEME_SUBJECTS;
+  if (isBrans) {
+    if (bransSubjectId) {
+      targetConfigs = DENEME_SUBJECTS.filter(s => s.id === bransSubjectId);
+    } else {
+      const activeSubjectsWithAnswers = scores.filter(s => (s.correct || 0) + (s.wrong || 0) > 0);
+      if (activeSubjectsWithAnswers.length > 0) {
+        // En yüksek soru girilen dersi branş denemesi olarak al
+        const best = activeSubjectsWithAnswers.reduce((prev, curr) => {
+          const prevTotal = (prev.correct || 0) + (prev.wrong || 0);
+          const currTotal = (curr.correct || 0) + (curr.wrong || 0);
+          return currTotal > prevTotal ? curr : prev;
+        });
+        targetConfigs = DENEME_SUBJECTS.filter(s => s.id === best.subjectId);
+      } else if (scores.length > 0) {
+        targetConfigs = DENEME_SUBJECTS.filter(s => s.id === scores[0].subjectId);
+      }
+    }
+  }
 
   const subjects = targetConfigs.map((config) => {
     const existing = scores.find((s) => s.subjectId === config.id);
@@ -181,28 +200,34 @@ export function formatNet(value: number): string {
 
 export function getDenemeTheme(deneme: DenemeRecord) {
   if (deneme.examType === "brans") {
-    const bransId = deneme.bransSubjectId || deneme.scores?.[0]?.subjectId;
+    const bransId = deneme.bransSubjectId || inferBransSubjectId(deneme) || deneme.scores?.[0]?.subjectId;
     const config = DENEME_SUBJECTS.find(s => s.id === bransId);
     if (config) {
       return {
         color: config.color,
         title: `${config.title} Branş Denemesi`,
+        subjectTitle: config.title,
+        subjectId: config.id,
         name: deneme.name,
         icon: config.icon,
         isBrans: true,
       };
     }
     return {
-      color: "#1cb0f6",
+      color: "#af52de",
       title: "Branş Denemesi",
+      subjectTitle: "Branş",
+      subjectId: undefined,
       name: deneme.name,
       icon: "🎯",
       isBrans: true,
     };
   }
   return {
-    color: "#58cc02",
+    color: "#1cb0f6",
     title: "Genel Deneme",
+    subjectTitle: "Genel",
+    subjectId: undefined,
     name: deneme.name,
     icon: "🎯",
     isBrans: false,

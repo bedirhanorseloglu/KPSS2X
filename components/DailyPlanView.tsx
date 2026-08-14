@@ -453,43 +453,49 @@ export default function DailyPlanView({
   return (
     <div className="flex flex-col gap-6">
       {/* 3D Date Header Box */}
-      <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-5 sm:p-6 flex flex-col lg:flex-row justify-between items-center gap-6 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md">
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full lg:w-auto">
-           {/* 3D Date Badge */}
-           <div className="bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 w-16 h-16 rounded-2xl flex flex-col items-center justify-center border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs shrink-0">
-              <span className="text-[10px] font-black uppercase text-[#1cb0f6] tracking-widest">{format(date, "MMM", { locale: tr })}</span>
-              <span className="text-2xl font-black text-slate-800 dark:text-white leading-tight">{format(date, "dd")}</span>
-           </div>
-           
-           <div className="flex flex-col text-center lg:text-left">
-              <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
-                {format(date, "EEEE", { locale: tr })}
-              </h2>
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-2">
-                {/* 3D Holiday Toggle Button */}
-                <button 
-                  type="button"
-                  onClick={() => onToggleHoliday(dateStr)}
-                  className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-2xl border-2 border-b-4 transition-all cursor-pointer shadow-2xs active:translate-y-0.5 ${
-                    isHoliday 
-                      ? "bg-red-50 text-[#ff4b4b] border-[#ff4b4b] border-b-[#e03030]" 
-                      : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 border-slate-200 border-b-slate-300 dark:border-slate-600 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
-                  }`}
-                >
-                  {isHoliday ? "🏖️ Tatili İptal Et" : "🏖️ Tatil Modu"}
-                </button>
+      <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-5 sm:p-6 flex flex-col lg:flex-row justify-between items-center gap-5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md">
+        <div className="flex items-center gap-4 sm:gap-5 w-full lg:w-auto">
+          {/* 3D Date Badge - Optically Balanced & Centered */}
+          <div className="bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex flex-col items-center justify-center border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs shrink-0 p-1">
+            <span className="text-[10px] sm:text-[11px] font-black uppercase text-[#1cb0f6] tracking-wider leading-none">
+              {format(date, "MMM", { locale: tr })}
+            </span>
+            <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white font-mono leading-none mt-1">
+              {format(date, "dd")}
+            </span>
+          </div>
 
-                {pomodoroFocusMins > 0 && (
-                  <div className="flex items-center gap-2 bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 text-[#1cb0f6] px-4 py-2 rounded-2xl border-2 border-b-2 border-[#1cb0f6]/30 shadow-2xs font-black text-xs">
-                    <AppleEmoji emoji="⏱️" size={16} />
-                    <span>
-                      {Math.floor(pomodoroFocusMins / 60) > 0 && `${Math.floor(pomodoroFocusMins / 60)}s `}
-                      {pomodoroFocusMins % 60}dk Çalışıldı
-                    </span>
-                  </div>
-                )}
-              </div>
-           </div>
+          {/* Title & Action Badges */}
+          <div className="flex flex-col items-start justify-center gap-2 min-w-0">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight leading-none">
+              {format(date, "EEEE", { locale: tr })}
+            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* 3D Holiday Toggle Button */}
+              <button
+                type="button"
+                onClick={() => onToggleHoliday(dateStr)}
+                className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-xl border-2 border-b-4 transition-all cursor-pointer shadow-2xs active:translate-y-0.5 ${
+                  isHoliday
+                    ? "bg-red-50 text-[#ff4b4b] border-[#ff4b4b] border-b-[#e03030]"
+                    : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 border-slate-200 border-b-slate-300 dark:border-slate-600 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
+                }`}
+              >
+                <AppleEmoji emoji="🏖️" size={14} />
+                <span>{isHoliday ? "Tatili İptal Et" : "Tatil Modu"}</span>
+              </button>
+
+              {pomodoroFocusMins > 0 && (
+                <div className="inline-flex items-center gap-1.5 bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 text-[#1cb0f6] px-3.5 py-1.5 rounded-xl border-2 border-b-2 border-[#1cb0f6]/30 shadow-2xs font-black text-[11px] sm:text-xs">
+                  <AppleEmoji emoji="⏱️" size={14} />
+                  <span>
+                    {Math.floor(pomodoroFocusMins / 60) > 0 && `${Math.floor(pomodoroFocusMins / 60)}s `}
+                    {pomodoroFocusMins % 60}dk Çalışıldı
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* 3D Date Navigation Controls */}

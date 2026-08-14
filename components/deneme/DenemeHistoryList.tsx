@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { Trash2, Edit3, Clock, ChevronLeft, ChevronRight, ChevronDown, ArrowRight } from "lucide-react";
 import AppleEmoji from "../AppleEmoji";
-import { DenemeRecord, evaluateDeneme, formatNet, formatDuration, estimateP3Score } from "@/lib/denemeUtils";
+import { DenemeRecord, evaluateDeneme, formatNet, formatDuration, estimateP3Score, inferBransSubjectId } from "@/lib/denemeUtils";
 import { DENEME_SUBJECTS } from "@/lib/denemeConfig";
 import ConfirmDialog from "./ConfirmDialog";
 
@@ -203,9 +203,9 @@ export default function DenemeHistoryList({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
               {paginatedExams.map((deneme, idx) => {
-                const res = evaluateDeneme(deneme.scores, deneme.examType);
                 const isBrans = deneme.examType === "brans";
-                const subId = deneme.bransSubjectId || activeSubjectTab;
+                const subId = deneme.bransSubjectId || inferBransSubjectId(deneme) || activeSubjectTab;
+                const res = evaluateDeneme(deneme.scores, deneme.examType, subId);
                 const subConfig = isBrans ? DENEME_SUBJECTS.find((s) => s.id === subId) || activeSubConfig : null;
                 const subRes = isBrans ? res.subjects.find((s) => s.subjectId === subId) || res.subjects[0] : null;
 
@@ -327,18 +327,33 @@ export default function DenemeHistoryList({
                         /* BRANŞ DENEMESİ (PREMIUM STATIC CARD) */
                         <div>
                           <div className="flex justify-between items-start mb-4 pt-1 gap-3">
-                            <div className="space-y-1.5 flex-1">
-                              <h4 
-                                className="text-base font-black text-slate-800 dark:text-white leading-tight transition-colors duration-200 cursor-default"
-                                onMouseEnter={(e) => {
-                                  if (subConfig?.color) e.currentTarget.style.color = subConfig.color;
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.color = "";
-                                }}
-                              >
-                                {deneme.name}
-                              </h4>
+                            <div className="space-y-1.5 flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 
+                                  className="text-base font-black text-slate-800 dark:text-white leading-tight transition-colors duration-200 cursor-default"
+                                  onMouseEnter={(e) => {
+                                    if (subConfig?.color) e.currentTarget.style.color = subConfig.color;
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.color = "";
+                                  }}
+                                >
+                                  {deneme.name}
+                                </h4>
+                                {subConfig && (
+                                  <span 
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black border-2 border-b-2 shadow-2xs shrink-0"
+                                    style={{ 
+                                      backgroundColor: `${subConfig.color}15`, 
+                                      borderColor: subConfig.color, 
+                                      color: subConfig.color 
+                                    }}
+                                  >
+                                    <AppleEmoji emoji={subConfig.icon} size={12} />
+                                    <span>{subConfig.title} Branş</span>
+                                  </span>
+                                )}
+                              </div>
                               <div className="flex items-center gap-2 text-xs font-bold text-slate-400 flex-wrap">
                                 <span>{format(new Date(deneme.date + "T12:00:00"), "d MMM yyyy", { locale: tr })}</span>
                                 {deneme.publisher && (

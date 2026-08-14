@@ -147,76 +147,69 @@ export default function SubjectScoreRow({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.02, type: "spring", stiffness: 300, damping: 28 }}
-      className={`p-5 sm:p-6 rounded-[2rem] bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-xs relative overflow-hidden ${
+      className={`p-6 rounded-[2.25rem] bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] transition-all shadow-xs relative overflow-hidden ${
         subject.error ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50" : ""
       }`}
     >
-      {/* Sol Derse Özgü Renk Çizgisi */}
-      <div className="absolute top-0 left-0 bottom-0 w-2.5" style={{ backgroundColor: subject.color }} />
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5 flex-1 min-w-0">
           <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 border-2 border-b-4 shadow-2xs"
+            className="w-13 h-13 rounded-2xl flex items-center justify-center shrink-0 border-2 border-b-4 shadow-2xs"
             style={{
               backgroundColor: `${subject.color}15`,
               borderColor: subject.color,
               color: subject.color,
             }}
           >
-            <AppleEmoji emoji={subject.icon} size={26} />
+            <AppleEmoji emoji={subject.icon} size={26} color={subject.color} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h4 className="font-black text-slate-800 dark:text-white text-lg tracking-tight truncate">{subject.title}</h4>
-            </div>
+            <h4 className="font-black text-slate-800 dark:text-white text-lg tracking-tight truncate">{subject.title}</h4>
             <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mt-0.5">
-              Soru Sayısı: <span className="font-sans text-slate-700 dark:text-slate-200 font-black">{subject.questionCount}</span>
+              Soru Sayısı: <span className="font-mono text-slate-700 dark:text-slate-200 font-black">{subject.questionCount}</span>
             </p>
           </div>
         </div>
 
-        {/* Net Rozeti */}
+        {/* 3D Net Rozeti */}
         <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
           <div 
-            className="px-4 py-2 rounded-2xl font-sans text-lg font-black flex items-center gap-1 bg-[#f5f5f7] dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs"
+            className="px-4 py-2 rounded-2xl font-mono text-lg font-black flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/80 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs"
             style={{ color: subject.color }}
           >
             <span>{formatNet(subject.net)}</span>
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mt-0.5 ml-0.5">Net</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">NET</span>
           </div>
         </div>
       </div>
 
-      {/* Stacked D/Y/B Ratio Progress Bar */}
-      <div className="mt-4 h-3.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full border-2 border-slate-200 dark:border-slate-700 p-[2px] relative overflow-hidden shadow-inner">
-        <div className="w-full h-full rounded-full overflow-hidden flex relative">
-          {correctPct > 0 && (
-            <motion.div 
-              className="h-full bg-[#58cc02]"
-              style={{ width: `${correctPct}%` }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-          )}
-          {wrongPct > 0 && (
-            <motion.div 
-              className="h-full bg-[#ff4b4b]"
-              style={{ width: `${wrongPct}%` }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-          )}
-          {emptyPct > 0 && (
-            <motion.div 
-              className="h-full bg-slate-300 dark:bg-slate-600"
-              style={{ width: `${emptyPct}%` }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-          )}
-        </div>
+      {/* 3D Segmented Progress Bar */}
+      <div className="mt-4 h-3.5 w-full bg-slate-200 dark:bg-slate-950 rounded-full border-2 border-b-2 border-slate-300 dark:border-slate-700 p-0.5 relative overflow-hidden shadow-inner flex gap-1">
+        {correctPct > 0 && (
+          <motion.div 
+            className="h-full bg-[#58cc02] rounded-full shadow-2xs"
+            style={{ width: `${correctPct}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          />
+        )}
+        {wrongPct > 0 && (
+          <motion.div 
+            className="h-full bg-[#ff4b4b] rounded-full shadow-2xs"
+            style={{ width: `${wrongPct}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          />
+        )}
+        {emptyPct > 0 && (
+          <motion.div 
+            className="h-full bg-slate-400/40 dark:bg-slate-700 rounded-full shadow-2xs"
+            style={{ width: `${emptyPct}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          />
+        )}
       </div>
 
       {/* SAYISAL STEPPER’LAR */}
-      <div className="grid grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-cols-3 gap-3.5 mt-4">
         <ScoreStepper
           label="Doğru"
           value={subject.correct}
@@ -262,7 +255,7 @@ export default function SubjectScoreRow({
                 </span>
               ))
             ) : (
-              <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                 <AppleEmoji emoji="🎯" size={16} /> Hangi konularda takıldın?
               </span>
             )}
@@ -272,7 +265,7 @@ export default function SubjectScoreRow({
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 rounded-2xl bg-[#1cb0f6] text-white border-2 border-b-4 border-sky-700 hover:bg-[#199edc] text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer active:translate-y-0.5 shadow-xs shrink-0"
+            className="px-4 py-2.5 rounded-2xl bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] hover:bg-[#199edc] text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer active:translate-y-0.5 shadow-xs shrink-0"
           >
             {topicErrors.length > 0 ? (
               <>
