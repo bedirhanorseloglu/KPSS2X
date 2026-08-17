@@ -147,21 +147,28 @@ function TimeSlot({
         ) : deneme ? (() => {
           const theme = getDenemeTheme(deneme);
           return (
-            <div className="flex items-center justify-between gap-3 p-3 rounded-2xl border-2 border-b-4 transition-all shadow-2xs" style={{ backgroundColor: `${theme.color}15`, borderColor: theme.color }}>
-               <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-9 h-9 rounded-xl text-white flex items-center justify-center shrink-0 border-2 border-b-2 shadow-2xs" style={{ backgroundColor: theme.color, borderColor: theme.color }}>
-                     <AppleEmoji emoji={theme.icon} size={18} />
+            <div className="flex items-center justify-between gap-2.5 p-3 rounded-2xl border-2 border-b-4 transition-all shadow-2xs group" style={{ backgroundColor: `${theme.color}12`, borderColor: theme.color }}>
+               <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div 
+                    className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 border-b-2 shadow-2xs text-white" 
+                    style={{ 
+                      backgroundColor: theme.color, 
+                      borderColor: theme.color,
+                      borderBottomColor: "rgba(0, 0, 0, 0.25)"
+                    }}
+                  >
+                     <AppleEmoji emoji={theme.icon} size={18} color="white" className="text-white" />
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
                      <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color: theme.color }}>
                        {theme.title}
                      </span>
-                     <span className="text-xs font-black text-slate-800 dark:text-white leading-tight mt-0.5 truncate group-hover:whitespace-normal group-hover:break-words transition-all">
+                     <span className="text-xs font-black text-slate-800 dark:text-white leading-tight mt-0.5 group-hover:whitespace-normal group-hover:break-words">
                        {theme.name}
                      </span>
                   </div>
                </div>
-               <div className="px-3 py-1.5 rounded-xl text-white font-mono font-black text-xs border-2 border-b-2 shrink-0 shadow-2xs" style={{ backgroundColor: theme.color, borderColor: theme.color }}>
+               <div className="px-2.5 py-1 rounded-xl text-white font-mono font-black text-xs border-2 border-b-2 shrink-0 shadow-2xs" style={{ backgroundColor: theme.color, borderColor: theme.color }}>
                  {formatNet(evaluateDeneme(deneme.scores, deneme.examType).totalNet)} Net
                </div>
             </div>
@@ -345,7 +352,8 @@ export default function DailyPlanView({
     const map: Record<number, DenemeRecord> = {};
     if (denemelerForDay.length === 0 || isExamDay || isHoliday) return map;
 
-    const unassignedDenemeler = [...denemelerForDay];
+    // İlk eklenen deneme başta dursun, sonraki eklenenler sıradaki boş slotlara dağıtılsın
+    const unassignedDenemeler = [...denemelerForDay].reverse();
 
     for (const h of allHours) {
       if (unassignedDenemeler.length === 0) break;
