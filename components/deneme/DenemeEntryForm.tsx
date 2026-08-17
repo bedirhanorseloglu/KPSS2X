@@ -61,6 +61,7 @@ const PUBLISHER_OPTIONS = [
   "Bilgi Sarmal",
   "Evveliyat",
   "Palme",
+  "Retro",
   "ÖSYM",
   "Diğer"
 ];
@@ -748,25 +749,28 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
           <div className="grid grid-cols-2 gap-3.5">
             {examType === "genel" ? (
               <>
-                <Stat3DCard label="G. Yetenek" value={formatNet(result.gyNet)} emoji="📘" variant="blue" />
-                <Stat3DCard label="G. Kültür" value={formatNet(result.gkNet)} emoji="🏛️" variant="purple" />
-                <Stat3DCard label="Toplam Doğru" value={String(result.totalCorrect)} emoji="✅" variant="green" />
-                <Stat3DCard label="Toplam Yanlış" value={String(result.totalWrong)} emoji="❌" variant="red" />
+                <Stat3DCard label="GY Net" value={formatNet(result.gyNet)} emoji="📘" variant="blue" />
+                <Stat3DCard label="GK Net" value={formatNet(result.gkNet)} emoji="🏛️" variant="purple" />
+                <Stat3DCard label="Doğru" value={String(result.totalCorrect)} emoji="✅" variant="green" />
+                <Stat3DCard label="Yanlış" value={String(result.totalWrong)} emoji="❌" variant="red" />
                 
                 {/* 3D P3 Puan Tahmini Kartı */}
-                <div className="col-span-2 rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/50 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex items-center justify-between shadow-2xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-[#ff9500] border-2 border-b-4 border-[#ff9500] border-b-[#e08400] text-white flex items-center justify-center shadow-2xs shrink-0">
-                      <AppleEmoji emoji="🏆" size={20} color="white" className="text-white" />
+                <div className="col-span-2 rounded-2xl p-4 bg-gradient-to-br from-[#fff8ed] to-white dark:from-slate-900/80 dark:to-slate-900/50 border-2 border-b-4 border-[#ff9500]/40 dark:border-[#ff9500]/30 flex items-center justify-between shadow-2xs hover:border-[#ff9500] dark:hover:border-[#ff9500] transition-all group">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff9500] to-[#e08400] text-white border-2 border-b-4 border-[#ff9500] border-b-[#c77200] flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                      <AppleEmoji emoji="🏆" size={22} color="white" className="text-white" />
                     </div>
                     <div>
-                      <span className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-white block">P3 Puan Tahmini</span>
-                      <span className="text-[10px] font-bold text-slate-400">Standart Sapmalı Model</span>
+                      <span className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-white block">
+                        P3 Puan Tahmini
+                      </span>
                     </div>
                   </div>
-                  <span className="text-3xl font-black font-mono text-[#ff9500] tracking-tight">
-                    {estimateP3Score(result.gyNet, result.gkNet).toFixed(3)}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-3xl sm:text-4xl font-black font-mono text-[#ff9500] tracking-tight drop-shadow-2xs">
+                      {estimateP3Score(result.gyNet, result.gkNet).toFixed(3)}
+                    </span>
+                  </div>
                 </div>
               </>
             ) : (
@@ -775,7 +779,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 <Stat3DCard label="Yanlış" value={String(selectedBranchSubject?.wrong ?? 0)} emoji="❌" variant="red" />
                 <Stat3DCard label="Boş" value={String(selectedBranchSubject?.empty ?? 0)} emoji="⚪" variant="slate" />
                 <Stat3DCard 
-                  label="İsabet Oranı" 
+                  label="İsabet" 
                   value={maxQuestions > 0 ? `%${Math.max(0, Math.round(((displayNet) / maxQuestions) * 100))}` : "%0"} 
                   emoji="🎯" 
                   variant="orange" 
@@ -809,47 +813,53 @@ function Stat3DCard({
   const config = {
     green: {
       color: "text-[#58cc02]",
-      badgeBg: "bg-emerald-50 dark:bg-[#58cc02]/20 border-2 border-b-2 border-emerald-200 dark:border-[#58cc02]/40",
+      badgeBg: "bg-[#e5f9e7] dark:bg-[#58cc02]/20 border-[#58cc02]/30 dark:border-[#58cc02]/40 text-[#58cc02]",
+      borderColor: "hover:border-[#58cc02] dark:hover:border-[#58cc02]",
       accent: "#58cc02",
     },
     red: {
       color: "text-[#ff4b4b]",
-      badgeBg: "bg-rose-50 dark:bg-[#ff4b4b]/20 border-2 border-b-2 border-rose-200 dark:border-[#ff4b4b]/40",
+      badgeBg: "bg-[#ffebeb] dark:bg-[#ff4b4b]/20 border-[#ff4b4b]/30 dark:border-[#ff4b4b]/40 text-[#ff4b4b]",
+      borderColor: "hover:border-[#ff4b4b] dark:hover:border-[#ff4b4b]",
       accent: "#ff4b4b",
     },
     blue: {
       color: "text-[#1cb0f6]",
-      badgeBg: "bg-sky-50 dark:bg-[#1cb0f6]/20 border-2 border-b-2 border-sky-200 dark:border-[#1cb0f6]/40",
+      badgeBg: "bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 border-[#1cb0f6]/30 dark:border-[#1cb0f6]/40 text-[#1cb0f6]",
+      borderColor: "hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]",
       accent: "#1cb0f6",
     },
     purple: {
       color: "text-[#af52de]",
-      badgeBg: "bg-purple-50 dark:bg-[#af52de]/20 border-2 border-b-2 border-purple-200 dark:border-[#af52de]/40",
+      badgeBg: "bg-[#f8f0fc] dark:bg-[#af52de]/20 border-[#af52de]/30 dark:border-[#af52de]/40 text-[#af52de]",
+      borderColor: "hover:border-[#af52de] dark:hover:border-[#af52de]",
       accent: "#af52de",
     },
     orange: {
       color: "text-[#ff9500]",
-      badgeBg: "bg-amber-50 dark:bg-[#ff9500]/20 border-2 border-b-2 border-amber-200 dark:border-[#ff9500]/40",
+      badgeBg: "bg-[#fff8ed] dark:bg-[#ff9500]/20 border-[#ff9500]/30 dark:border-[#ff9500]/40 text-[#ff9500]",
+      borderColor: "hover:border-[#ff9500] dark:hover:border-[#ff9500]",
       accent: "#ff9500",
     },
     slate: {
       color: "text-slate-700 dark:text-slate-200",
-      badgeBg: "bg-slate-100 dark:bg-slate-800 border-2 border-b-2 border-slate-200 dark:border-slate-700",
+      badgeBg: "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500",
+      borderColor: "hover:border-slate-400 dark:hover:border-slate-500",
       accent: "#64748b",
     },
   }[variant];
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-900/50 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl p-4 flex flex-col justify-between items-start gap-3 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] transition-all">
-      <div className="flex items-center gap-2 w-full justify-between">
-        <div className={`w-9 h-9 rounded-xl ${config.badgeBg} flex items-center justify-center shadow-2xs shrink-0`}>
-          <AppleEmoji emoji={emoji} size={18} color={config.accent} />
+    <div className={`bg-white dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between items-center text-center gap-2.5 shadow-2xs ${config.borderColor} transition-all duration-200 group`}>
+      <div className="flex items-center justify-center gap-2 w-full">
+        <div className={`w-8 h-8 rounded-xl ${config.badgeBg} border-2 border-b-2 flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform`}>
+          <AppleEmoji emoji={emoji} size={16} color={config.accent} />
         </div>
-        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 text-right">
+        <span className="text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">
           {label}
         </span>
       </div>
-      <p className={`text-2xl sm:text-3xl font-black font-mono leading-none tracking-tight ${config.color}`}>
+      <p className={`text-3xl sm:text-4xl font-black font-mono leading-none tracking-tight ${config.color} text-center`}>
         {value}
       </p>
     </div>

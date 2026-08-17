@@ -8,7 +8,7 @@ import { UNIVERSITY_CLASSES } from "@/lib/data";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo, useEffect } from "react";
 import { getStudyDate } from "@/lib/dateUtils";
-import { X, Check } from "lucide-react";
+import { X, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import AppleEmoji from "@/components/AppleEmoji";
 import { DenemeRecord, evaluateDeneme, formatNet, getDenemeTheme } from "@/lib/denemeUtils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -148,15 +148,15 @@ function TimeSlot({
           const theme = getDenemeTheme(deneme);
           return (
             <div className="flex items-center justify-between gap-3 p-3 rounded-2xl border-2 border-b-4 transition-all shadow-2xs" style={{ backgroundColor: `${theme.color}15`, borderColor: theme.color }}>
-               <div className="flex items-center gap-3 min-w-0">
+               <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="w-9 h-9 rounded-xl text-white flex items-center justify-center shrink-0 border-2 border-b-2 shadow-2xs" style={{ backgroundColor: theme.color, borderColor: theme.color }}>
                      <AppleEmoji emoji={theme.icon} size={18} />
                   </div>
-                  <div className="flex flex-col min-w-0">
+                  <div className="flex flex-col min-w-0 flex-1">
                      <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color: theme.color }}>
                        {theme.title}
                      </span>
-                     <span className="text-xs font-black text-slate-800 dark:text-white leading-tight truncate mt-0.5">
+                     <span className="text-xs font-black text-slate-800 dark:text-white leading-tight mt-0.5 truncate group-hover:whitespace-normal group-hover:break-words transition-all">
                        {theme.name}
                      </span>
                   </div>
@@ -171,11 +171,13 @@ function TimeSlot({
              <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 border-b-2 shadow-2xs" style={{ backgroundColor: `${subjectColor}25`, borderColor: subjectColor }}>
                 <AppleEmoji emoji={subjectObj?.icon || "📚"} size={18} />
              </div>
-             <div className="flex flex-col min-w-0">
+             <div className="flex flex-col min-w-0 flex-1">
                 <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color: subjectColor }}>
                   {subjectObj?.title || "Ders"}
                 </span>
-                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompletedActive ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-white'}`}>
+                <span className={`text-xs font-black leading-tight mt-0.5 transition-all ${
+                  isCompletedActive ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-white'
+                } line-clamp-2 group-hover:line-clamp-none group-hover:whitespace-normal group-hover:break-words`}>
                   {topic.title}
                 </span>
              </div>
@@ -185,11 +187,13 @@ function TimeSlot({
              <div className="w-9 h-9 rounded-xl bg-[#ff9500] text-white flex items-center justify-center shrink-0 border-2 border-b-2 border-[#e08400] shadow-2xs">
                 <AppleEmoji emoji="🔄" size={18} />
              </div>
-             <div className="flex flex-col min-w-0">
+             <div className="flex flex-col min-w-0 flex-1">
                 <span className="text-[10px] font-black uppercase tracking-widest text-[#ff9500]">
                   {revision.level === 3 ? "Kritik Tekrar" : "Rutin Tekrar"}
                 </span>
-                <span className={`text-xs font-black leading-tight mt-0.5 ${isCompletedActive ? 'line-through text-slate-400' : 'text-slate-800 dark:text-white'}`}>
+                <span className={`text-xs font-black leading-tight mt-0.5 transition-all ${
+                  isCompletedActive ? 'line-through text-slate-400' : 'text-slate-800 dark:text-white'
+                } line-clamp-2 group-hover:line-clamp-none group-hover:whitespace-normal group-hover:break-words`}>
                   {revision.title}
                 </span>
              </div>
@@ -208,11 +212,21 @@ function TimeSlot({
       {!isLocked && (
         <div className="pt-2 border-t border-slate-100 dark:border-slate-700/60">
            <textarea 
+             ref={(el) => {
+               if (el) {
+                 el.style.height = "auto";
+                 el.style.height = `${Math.max(38, el.scrollHeight)}px`;
+               }
+             }}
              value={note || ""}
-             onChange={(e) => onUpdateNote(slotId, e.target.value)}
-             placeholder="📝 Not veya görev ekle..."
-             rows={2}
-             className={`w-full bg-transparent border-0 outline-none text-xs font-bold transition-all placeholder:text-slate-400/80 resize-none leading-relaxed ${
+             onChange={(e) => {
+               onUpdateNote(slotId, e.target.value);
+               e.target.style.height = "auto";
+               e.target.style.height = `${Math.max(38, e.target.scrollHeight)}px`;
+             }}
+             placeholder="Not veya görev ekle..."
+             rows={1}
+             className={`w-full bg-transparent border-0 outline-none text-xs font-bold transition-all placeholder:text-slate-400/80 resize-none leading-relaxed overflow-hidden ${
                isCompletedActive ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-800 dark:text-slate-100'
              }`}
              onClick={(e) => e.stopPropagation()}
@@ -555,9 +569,10 @@ export default function DailyPlanView({
           <button 
             type="button"
             onClick={() => onDateChange(subDays(new Date(date), 1))} 
-            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 font-black text-slate-600 dark:text-slate-300 hover:text-slate-900 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            title="Önceki Gün"
           >
-            &lt;
+            <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
           
           <button 
@@ -568,7 +583,7 @@ export default function DailyPlanView({
             className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${
               isToday 
                 ? "bg-slate-200 dark:bg-slate-800 text-slate-400 border-2 border-slate-300 dark:border-slate-700 cursor-default" 
-                : "bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs active:translate-y-0.5"
+                : "bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] hover:brightness-110 shadow-xs active:translate-y-0.5"
             }`}
           >
             {isToday ? "Bugün" : "Bugüne Dön"}
@@ -577,9 +592,10 @@ export default function DailyPlanView({
           <button 
             type="button"
             onClick={() => onDateChange(addDays(new Date(date), 1))} 
-            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 font-black text-slate-600 dark:text-slate-300 hover:text-slate-900 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            title="Sonraki Gün"
           >
-            &gt;
+            <ChevronRight className="w-5 h-5 stroke-[2.5]" />
           </button>
         </div>
       </div>

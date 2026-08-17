@@ -143,7 +143,6 @@ const tabs = [
             </div>
             <div className="block">
               <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-bold bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 p-3.5 rounded-xl inline-flex items-center gap-2.5 border-2 border-b-2 border-[#1cb0f6]/30 shadow-2xs">
-                <AppleEmoji emoji="🚀" size={18} />
                 <span>Bilgisayar, Yazılım ve Bilişim kadrolarına bu puanla girilir.</span>
               </p>
             </div>
@@ -179,9 +178,8 @@ const tabs = [
                <span className="w-10 h-10 rounded-xl bg-[#1cb0f6] text-white flex items-center justify-center text-lg font-black border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs">1</span>
                Merkezi Atama 
             </div>
-            <span className="text-[10px] font-black text-[#58cc02] bg-[#e5f9e7] dark:bg-[#58cc02]/10 px-3 py-1 rounded-xl border-2 border-b-2 border-[#58cc02]/30 sm:ml-auto w-max shadow-2xs flex items-center gap-1.5">
+            <span className="text-[10px] font-black text-[#58cc02] bg-[#e5f9e7] dark:bg-[#58cc02]/10 px-3 py-1 rounded-xl border-2 border-b-2 border-[#58cc02]/30 sm:ml-auto w-max shadow-2xs">
               <span>EN TEMİZ YOL</span>
-              <AppleEmoji emoji="🌟" size={12} />
             </span>
           </h4>
           <div className="sm:pl-[3.5rem] space-y-3">

@@ -191,18 +191,18 @@ export default function TopicList({
           <button
             type="button"
             onClick={goToPrev}
-            className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center font-black active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
+            className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 flex items-center justify-center font-black active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
             title="Önceki Ders"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
           <button
             type="button"
             onClick={goToNext}
-            className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center font-black active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
+            className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 flex items-center justify-center font-black active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
             title="Sonraki Ders"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5 stroke-[2.5]" />
           </button>
         </div>
 

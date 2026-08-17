@@ -307,7 +307,7 @@ export default function ExamSimulatorPage() {
 
                     <div className="inline-flex items-center gap-2 bg-[#e5f9e7] text-[#58cc02] dark:bg-[#58cc02]/10 font-black px-5 py-2.5 rounded-xl text-xs border-2 border-b-4 border-[#58cc02] border-b-[#46a302] shadow-2xs self-start group-active:translate-y-0.5 transition-transform mt-6">
                       <span>Seç & Başlat</span>
-                      <AppleEmoji emoji="🚀" size={14} className="text-[#58cc02]" />
+                      <Play className="w-3.5 h-3.5 fill-current" />
                     </div>
                   </button>
 
@@ -338,7 +338,7 @@ export default function ExamSimulatorPage() {
 
                     <div className="inline-flex items-center gap-2 bg-[#e8f7ff] text-[#1cb0f6] dark:bg-[#1cb0f6]/10 font-black px-5 py-2.5 rounded-xl text-xs border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs self-start group-active:translate-y-0.5 transition-transform mt-6">
                       <span>Dersi Seç</span>
-                      <AppleEmoji emoji="🚀" size={14} className="text-[#1cb0f6]" />
+                      <Play className="w-3.5 h-3.5 fill-current" />
                     </div>
                   </button>
                 </div>

@@ -798,16 +798,16 @@ export default function MonthlyCalendar({
           <button 
             type="button"
             onClick={() => setCurrentDate(subMonths(currentDate, 1))} 
-            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 font-black text-slate-600 dark:text-slate-300 hover:text-slate-900 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
             title="Önceki Ay"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
           
           <button 
             type="button"
             onClick={() => setCurrentDate(new Date())} 
-            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 font-black text-xs text-[#1cb0f6] hover:bg-[#e8f7ff] active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-xs text-[#1cb0f6] hover:bg-[#e8f7ff] dark:hover:bg-[#1cb0f6]/20 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
             title="Bugün"
           >
             Bugün
@@ -816,10 +816,10 @@ export default function MonthlyCalendar({
           <button 
             type="button"
             onClick={() => setCurrentDate(addMonths(currentDate, 1))} 
-            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 font-black text-slate-600 dark:text-slate-300 hover:text-slate-900 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
             title="Sonraki Ay"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5 stroke-[2.5]" />
           </button>
         </div>
       </div>

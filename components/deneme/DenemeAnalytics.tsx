@@ -442,7 +442,7 @@ export default function DenemeAnalytics({
               className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
                 range === r
                   ? "bg-white dark:bg-slate-800 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-xs"
-                  : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                  : "text-slate-500 dark:text-slate-400 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-slate-800/60"
               }`}
             >
               {r === "all" ? "Tüm Zamanlar" : `Son ${r} Sınav`}

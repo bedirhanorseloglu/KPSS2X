@@ -238,7 +238,6 @@ export default function DenemePageContent() {
               </span>
               <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-0.5">
                 <span>Sonuçlar veritabanında güncellendi</span>
-                <AppleEmoji emoji="✨" size={13} />
               </span>
             </div>
           </div>
@@ -269,9 +268,8 @@ export default function DenemePageContent() {
             <span className="text-sm font-black text-slate-800 dark:text-white tracking-tight leading-tight truncate">
               {payload.name || "Yeni Deneme Sınavı"}
             </span>
-            <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-0.5">
+            <span className="text-xs font-bold text-slate-400 mt-0.5">
               <span>Analizlerin ve sıralaman güncellendi</span>
-              <AppleEmoji emoji="🚀" size={13} />
             </span>
           </div>
         </div>
@@ -422,7 +420,7 @@ export default function DenemePageContent() {
                       }}
                       className="px-3.5 py-1.5 bg-[#ffebeb] dark:bg-rose-500/20 text-[#ff4b4b] dark:text-rose-400 font-extrabold rounded-xl text-xs uppercase tracking-wider border-2 border-b-4 border-[#ff4b4b] border-b-[#ea2b2b] hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
                     >
-                      🧪 Test Verisi Yükle
+                      Test Verisi Yükle
                     </button>
 
                     {denemeler.some(d => (d as any).isMock || d.id?.startsWith("mock-") || d.name?.startsWith("Mock ")) && (
@@ -432,11 +430,11 @@ export default function DenemePageContent() {
                           const clean = denemeler.filter(d => !((d as any).isMock || d.id?.startsWith("mock-") || d.name?.startsWith("Mock ")));
                           setDenemeler(clean);
                           persistData(clean, targetNet);
-                          toast.success("Test verileri silindi ve veritabanı temizlendi! 🧹");
+                          toast.success("Test verileri silindi ve veritabanı temizlendi!");
                         }}
                         className="px-3.5 py-1.5 bg-[#e5f9e7] dark:bg-[#58cc02]/20 text-[#58cc02] border-2 border-b-4 border-[#58cc02] border-b-[#46a302] font-extrabold rounded-xl text-xs uppercase tracking-wider hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
                       >
-                        🧹 Test Verilerini Temizle
+                        Test Verilerini Temizle
                       </button>
                     )}
                   </>
@@ -454,13 +452,13 @@ export default function DenemePageContent() {
                   setTab(t.id);
                   if (t.id !== "yeni") setEditing(null);
                 }}
-                className={`flex-1 md:flex-none px-5 py-2.5 rounded-xl text-xs font-black transition-all relative flex items-center justify-center gap-2 cursor-pointer focus:outline-none ${
+                className={`flex-1 md:flex-none px-5 py-2.5 rounded-xl text-xs font-black transition-all relative flex items-center justify-center gap-2 cursor-pointer focus:outline-none group ${
                   tab === t.id
                     ? "bg-white dark:bg-slate-800 text-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs"
-                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white"
+                    : "text-slate-500 dark:text-slate-400 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-slate-800/80"
                 }`}
               >
-                <t.icon className={`w-4 h-4 transition-colors ${tab === t.id ? "text-[#1cb0f6]" : "text-slate-400"}`} />
+                <t.icon className={`w-4 h-4 transition-colors ${tab === t.id ? "text-[#1cb0f6]" : "text-slate-400 group-hover:text-[#1cb0f6]"}`} />
                 <span>{t.label}</span>
               </button>
             ))}
