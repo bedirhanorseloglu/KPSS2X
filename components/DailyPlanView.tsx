@@ -327,6 +327,59 @@ export default function DailyPlanView({
   const eveningHours = [18, 19, 20, 21, 22];
   const allHours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
+  const denemeSlotMap = useMemo(() => {
+    const map: Record<number, DenemeRecord> = {};
+    if (denemelerForDay.length === 0 || isExamDay || isHoliday) return map;
+
+    const unassignedDenemeler = [...denemelerForDay];
+
+    for (const h of allHours) {
+      if (unassignedDenemeler.length === 0) break;
+
+      const slotTimeStr = `${h.toString().padStart(2, '0')}:00`;
+
+      // Check if slot is locked by university class
+      const isUniLocked = UNIVERSITY_CLASSES.some(c => {
+        if (c.date !== dateStr) return false;
+        const startH = parseInt(c.startTime.split(":")[0]);
+        const endH = parseInt(c.endTime.split(":")[0]);
+        return h >= startH && h < endH;
+      });
+
+      // Check if slot has an explicit topic scheduled
+      const hasExplicitTopic = topicsForDay.some(t => t.scheduledTime === slotTimeStr);
+
+      // Check if slot is taken by auto-placed unassigned topic
+      const unassignedTopics = topicsForDay.filter(t => !t.scheduledTime || t.scheduledTime === "");
+      const firstOpenTopicHour = allHours.find(hour => !UNIVERSITY_CLASSES.some(c => c.date === dateStr && parseInt(c.startTime) <= hour && parseInt(c.endTime) > hour)) || 9;
+      const isFirstTopicHour = (unassignedTopics.length > 0 && h === firstOpenTopicHour);
+
+      if (!isUniLocked && !hasExplicitTopic && !isFirstTopicHour) {
+        map[h] = unassignedDenemeler.shift()!;
+      }
+    }
+
+    // Fallback: place remaining denemeler in any non-locked slot
+    if (unassignedDenemeler.length > 0) {
+      for (const h of allHours) {
+        if (unassignedDenemeler.length === 0) break;
+        if (!map[h]) {
+          const isUniLocked = UNIVERSITY_CLASSES.some(c => {
+            if (c.date !== dateStr) return false;
+            const startH = parseInt(c.startTime.split(":")[0]);
+            const endH = parseInt(c.endTime.split(":")[0]);
+            return h >= startH && h < endH;
+          });
+          if (!isUniLocked) {
+            map[h] = unassignedDenemeler.shift()!;
+          }
+        }
+      }
+    }
+
+    return map;
+  }, [denemelerForDay, isExamDay, isHoliday, dateStr, topicsForDay, allHours]);
+
   const stats = useMemo(() => {
     const check = (hours: number[]) => {
       let hasSomething = false;
@@ -346,8 +399,9 @@ export default function DailyPlanView({
         });
         const hasNote = slotNotes[slotId] && slotNotes[slotId].trim() !== "";
         const isNoteCompleted = completedNotes[slotId];
+        const hasDeneme = !!denemeSlotMap[h];
 
-        if (topic || revisionTopic || hasUni || hasNote) {
+        if (topic || revisionTopic || hasUni || hasNote || hasDeneme) {
           hasSomething = true;
           if (hasNote && !isNoteCompleted) {
             hasUncompleted = true;
@@ -363,7 +417,7 @@ export default function DailyPlanView({
       afternoon: check(afternoonHours),
       evening: check(eveningHours)
     };
-  }, [topics, topicsForDay, dateStr, slotNotes, completedNotes]);
+  }, [topics, topicsForDay, dateStr, slotNotes, completedNotes, denemeSlotMap, allHours, morningHours, afternoonHours, eveningHours]);
 
   const tabContent = (hours: number[]) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
@@ -421,9 +475,7 @@ export default function DailyPlanView({
           }
         }
 
-        const denemeForDay = denemelerForDay.length > 0 ? denemelerForDay[0] : null;
-        const firstOpenDenemeHour = hours.find(h => !UNIVERSITY_CLASSES.some(c => c.date === dateStr && parseInt(c.startTime) <= h && parseInt(c.endTime) > h)) || 10;
-        const denemeForSlot = (denemeForDay && hour === firstOpenDenemeHour && !topic && !isLocked) ? denemeForDay : null;
+        const denemeForSlot = denemeSlotMap[hour] || null;
 
         return (
           <TimeSlot 
