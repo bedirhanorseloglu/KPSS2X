@@ -75,7 +75,11 @@ export function SummaryCard({
         <span className="text-[11px] font-black text-slate-400 dark:text-slate-300 uppercase tracking-wider">
           {label}
         </span>
-        <AppleEmoji emoji={emoji} size={24} />
+        <AppleEmoji
+          emoji={emoji}
+          size={24}
+          color={color || (accent ? "#1cb0f6" : highlight ? "#58cc02" : undefined)}
+        />
       </div>
       <div>
         <div
@@ -126,7 +130,7 @@ export function Tip({
           borderBottomColor: accentColor,
         }}
       >
-        <AppleEmoji emoji={emoji} size={26} />
+        <AppleEmoji emoji={emoji} size={26} color={accentColor} />
       </div>
       <div className="space-y-1 min-w-0 flex-1">
         <h4 className="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
@@ -232,20 +236,47 @@ export const renderRefLabel = (
   return (props: any) => {
     const { viewBox } = props;
     if (!viewBox) return null;
-    const x = align === "right" ? viewBox.width + viewBox.x - 10 : viewBox.x + 10;
-    const y = viewBox.y - 6;
+
+    // Strip any raw emoji characters so label is pure, clean text
+    const cleanText = text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, "").trim();
+
+    const badgeWidth = Math.max(80, cleanText.length * 8.5 + 24);
+    const badgeHeight = 26;
+    const x = align === "right" ? viewBox.width + viewBox.x - 8 : viewBox.x + 8;
+    const rectX = align === "right" ? x - badgeWidth : x;
+    const rectY = Math.max(4, viewBox.y - badgeHeight - 4);
+    const textX = rectX + badgeWidth / 2;
+    const textY = rectY + 17;
+
     return (
-      <text
-        x={x}
-        y={y}
-        fill={color}
-        fontSize={10}
-        fontWeight={800}
-        textAnchor={align === "right" ? "end" : "start"}
-        className="font-mono"
-      >
-        {text}
-      </text>
+      <g>
+        {/* Responsive Light & Dark Mode Pill Backdrop */}
+        <rect
+          x={rectX}
+          y={rectY}
+          width={badgeWidth}
+          height={badgeHeight}
+          rx={10}
+          ry={10}
+          className="fill-white dark:fill-slate-900 filter drop-shadow-xs"
+          stroke={color}
+          strokeWidth={2.5}
+        />
+        <text
+          x={textX}
+          y={textY}
+          fill={color}
+          fontSize={12}
+          fontWeight={900}
+          textAnchor="middle"
+          style={{
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            letterSpacing: "0.03em"
+          }}
+        >
+          {cleanText}
+        </text>
+      </g>
     );
   };
 };

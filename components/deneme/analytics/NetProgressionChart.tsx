@@ -130,18 +130,18 @@ export function GenelRechartsTrend({
               color: mainColor,
             }}
           >
-            <span className="opacity-75">Son:</span>
-            <span className="font-mono text-sm">{formatNet(latestNet)}</span>
+            <span className="opacity-75 font-extrabold">Son:</span>
+            <span className="font-black text-sm tracking-wide">{formatNet(latestNet)}</span>
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-400 border-b-amber-500 text-[#ff9500] text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span>Rekor:</span>
-            <span className="font-mono text-sm">{formatNet(bestNet)}</span>
+            <span className="font-extrabold">Rekor:</span>
+            <span className="font-black text-sm tracking-wide">{formatNet(bestNet)}</span>
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-[#58cc02]/10 dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02]/40 border-b-[#58cc02] text-[#58cc02] text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span>Ort:</span>
-            <span className="font-mono text-sm">{formatNet(avgNet)}</span>
+            <span className="font-extrabold">Ort:</span>
+            <span className="font-black text-sm tracking-wide">{formatNet(avgNet)}</span>
           </div>
         </div>
       </div>
@@ -241,7 +241,7 @@ export function GenelRechartsTrend({
                 strokeDasharray="5 5"
                 strokeWidth={2}
                 label={renderRefLabel(
-                  `🎯 Hedef: ${targetNet}`,
+                  `Hedef: ${targetNet}`,
                   "#58cc02",
                   "left"
                 )}
@@ -358,18 +358,18 @@ export function BransRechartsTrend({ bransStats }: { bransStats: any }) {
               color: mainColor,
             }}
           >
-            <span className="opacity-75">Son:</span>
-            <span className="font-mono text-sm">{formatNet(latestNet)}</span>
+            <span className="opacity-75 font-extrabold">Son:</span>
+            <span className="font-black text-sm tracking-wide">{formatNet(latestNet)}</span>
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border-2 border-b-4 border-amber-400 border-b-amber-500 text-[#ff9500] text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span>Rekor:</span>
-            <span className="font-mono text-sm">{formatNet(bestNet)}</span>
+            <span className="font-extrabold">Rekor:</span>
+            <span className="font-black text-sm tracking-wide">{formatNet(bestNet)}</span>
           </div>
 
           <div className="px-3.5 py-1.5 rounded-xl bg-[#58cc02]/10 dark:bg-[#58cc02]/20 border-2 border-b-4 border-[#58cc02]/40 border-b-[#58cc02] text-[#58cc02] text-xs font-black flex items-center gap-1.5 shadow-2xs">
-            <span>Ort:</span>
-            <span className="font-mono text-sm">{formatNet(avgNet)}</span>
+            <span className="font-extrabold">Ort:</span>
+            <span className="font-black text-sm tracking-wide">{formatNet(avgNet)}</span>
           </div>
         </div>
       </div>

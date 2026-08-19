@@ -93,7 +93,7 @@ const fadeUp = {
    DATA CONSTANTS — STRICT AGENTS.MD COLORS
 ═══════════════════════════════════════════════════════ */
 const SUBJECTS = [
-  { title: "Türkçe", emoji: "📘", color: "#F43F5E", q: 30, desc: "Sözel Mantık & Paragraf", pct: 82 },
+  { title: "Türkçe", emoji: "📘", color: "#fa5fea", q: 30, desc: "Sözel Mantık & Paragraf", pct: 82 },
   { title: "Matematik", emoji: "🔢", color: "#af52de", q: 30, desc: "Sayısal Mantık & Problem", pct: 64 },
   { title: "Tarih", emoji: "🏛️", color: "#ff9500", q: 27, desc: "Osmanlı & İnkılap Tarihi", pct: 76 },
   { title: "Coğrafya", emoji: "🗺️", color: "#10B981", q: 18, desc: "Fiziki & Beşeri Coğrafya", pct: 88 },

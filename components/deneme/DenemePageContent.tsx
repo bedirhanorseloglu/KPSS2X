@@ -623,7 +623,7 @@ function ViewTypeSwitcher({
         <button
           onClick={() => onChange("brans")}
           className={`flex-1 sm:flex-none relative px-6 py-2.5 text-sm font-bold transition-all rounded-xl z-10 flex items-center justify-center gap-2 ${
-            viewType === "brans" ? "text-[#af52de] dark:text-[#af52de]" : "text-slate-500 hover:text-slate-700 dark:text-slate-400"
+            viewType === "brans" ? "text-[#58cc02] dark:text-[#58cc02]" : "text-slate-500 hover:text-slate-700 dark:text-slate-400"
           }`}
         >
           {viewType === "brans" && (
@@ -633,12 +633,12 @@ function ViewTypeSwitcher({
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
             />
           )}
-          <AppleEmoji emoji="🎯" className="relative z-10 mr-1" color="#af52de" />
+          <AppleEmoji emoji="🎯" className="relative z-10 mr-1" color="#58cc02" />
           <span className="relative z-10">Branş Denemesi</span>
         </button>
       </div>
       <div className="hidden sm:flex items-center gap-2.5 px-5 py-3 bg-white dark:bg-slate-800/80 rounded-2xl shadow-sm border border-slate-100 dark:border-white/5 text-xs font-bold text-slate-400">
-        <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+        <div className={`w-2 h-2 rounded-full ${viewType === "genel" ? "bg-blue-400" : "bg-[#58cc02]"} animate-pulse`} />
         {viewType === "genel" ? "KPSS GY-GK Sınavları" : "Ders Bazlı Sınavlar"}
       </div>
     </div>

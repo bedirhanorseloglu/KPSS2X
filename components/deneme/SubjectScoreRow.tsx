@@ -289,16 +289,16 @@ export default function SubjectScoreRow({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="w-full max-w-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col overflow-hidden"
+              className="w-full max-w-2xl sm:max-w-3xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 shadow-2xl space-y-4 max-h-[88vh] flex flex-col overflow-hidden"
             >
               {/* Modal Başlık Barı */}
               <div className="flex items-center justify-between pb-3 border-b-2 border-slate-100 dark:border-slate-700/60 shrink-0">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg border-2 border-b-4 shadow-2xs"
+                    className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg border-2 border-b-4 shadow-2xs shrink-0"
                     style={{ backgroundColor: `${subject.color}15`, borderColor: subject.color, color: subject.color }}
                   >
-                    <AppleEmoji emoji={subject.icon} size={22} />
+                    <AppleEmoji emoji={subject.icon} size={22} color={subject.color} />
                   </div>
                   <div>
                     <h3 className="font-black text-slate-800 dark:text-white text-base">{subject.title} - Hangi Konularda Takıldın?</h3>
@@ -316,16 +316,16 @@ export default function SubjectScoreRow({
 
               {/* Canlı Eşleşme Sayaç Çubuğu */}
               <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 shrink-0 text-xs font-bold">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   {subject.wrong > 0 && (
-                    <span className={`px-2.5 py-1 rounded-xl border-2 border-b-4 text-[11px] font-mono font-black ${
+                    <span className={`px-2.5 py-1 rounded-xl border-2 border-b-4 text-[11px] font-black tracking-wide ${
                       totalMarkedWrong === subject.wrong ? "bg-[#58cc02]/15 text-[#58cc02] border-[#58cc02]/40" : "bg-[#ff4b4b]/15 text-[#ff4b4b] border-[#ff4b4b]/40"
                     }`}>
                       Yanlış: {totalMarkedWrong}/{subject.wrong}
                     </span>
                   )}
                   {subject.empty > 0 && (
-                    <span className={`px-2.5 py-1 rounded-xl border-2 border-b-4 text-[11px] font-mono font-black ${
+                    <span className={`px-2.5 py-1 rounded-xl border-2 border-b-4 text-[11px] font-black tracking-wide ${
                       totalMarkedEmpty === subject.empty ? "bg-[#58cc02]/15 text-[#58cc02] border-[#58cc02]/40" : "bg-amber-500/15 text-amber-500 border-amber-500/40"
                     }`}>
                       Boş: {totalMarkedEmpty}/{subject.empty}
@@ -368,7 +368,7 @@ export default function SubjectScoreRow({
                   return (
                     <div
                       key={t.id}
-                      className={`p-3.5 rounded-2xl border-2 border-b-4 transition-all flex items-center justify-between gap-3 ${
+                      className={`p-4 rounded-2xl border-2 border-b-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                         isWrongActive
                           ? "bg-rose-50/90 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 shadow-2xs"
                           : isEmptyActive
@@ -377,9 +377,25 @@ export default function SubjectScoreRow({
                       }`}
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate">{t.title}</p>
+                        {t.questionRange && (
+                          <div className="mb-1.5">
+                            <span 
+                              className="px-2.5 py-0.5 rounded-lg text-[11px] font-black tracking-wide border-2 border-b-2 shadow-2xs inline-block"
+                              style={{
+                                backgroundColor: `${subject.color}15`,
+                                borderColor: `${subject.color}40`,
+                                color: subject.color
+                              }}
+                            >
+                              {t.questionRange}
+                            </span>
+                          </div>
+                        )}
+                        <p className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-100 leading-snug break-words">
+                          {t.title}
+                        </p>
                         {t.questionCount && (
-                          <p className="text-[10px] font-bold text-slate-400 mt-0.5">Sınav Ağırlığı: {t.questionCount}</p>
+                          <p className="text-[10px] font-bold text-slate-400 mt-1">Sınav Ağırlığı: {t.questionCount}</p>
                         )}
                       </div>
 
@@ -399,7 +415,7 @@ export default function SubjectScoreRow({
                           >
                             <span>❌ YANLIŞ</span>
                             {wCount > 0 && (
-                              <span className="px-1.5 py-0.2 rounded-md bg-white text-[#ff4b4b] font-mono text-[11px] font-black shadow-2xs">
+                              <span className="px-1.5 py-0.2 rounded-md bg-white text-[#ff4b4b] text-[11px] font-black shadow-2xs">
                                 {wCount}
                               </span>
                             )}
@@ -421,7 +437,7 @@ export default function SubjectScoreRow({
                           >
                             <span>⚪ BOŞ</span>
                             {eCount > 0 && (
-                              <span className="px-1.5 py-0.2 rounded-md bg-white text-amber-600 font-mono text-[11px] font-black shadow-2xs">
+                              <span className="px-1.5 py-0.2 rounded-md bg-white text-amber-600 text-[11px] font-black shadow-2xs">
                                 {eCount}
                               </span>
                             )}

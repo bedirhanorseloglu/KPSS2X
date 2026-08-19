@@ -465,7 +465,7 @@ function DayActivityModal({
                 const totalQ = subRes ? subRes.questionCount : 120;
                 const accuracy = totalQ > 0 ? Math.max(0, Math.round((net / totalQ) * 100)) : 0;
 
-                const cardColor = subConfig?.color || (isBrans ? "#af52de" : "#1cb0f6");
+                const cardColor = subConfig?.color || (isBrans ? "#58cc02" : "#1cb0f6");
 
                 return (
                   <div 
@@ -504,8 +504,8 @@ function DayActivityModal({
                             <span>{subConfig.title} Branş</span>
                           </span>
                         ) : isBrans ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black bg-purple-100 dark:bg-purple-950/40 text-[#af52de] border-2 border-b-2 border-[#af52de] shadow-2xs shrink-0">
-                            <AppleEmoji emoji="🎯" size={13} />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black bg-emerald-100 dark:bg-emerald-950/40 text-[#58cc02] border-2 border-b-2 border-[#58cc02] shadow-2xs shrink-0">
+                            <AppleEmoji emoji="🎯" size={13} color="#58cc02" />
                             <span>Branş Denemesi</span>
                           </span>
                         ) : (

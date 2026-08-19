@@ -284,12 +284,12 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         window.history.replaceState(null, '', `?mode=brans${bransSubjectId ? `&subject=${bransSubjectId}` : ""}`);
                       }}
                       className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left outline-none cursor-pointer active:translate-y-0.5 ${examType === "brans"
-                        ? "border-[#af52de] border-b-[#8e24aa] bg-purple-50/60 dark:bg-purple-950/30"
-                        : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#af52de] dark:hover:border-[#af52de]"
+                        ? "border-[#58cc02] border-b-[#46a302] bg-emerald-50/60 dark:bg-emerald-950/30"
+                        : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#58cc02] dark:hover:border-[#58cc02]"
                         }`}
                     >
                       {/* Seçili işareti */}
-                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${examType === "brans" ? "border-[#af52de] bg-[#af52de]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
+                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${examType === "brans" ? "border-[#58cc02] bg-[#58cc02]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
                         }`}>
                         {examType === "brans" && (
                           <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="12" height="12" viewBox="0 0 10 10" fill="none">
@@ -300,15 +300,15 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
 
                       {/* Apple 3D Emoji Icon */}
                       <div className={`w-13 h-13 rounded-2xl flex items-center justify-center transition-all border-2 border-b-4 ${examType === "brans"
-                        ? "bg-purple-100/80 dark:bg-purple-900/40 border-purple-200 dark:border-purple-800"
+                        ? "bg-emerald-100/80 dark:bg-emerald-900/40 border-emerald-200 dark:border-emerald-800"
                         : "bg-slate-100/80 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600"
                         }`}>
-                        <AppleEmoji emoji="🎯" size={30} color="#af52de" />
+                        <AppleEmoji emoji="🎯" size={30} color="#58cc02" />
                       </div>
 
                       {/* Başlık + Açıklama */}
                       <div>
-                        <p className={`text-base font-black tracking-tight transition-colors ${examType === "brans" ? "text-[#af52de]" : "text-slate-800 dark:text-white"
+                        <p className={`text-base font-black tracking-tight transition-colors ${examType === "brans" ? "text-[#58cc02]" : "text-slate-800 dark:text-white"
                           }`}>
                           Branş Denemesi
                         </p>
@@ -319,7 +319,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
 
                       {/* Alt etiket */}
                       <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl transition-all border ${examType === "brans"
-                        ? "bg-purple-100 text-[#af52de] dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                        ? "bg-emerald-100 text-[#58cc02] dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
                         : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-600"
                         }`}>
                         Ders Bazlı

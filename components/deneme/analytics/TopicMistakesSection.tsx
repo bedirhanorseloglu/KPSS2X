@@ -164,7 +164,7 @@ export default function TopicMistakesSection({
               <div className="space-y-3">
                 {topicMatrixData.topWrong.map((t, idx) => {
                   const subjectConfig = DENEME_SUBJECTS.find((s) => s.id === t.subjectId);
-                  const color = subjectConfig?.color || "#F43F5E";
+                  const color = subjectConfig?.color || "#fa5fea";
 
                   return (
                     <div

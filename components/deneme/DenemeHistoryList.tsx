@@ -105,10 +105,10 @@ export default function DenemeHistoryList({
         <div className="flex flex-col items-center justify-center py-16 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 text-center shadow-md max-w-lg mx-auto my-6">
           <div className={`w-20 h-20 rounded-3xl flex items-center justify-center shadow-xs mb-6 shrink-0 border-2 border-b-4 ${
             isBrans 
-              ? 'bg-[#f5e8ff] dark:bg-[#af52de]/10 border-[#af52de] border-b-[#9b37c7]' 
+              ? 'bg-[#e5f9e7] dark:bg-[#58cc02]/10 border-[#58cc02] border-b-[#46a302]' 
               : 'bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 border-[#1cb0f6] border-b-[#1899d6]'
           }`}>
-            <AppleEmoji emoji={isBrans ? "🎯" : "🌍"} size={40} color={isBrans ? "#af52de" : "#1cb0f6"} />
+            <AppleEmoji emoji={isBrans ? "🎯" : "🌍"} size={40} color={isBrans ? "#58cc02" : "#1cb0f6"} />
           </div>
           <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
             {isBrans ? "Branş Denemesi Kaydı Bulunmuyor" : "Genel Deneme Kaydı Bulunmuyor"}
@@ -123,7 +123,7 @@ export default function DenemeHistoryList({
             onClick={onAdd}
             className={`mt-8 px-8 py-4 text-white font-black text-xs uppercase tracking-widest rounded-2xl border-2 border-b-4 active:translate-y-0.5 shadow-xs transition-all cursor-pointer flex items-center gap-2 ${
               isBrans 
-                ? 'bg-[#af52de] border-[#af52de] border-b-[#9b37c7]' 
+                ? 'bg-[#58cc02] border-[#58cc02] border-b-[#46a302]' 
                 : 'bg-[#1cb0f6] border-[#1cb0f6] border-b-[#1899d6]'
             }`}
           >

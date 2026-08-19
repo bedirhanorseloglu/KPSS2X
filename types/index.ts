@@ -6,6 +6,7 @@ export type TopicSchedule = {
 export type Topic = {
   id: string
   title: string
+  questionRange?: string
   questionCount?: string
   isRoutine?: boolean
   done: boolean

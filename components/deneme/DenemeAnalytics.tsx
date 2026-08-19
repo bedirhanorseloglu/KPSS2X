@@ -375,38 +375,11 @@ export default function DenemeAnalytics({
       .sort((a, b) => b.avgNet - a.avgNet);
   }, [active, viewType, selectedBransSubjectId]);
 
-  if (active.length === 0 && (!stats || stats.count === 0)) {
+  if (viewType === "brans" && (!bransStats || bransStats.count === 0 || availableBransSubjects.length === 0)) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md text-center max-w-lg mx-auto my-6">
-        <div className="w-20 h-20 rounded-3xl bg-sky-50 dark:bg-sky-950/60 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center shadow-xs mb-6 shrink-0">
-          <AppleEmoji emoji="📊" size={40} color="#1cb0f6" />
-        </div>
-        <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
-          Analiz Bekleniyor
-        </h3>
-        <p className="text-sm font-extrabold text-slate-400 mt-2.5 max-w-xs leading-relaxed">
-          Detaylı grafiklerinizi, ders kırılımlarınızı ve koçluk tavsiyelerini
-          görmek için ilk denemenizi kaydedin.
-        </p>
-        {!isReadOnly && (
-          <button
-            type="button"
-            onClick={onAdd}
-            className="mt-8 px-8 py-4 rounded-2xl bg-[#1cb0f6] text-white font-black text-xs uppercase tracking-widest border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <span>Deneme Sınavı Ekle</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-    );
-  }
-
-  if (viewType === "brans" && availableBransSubjects.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md text-center max-w-lg mx-auto my-6">
-        <div className="w-20 h-20 rounded-3xl bg-[#f5e8ff] dark:bg-[#af52de]/10 border-2 border-b-4 border-[#af52de] border-b-[#9b37c7] flex items-center justify-center shadow-xs mb-6 shrink-0">
-          <AppleEmoji emoji="🎯" size={40} color="#af52de" />
+        <div className="w-20 h-20 rounded-3xl bg-[#e5f9e7] dark:bg-[#58cc02]/10 border-2 border-b-4 border-[#58cc02] border-b-[#46a302] flex items-center justify-center shadow-xs mb-6 shrink-0">
+          <AppleEmoji emoji="🎯" size={40} color="#58cc02" />
         </div>
         <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
           Branş Analizi Bekleniyor
@@ -419,9 +392,36 @@ export default function DenemeAnalytics({
           <button
             type="button"
             onClick={onAdd}
-            className="mt-8 px-8 py-4 rounded-2xl bg-[#af52de] text-white font-black text-xs uppercase tracking-widest border-2 border-b-4 border-[#af52de] border-b-[#9b37c7] shadow-xs active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+            className="mt-8 px-8 py-4 rounded-2xl bg-[#58cc02] text-white font-black text-xs uppercase tracking-widest border-2 border-b-4 border-[#58cc02] border-b-[#46a302] shadow-xs active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
           >
             <span>Branş Denemesi Gir</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  if (viewType === "genel" && (!stats || stats.count === 0)) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-8 bg-white dark:bg-slate-800 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-md text-center max-w-lg mx-auto my-6">
+        <div className="w-20 h-20 rounded-3xl bg-sky-50 dark:bg-sky-950/60 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center shadow-xs mb-6 shrink-0">
+          <AppleEmoji emoji="🌍" size={40} color="#1cb0f6" />
+        </div>
+        <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
+          Genel Deneme Analizi Bekleniyor
+        </h3>
+        <p className="text-sm font-extrabold text-slate-400 mt-2.5 max-w-xs leading-relaxed">
+          Detaylı grafiklerinizi, ders kırılımlarınızı ve koçluk tavsiyelerini
+          görmek için ilk Genel Denemenizi kaydedin.
+        </p>
+        {!isReadOnly && (
+          <button
+            type="button"
+            onClick={onAdd}
+            className="mt-8 px-8 py-4 rounded-2xl bg-[#1cb0f6] text-white font-black text-xs uppercase tracking-widest border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-xs active:translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <span>Genel Deneme Sınavı Ekle</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         )}
@@ -611,11 +611,12 @@ export default function DenemeAnalytics({
 
           <Section
             title={`${bransStats.config?.title} İstatistikleri`}
-            desc="Seçili branştaki genel performans özetin."
+            desc={`Seçili ${bransStats.config?.title} branşındaki genel performans özetin.`}
             icon={
-              <BarChart3
-                className="w-8 h-8"
-                style={{ color: bransStats.config?.color || "#8b5cf6" }}
+              <AppleEmoji
+                emoji={bransStats.config?.icon || "📊"}
+                size={32}
+                color={bransStats.config?.color || "#1cb0f6"}
               />
             }
           >
@@ -788,6 +789,8 @@ export default function DenemeAnalytics({
             viewType="brans"
             maxQuestions={bransStats.maxQuestions}
             subColor={bransStats.config?.color}
+            branchTitle={bransStats.config?.title}
+            branchIcon={bransStats.config?.icon}
           />
 
           <SmartRecommendationsSection

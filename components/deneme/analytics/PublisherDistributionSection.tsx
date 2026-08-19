@@ -20,6 +20,8 @@ type Props = {
   viewType?: "genel" | "brans";
   maxQuestions?: number;
   subColor?: string;
+  branchTitle?: string;
+  branchIcon?: string;
 };
 
 export default function PublisherDistributionSection({
@@ -27,6 +29,8 @@ export default function PublisherDistributionSection({
   viewType = "genel",
   maxQuestions = 120,
   subColor = "#1cb0f6",
+  branchTitle,
+  branchIcon,
 }: Props) {
   if (!publishers || publishers.length === 0) return null;
 
@@ -34,44 +38,83 @@ export default function PublisherDistributionSection({
 
   return (
     <Section
-      title="Yayın Dağılımı ve Başarı Analizi"
-      desc={`Çözdüğünüz ${totalDeneme} denemenin yayın evlerine göre performans karşılaştırması.`}
-      icon={<Newspaper className="w-6 h-6 text-[#1cb0f6]" />}
+      title={
+        viewType === "brans" && branchTitle
+          ? `${branchTitle} - Yayın Dağılımı ve Başarı Analizi`
+          : "Yayın Dağılımı ve Başarı Analizi"
+      }
+      desc={
+        viewType === "brans" && branchTitle
+          ? `Çözdüğünüz ${totalDeneme} ${branchTitle} denemesinin yayın evlerine göre performans karşılaştırması.`
+          : `Çözdüğünüz ${totalDeneme} denemenin yayın evlerine göre performans karşılaştırması.`
+      }
+      icon={
+        <AppleEmoji
+          emoji={viewType === "brans" && branchIcon ? branchIcon : "📰"}
+          size={32}
+          color={subColor}
+        />
+      }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {publishers.map((pub, idx) => {
           const pct = Math.min(100, (pub.avgNet / maxQuestions) * 100);
+          const activeColor = viewType === "brans" && subColor ? subColor : "#1cb0f6";
+
           return (
             <motion.div
               key={pub.name}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
+              style={
+                idx === 0
+                  ? {
+                      borderColor: activeColor,
+                      borderBottomColor: activeColor,
+                    }
+                  : {}
+              }
               className={`p-6 rounded-[2.25rem] border-2 border-b-4 relative overflow-hidden flex flex-col justify-between shadow-xs transition-all hover:scale-[1.01] ${
                 idx === 0
-                  ? "bg-white dark:bg-slate-800 border-[#1cb0f6] border-b-[#1899d6] text-slate-800 dark:text-white shadow-md"
+                  ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-md"
                   : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
               }`}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <span
+                    style={
+                      idx === 0
+                        ? {
+                            backgroundColor: activeColor,
+                            borderColor: activeColor,
+                          }
+                        : {}
+                    }
                     className={`w-8 h-8 rounded-xl font-black text-xs flex items-center justify-center border-2 border-b-4 shrink-0 shadow-xs ${
                       idx === 0
-                        ? "bg-[#1cb0f6] text-white border-[#1899d6]"
+                        ? "text-white"
                         : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 border-slate-200 dark:border-slate-600"
                     }`}
                   >
                     #{idx + 1}
                   </span>
-                  <h4 className="text-base font-black text-slate-800 dark:text-white truncate max-w-[150px]">
+                  <h4 className="text-base font-black text-slate-800 dark:text-white truncate">
                     {pub.name}
                   </h4>
                 </div>
 
                 {idx === 0 && (
-                  <span className="px-3 py-1 text-[10px] font-black rounded-2xl uppercase tracking-wider flex items-center gap-1 bg-sky-50 dark:bg-sky-950/60 text-[#1cb0f6] border-2 border-b-2 border-sky-200 dark:border-sky-800 shadow-2xs">
-                    <AppleEmoji emoji="👑" size={12} color="#1cb0f6" /> En Yüksek Başarı
+                  <span 
+                    style={{
+                      backgroundColor: `${activeColor}15`,
+                      borderColor: `${activeColor}40`,
+                      color: activeColor,
+                    }}
+                    className="px-3 py-1 text-[10px] font-black rounded-2xl uppercase tracking-wider flex items-center gap-1 border-2 border-b-2 shadow-2xs shrink-0"
+                  >
+                    <AppleEmoji emoji="👑" size={12} color={activeColor} /> En Yüksek Başarı
                   </span>
                 )}
               </div>
@@ -83,7 +126,7 @@ export default function PublisherDistributionSection({
                   </span>
                   <span
                     className="text-3xl font-black font-mono leading-none"
-                    style={{ color: viewType === "brans" ? subColor : "#1cb0f6" }}
+                    style={{ color: activeColor }}
                   >
                     {formatNet(pub.avgNet)}
                   </span>
@@ -94,7 +137,7 @@ export default function PublisherDistributionSection({
                   <motion.div
                     className="h-full rounded-full relative flex items-center justify-end pr-0.5"
                     style={{
-                      backgroundColor: viewType === "brans" ? subColor : "#1cb0f6",
+                      backgroundColor: activeColor,
                     }}
                     initial={{ width: 0 }}
                     animate={{ width: `${pct}%` }}
@@ -112,7 +155,7 @@ export default function PublisherDistributionSection({
               <div className="grid grid-cols-3 gap-2.5 pt-3.5 border-t-2 border-slate-100 dark:border-slate-700/60 text-center">
                 <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center transition-transform hover:-translate-y-0.5 shadow-2xs">
                   <div className="flex items-center gap-1 mb-1">
-                    <BookOpen className="w-3 h-3 text-[#1cb0f6]" />
+                    <BookOpen className="w-3 h-3" style={{ color: activeColor }} />
                     <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Sınav
                     </span>
@@ -142,7 +185,7 @@ export default function PublisherDistributionSection({
                     </span>
                   </div>
                   <span className="text-xs sm:text-sm font-black text-[#58cc02]">
-                    %{Math.round(pub.accuracy)}
+                    %{Math.round(pct)}
                   </span>
                 </div>
               </div>

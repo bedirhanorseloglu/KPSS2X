@@ -15,7 +15,7 @@ export const DENEME_SUBJECTS: DenemeSubjectConfig[] = [
     id: "turkce",
     title: "Türkçe",
     icon: "📘",
-    color: "#F43F5E", // Koyu Mercan / Deep Coral
+    color: "#fa5fea", // Canlı Orkide / Vibrant Pink-Magenta
     category: "Genel Yetenek",
     questionCount: 30,
   },

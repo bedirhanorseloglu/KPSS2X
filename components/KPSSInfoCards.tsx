@@ -70,8 +70,8 @@ const tabs = [
             </div>
             <ul className="text-sm text-slate-700 dark:text-slate-300 font-bold space-y-3">
               <li className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#fff1f2] dark:bg-[#F43F5E]/10 border-2 border-b-2 border-[#F43F5E]/30 flex items-center justify-center">
-                  <AppleEmoji emoji="📝" size={16} />
+                <div className="w-8 h-8 rounded-xl bg-[#fa5fea]/10 dark:bg-[#fa5fea]/20 border-2 border-b-2 border-[#fa5fea]/40 flex items-center justify-center">
+                  <AppleEmoji emoji="📝" size={16} color="#fa5fea" />
                 </div> 
                 Türkçe (30)
               </li>

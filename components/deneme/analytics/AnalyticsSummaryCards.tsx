@@ -62,61 +62,50 @@ export function BransAnalyticsOverview({ bransStats }: { bransStats: any }) {
   if (!bransStats) return null;
 
   return (
-    <Section
-      title={`${bransStats.config?.title} İstatistikleri`}
-      desc="Seçili branştaki genel performans özetin."
-      icon={
-        <BarChart3
-          className="w-8 h-8"
-          style={{ color: bransStats.config?.color || "#8b5cf6" }}
-        />
-      }
-    >
-      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
-        <SummaryCard
-          label="Net Ortalaması"
-          value={formatNet(bransStats.avg)}
-          sub={`${bransStats.maxQuestions} soruda`}
-          emoji="📊"
-          accent
-        />
-        <SummaryCard
-          label="En Yüksek Net"
-          value={formatNet(bransStats.best)}
-          sub="Rekorun"
-          emoji="🏆"
-        />
-        <SummaryCard
-          label="Ortalama Süre"
-          value={
-            bransStats.avgDuration
-              ? formatDuration(Math.round(bransStats.avgDuration))
-              : "-"
-          }
-          sub={
-            bransStats.avgSecondsPerQuestion
-              ? `Soru başı ~${Math.round(bransStats.avgSecondsPerQuestion)} sn`
-              : "Süre kaydı yok"
-          }
-          emoji="⏱️"
-        />
-        <SummaryCard
-          label="Son Sınav Neti"
-          value={formatNet(bransStats.latest)}
-          sub="Mevcut durum"
-          emoji="📌"
-        />
-        <SummaryCard
-          label="Gelişimin"
-          value={`${bransStats.improvement > 0 ? "+" : ""}${formatNet(
-            bransStats.improvement
-          )}`}
-          sub="İlk sınava göre"
-          emoji={bransStats.improvement > 0 ? "🚀" : "📉"}
-          highlight
-        />
-      </div>
-    </Section>
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
+      <SummaryCard
+        label="Net Ortalaması"
+        value={formatNet(bransStats.avg)}
+        sub={`${bransStats.maxQuestions} soruda`}
+        emoji="📊"
+        accent
+      />
+      <SummaryCard
+        label="En Yüksek Net"
+        value={formatNet(bransStats.best)}
+        sub="Rekorun"
+        emoji="🏆"
+      />
+      <SummaryCard
+        label="Ortalama Süre"
+        value={
+          bransStats.avgDuration
+            ? formatDuration(Math.round(bransStats.avgDuration))
+            : "-"
+        }
+        sub={
+          bransStats.avgSecondsPerQuestion
+            ? `Soru başı ~${Math.round(bransStats.avgSecondsPerQuestion)} sn`
+            : "Süre kaydı yok"
+        }
+        emoji="⏱️"
+      />
+      <SummaryCard
+        label="Son Sınav Neti"
+        value={formatNet(bransStats.latest)}
+        sub="Mevcut durum"
+        emoji="📌"
+      />
+      <SummaryCard
+        label="Gelişimin"
+        value={`${bransStats.improvement > 0 ? "+" : ""}${formatNet(
+          bransStats.improvement
+        )}`}
+        sub="İlk sınava göre"
+        emoji={bransStats.improvement > 0 ? "🚀" : "📉"}
+        highlight
+      />
+    </div>
   );
 }
 

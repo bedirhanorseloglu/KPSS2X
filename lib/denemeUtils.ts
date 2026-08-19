@@ -214,7 +214,7 @@ export function getDenemeTheme(deneme: DenemeRecord) {
       };
     }
     return {
-      color: "#af52de",
+      color: "#58cc02",
       title: "Branş Denemesi",
       subjectTitle: "Branş",
       subjectId: undefined,
