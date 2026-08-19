@@ -2,16 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, Award, Swords } from "lucide-react";
+import { X, Award, Swords, TrendingUp, CheckCircle2, Trophy, Flame, Target } from "lucide-react";
 import { LeaderboardEntry } from "@/lib/leaderboardService";
 import { loadFromFirebase, loadDenemeYeniden } from "@/lib/firebaseService";
 import { evaluateDeneme } from "@/lib/denemeUtils";
-import { Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid, YAxis, XAxis, Legend } from "recharts";
-import { format } from "date-fns";
-import { tr } from "date-fns/locale";
-
 import { useAuth } from "@/contexts/AuthContext";
-import { getEarnedBadges } from "@/lib/badgesConfig";
 import { DenemeRecord, migrateDenemeler } from "@/lib/denemeUtils";
 import { DENEME_SUBJECTS } from "@/lib/denemeConfig";
 import AppleEmoji from "../AppleEmoji";
@@ -58,10 +53,6 @@ export default function UserProfileModal({ userEntry, isOpen, onClose }: UserPro
     totalBrans: 0,
     avgNetBrans: 0,
     maxNetBrans: 0,
-    bestBransName: "",
-    bestBransScore: 0,
-    bestGenelSubj: "",
-    worstGenelSubj: "",
   });
   const [userDenemeler, setUserDenemeler] = useState<DenemeRecord[]>([]);
   
@@ -139,10 +130,6 @@ export default function UserProfileModal({ userEntry, isOpen, onClose }: UserPro
             totalBrans: brans.length,
             avgNetBrans: avgBrans,
             maxNetBrans: maxBrans,
-            bestBransName: "",
-            bestBransScore: 0,
-            bestGenelSubj: "",
-            worstGenelSubj: "",
           });
         }
       } catch (error) {
@@ -211,48 +198,69 @@ export default function UserProfileModal({ userEntry, isOpen, onClose }: UserPro
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+          className="absolute inset-0 bg-slate-950/70 backdrop-blur-md"
         />
 
         {/* 3D Main Modal Container */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.94, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          exit={{ opacity: 0, scale: 0.94, y: 20 }}
+          transition={{ type: "spring", stiffness: 350, damping: 28 }}
           className="relative w-full max-w-5xl max-h-[92vh] bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden z-10"
         >
+          {/* Ambient Glows */}
+          <div className="absolute -top-24 -left-24 w-64 h-64 bg-[#1cb0f6]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#F43F5E]/10 rounded-full blur-3xl pointer-events-none" />
+
           {/* 3D Push Button Close */}
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-5 right-5 w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-500 dark:text-slate-400 hover:text-[#ff4b4b] hover:border-[#ff4b4b] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center z-30 shadow-2xs"
+            className="absolute top-5 right-5 w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 text-slate-400 hover:text-[#ff4b4b] hover:border-[#ff4b4b] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center z-30 shadow-2xs"
           >
             <X className="w-5 h-5" />
           </button>
 
-          {/* 3D Site-Standard Profile Header */}
-          <div className="p-6 sm:p-8 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-6 border-b-2 border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/80 relative">
-            <div className="flex flex-col sm:flex-row items-center gap-5">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.5rem] bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center justify-center overflow-hidden shrink-0 shadow-md">
+          {/* ━━━ 3D DÜELLO & PROFİL BAŞLIĞI ━━━ */}
+          <div className="p-6 sm:p-8 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-6 border-b-2 border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/90 relative z-10">
+            <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+              
+              {/* Opponent Avatar with 3D Ring */}
+              <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-[1.75rem] bg-[#fff0f3] dark:bg-[#F43F5E]/15 border-2 border-b-4 border-[#F43F5E] border-b-[#e11d48] flex items-center justify-center overflow-hidden shrink-0 shadow-md relative group">
                 {userEntry.photoURL ? (
                    <img src={userEntry.photoURL} alt={userEntry.displayName} className="w-full h-full object-cover" />
                 ) : (
-                   <span className="text-4xl font-black text-[#1cb0f6]">
+                   <span className="text-4xl font-black text-[#F43F5E]">
                      {userEntry.displayName.charAt(0).toUpperCase()}
                    </span>
                 )}
+                <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-xs">
+                  <AppleEmoji emoji="🎯" size={14} />
+                </div>
               </div>
               
-              <div className="text-center sm:text-left">
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{userEntry.displayName}</h2>
+              <div>
+                <div className="flex items-center justify-center sm:justify-start gap-2.5 flex-wrap">
+                  <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                    {userEntry.displayName}
+                  </h2>
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-rose-500/10 text-[#F43F5E] border border-[#F43F5E]/30">
+                    RAKİP ADAY
+                  </span>
+                </div>
                 <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
-                   <span className="text-xs font-bold text-[#1cb0f6] flex items-center gap-1.5 bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 px-3.5 py-1.5 rounded-xl border-2 border-b-2 border-[#1cb0f6]/30 shadow-2xs">
-                     <Award className="w-4 h-4 text-[#1cb0f6]" /> KPSS Adayı
+                   <span className="text-xs font-bold text-[#1cb0f6] flex items-center gap-1.5 bg-[#e8f7ff] dark:bg-[#1cb0f6]/15 px-3 py-1 rounded-xl border-2 border-b-2 border-[#1cb0f6]/30 shadow-2xs">
+                     <Award className="w-3.5 h-3.5 text-[#1cb0f6]" /> KPSS Adayı
+                   </span>
+                   <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-xl border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs">
+                     {stats.totalGenel + stats.totalBrans} Toplam Deneme
                    </span>
                 </div>
               </div>
             </div>
 
+            {/* Rakip Net Score Badge */}
             {(() => {
               const headerAvgRakip = (() => {
                 if (kiyasType === "genel") return stats.avgNetGenel || 0;
@@ -267,17 +275,22 @@ export default function UserProfileModal({ userEntry, isOpen, onClose }: UserPro
 
               const isBrans = kiyasType === "brans";
               const activeSubject = isBrans ? DENEME_SUBJECTS.find(s => s.id === kiyasBransSubject) : null;
-              
               const title = isBrans && activeSubject ? `${activeSubject.title} Ort.` : "Genel Net Ort.";
-              const color = isBrans && activeSubject ? activeSubject.color : "#1cb0f6";
+              const activeColor = isBrans && activeSubject ? activeSubject.color : "#1cb0f6";
 
               return (
                 <div 
-                  className="text-center sm:text-right px-6 py-3.5 rounded-2xl border-2 border-b-4 shadow-xs shrink-0 transition-all duration-300 sm:mr-12"
-                  style={{ backgroundColor: `${color}15`, borderColor: color }}
+                  className="text-center sm:text-right px-6 py-3.5 rounded-2xl border-2 border-b-4 shadow-xs shrink-0 sm:mr-12 transition-all duration-300"
+                  style={{ 
+                    backgroundColor: `${activeColor}15`, 
+                    borderColor: `${activeColor}50`,
+                    borderBottomColor: activeColor 
+                  }}
                 >
-                   <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color }}>{title}</p>
-                   <p className="text-3xl sm:text-4xl font-black font-mono tracking-tight" style={{ color }}>
+                   <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: activeColor }}>
+                     {title}
+                   </p>
+                   <p className="text-3xl sm:text-4xl font-black font-mono tracking-tight" style={{ color: activeColor }}>
                      {headerAvgRakip.toFixed(2)}
                    </p>
                 </div>
@@ -290,44 +303,56 @@ export default function UserProfileModal({ userEntry, isOpen, onClose }: UserPro
             {currentUserStats ? (
               <div className="space-y-6">
                 
-                {/* Mode Selector & Versus Badge */}
+                {/* ━━━ DÜELLO MODU VE ÜSTÜNLÜK ÇİPİ ━━━ */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-base font-black text-slate-800 dark:text-white tracking-tight">Detaylı Karşılaştırma</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                      Karşılaştırma Modu
+                    </h3>
                     
                     {/* 3D Segmented Control */}
-                    <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs gap-1">
+                    <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs gap-1.5 relative">
                       <button 
                         type="button"
                         onClick={() => setKiyasType("genel")}
-                        className={`px-4 py-1.5 text-xs font-black tracking-widest uppercase rounded-xl transition-all cursor-pointer ${
-                          kiyasType === "genel" 
-                            ? "bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] shadow-2xs" 
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent"
+                        className={`relative px-5 py-2 text-xs font-black tracking-widest uppercase rounded-xl transition-all cursor-pointer z-10 ${
+                          kiyasType === "genel" ? "text-white" : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
                         }`}
                       >
-                        Genel
+                        {kiyasType === "genel" && (
+                          <motion.div
+                            layoutId="modalKiyasTabBg"
+                            className="absolute inset-0 bg-[#1cb0f6] border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] rounded-xl shadow-xs"
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                          />
+                        )}
+                        <span className="relative z-10">Genel Deneme</span>
                       </button>
                       <button 
                         type="button"
                         onClick={() => setKiyasType("brans")}
-                        className={`px-4 py-1.5 text-xs font-black tracking-widest uppercase rounded-xl transition-all cursor-pointer ${
-                          kiyasType === "brans" 
-                            ? "bg-[#af52de] text-white border-2 border-b-4 border-[#af52de] border-b-[#963ec7] shadow-2xs" 
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent"
+                        className={`relative px-5 py-2 text-xs font-black tracking-widest uppercase rounded-xl transition-all cursor-pointer z-10 ${
+                          kiyasType === "brans" ? "text-white" : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
                         }`}
                       >
-                        Branş
+                        {kiyasType === "brans" && (
+                          <motion.div
+                            layoutId="modalKiyasTabBg"
+                            className="absolute inset-0 bg-[#af52de] border-2 border-b-4 border-[#af52de] border-b-[#963ec7] rounded-xl shadow-xs"
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                          />
+                        )}
+                        <span className="relative z-10">Branş Denemesi</span>
                       </button>
                     </div>
                   </div>
 
-                  {/* 3D Versus Badge */}
-                  <span className="text-xs font-black text-white bg-slate-800 dark:bg-slate-950 px-4 py-2 rounded-2xl border-2 border-b-4 border-slate-900 border-b-black uppercase tracking-widest shadow-2xs flex items-center justify-center gap-2 self-start sm:self-auto">
-                    <span>Sen</span>
+                  {/* 3D Versus Matchup Pill */}
+                  <div className="flex items-center gap-2 bg-slate-900 dark:bg-slate-950 text-white px-4 py-2 rounded-2xl border-2 border-b-4 border-slate-950 border-b-black shadow-xs self-start sm:self-auto">
+                    <span className="text-xs font-black text-[#1cb0f6]">SEN</span>
                     <AppleEmoji emoji="⚔️" size={16} />
-                    <span>{userEntry.displayName}</span>
-                  </span>
+                    <span className="text-xs font-black text-[#F43F5E]">{userEntry.displayName}</span>
+                  </div>
                 </div>
                 
                 {/* Branş Sub-Subject Pills */}
@@ -340,14 +365,15 @@ export default function UserProfileModal({ userEntry, isOpen, onClose }: UserPro
                           key={subj.id}
                           type="button"
                           onClick={() => setKiyasBransSubject(subj.id)}
-                          className={`px-4 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-all whitespace-nowrap border-2 border-b-4 cursor-pointer ${
+                          className={`px-4 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-all whitespace-nowrap border-2 border-b-4 cursor-pointer flex items-center gap-2 ${
                             isActive 
-                              ? "text-white shadow-2xs active:translate-y-0.5" 
+                              ? "text-white shadow-xs active:translate-y-0.5" 
                               : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                           }`}
-                          style={isActive ? { backgroundColor: subj.color, borderColor: subj.color } : {}}
+                          style={isActive ? { backgroundColor: subj.color, borderColor: subj.color, borderBottomColor: "rgba(0,0,0,0.3)" } : {}}
                         >
-                          {subj.title}
+                          <AppleEmoji emoji={subj.icon} size={15} color={isActive ? "white" : subj.color} />
+                          <span>{subj.title}</span>
                         </button>
                       );
                     })}
@@ -394,103 +420,244 @@ export default function UserProfileModal({ userEntry, isOpen, onClose }: UserPro
                     kiyasTotalSen = senStats.count;
                     kiyasTotalRakip = rakipBransStatsObj.count;
                   }
+
+                  const avgDiff = kiyasAvgSen - kiyasAvgRakip;
+                  const maxDiff = kiyasMaxSen - kiyasMaxRakip;
                   
                   return (
-                    <div className="grid md:grid-cols-2 gap-6 items-start">
+                    <div className="grid lg:grid-cols-12 gap-6 items-start">
                       
-                      {/* Left Column: 3D Comparison Bars */}
-                      <div className="space-y-4">
+                      {/* ━━━ SOL KOLON: 3D DÜELLO ÖZET KARTLARI (5 Kolon) ━━━ */}
+                      <div className="lg:col-span-5 space-y-4">
                         
-                        {/* Ortalamalar Card */}
-                        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs">
-                          <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-400 mb-3">
-                             <span className={kiyasAvgSen >= kiyasAvgRakip ? "text-[#1cb0f6]" : ""}>
-                               Sen ({kiyasAvgSen.toFixed(1)}) {kiyasAvgSen >= kiyasAvgRakip && kiyasAvgSen > 0 && <AppleEmoji emoji="👑" size={14} />}
-                             </span>
-                             <span className="text-slate-600 dark:text-slate-300">{typeLabel} Net Ortalaması</span>
-                             <span className={kiyasAvgRakip > kiyasAvgSen ? "text-[#ff2d55]" : ""}>
-                               {kiyasAvgRakip > kiyasAvgSen && <AppleEmoji emoji="👑" size={14} />} Rakip ({kiyasAvgRakip.toFixed(1)})
-                             </span>
+                        {/* 1. Ortalama Net Karşılaştırma Kartı */}
+                        <div className="bg-slate-50 dark:bg-slate-800/80 p-5 rounded-3xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs space-y-3.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                              {typeLabel} Net Ortalaması
+                            </span>
+                            {avgDiff > 0 ? (
+                              <span className="text-[11px] font-black text-[#58cc02] bg-[#e5f9e7] dark:bg-[#58cc02]/15 px-2.5 py-0.5 rounded-lg border border-[#58cc02]/30 flex items-center gap-1">
+                                <AppleEmoji emoji="👑" size={12} /> +{avgDiff.toFixed(1)} Öndesin
+                              </span>
+                            ) : avgDiff < 0 ? (
+                              <span className="text-[11px] font-black text-[#F43F5E] bg-[#fff0f3] dark:bg-[#F43F5E]/15 px-2.5 py-0.5 rounded-lg border border-[#F43F5E]/30 flex items-center gap-1">
+                                {avgDiff.toFixed(1)} Geridesin
+                              </span>
+                            ) : (
+                              <span className="text-[11px] font-black text-slate-400 bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 rounded-lg">
+                                Eşit Skor
+                              </span>
+                            )}
                           </div>
-                          <div className="flex h-3.5 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-0.5 shadow-inner">
-                             <div className="h-full transition-all rounded-full" style={{ backgroundColor: "#1cb0f6", width: `${(kiyasAvgSen / (kiyasAvgSen + kiyasAvgRakip || 1)) * 100}%` }} />
-                             <div className="h-full transition-all rounded-full" style={{ backgroundColor: "#ff2d55", width: `${(kiyasAvgRakip / (kiyasAvgSen + kiyasAvgRakip || 1)) * 100}%` }} />
+
+                          {/* Yan Yana Skor Sayıları */}
+                          <div className="flex items-center justify-between">
+                            <div className="text-left">
+                              <span className="text-[10px] font-black uppercase text-[#1cb0f6] tracking-wider block">SEN</span>
+                              <span className="text-3xl font-black font-mono text-[#1cb0f6]">
+                                {kiyasAvgSen.toFixed(1)}
+                              </span>
+                            </div>
+                            <div className="text-center">
+                              <span className="text-xs font-black text-slate-400 uppercase">VS</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[10px] font-black uppercase text-[#F43F5E] tracking-wider block">RAKİP</span>
+                              <span className="text-3xl font-black font-mono text-[#F43F5E]">
+                                {kiyasAvgRakip.toFixed(1)}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* 3D Segmented Dynamic Track */}
+                          <div className="h-4 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 p-0.5 shadow-inner flex gap-1">
+                            <motion.div 
+                              className="h-full rounded-full bg-gradient-to-r from-[#1cb0f6] to-[#0099e6] shadow-xs"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(kiyasAvgSen / (kiyasAvgSen + kiyasAvgRakip || 1)) * 100}%` }}
+                              transition={{ duration: 0.5, ease: "easeOut" }}
+                            />
+                            <motion.div 
+                              className="h-full rounded-full bg-gradient-to-r from-[#F43F5E] to-[#e11d48] shadow-xs"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(kiyasAvgRakip / (kiyasAvgSen + kiyasAvgRakip || 1)) * 100}%` }}
+                              transition={{ duration: 0.5, ease: "easeOut" }}
+                            />
                           </div>
                         </div>
 
-                        {/* En Yüksek Net Card */}
-                        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs">
-                          <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-400 mb-3">
-                             <span className={kiyasMaxSen >= kiyasMaxRakip ? "text-[#1cb0f6]" : ""}>
-                               Sen ({kiyasMaxSen.toFixed(1)}) {kiyasMaxSen >= kiyasMaxRakip && kiyasMaxSen > 0 && <AppleEmoji emoji="👑" size={14} />}
-                             </span>
-                             <span className="text-slate-600 dark:text-slate-300">En Yüksek {typeLabel} Net</span>
-                             <span className={kiyasMaxRakip > kiyasMaxSen ? "text-[#ff2d55]" : ""}>
-                               {kiyasMaxRakip > kiyasMaxSen && <AppleEmoji emoji="👑" size={14} />} Rakip ({kiyasMaxRakip.toFixed(1)})
-                             </span>
+                        {/* 2. En Yüksek Net Kartı */}
+                        <div className="bg-slate-50 dark:bg-slate-800/80 p-5 rounded-3xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs space-y-3.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                              En Yüksek {typeLabel} Net
+                            </span>
+                            {maxDiff > 0 ? (
+                              <span className="text-[11px] font-black text-[#58cc02] bg-[#e5f9e7] dark:bg-[#58cc02]/15 px-2.5 py-0.5 rounded-lg border border-[#58cc02]/30 flex items-center gap-1">
+                                <AppleEmoji emoji="👑" size={12} /> +{maxDiff.toFixed(1)} Rekor
+                              </span>
+                            ) : maxDiff < 0 ? (
+                              <span className="text-[11px] font-black text-[#F43F5E] bg-[#fff0f3] dark:bg-[#F43F5E]/15 px-2.5 py-0.5 rounded-lg border border-[#F43F5E]/30">
+                                {maxDiff.toFixed(1)} Fark
+                              </span>
+                            ) : (
+                              <span className="text-[11px] font-black text-slate-400 bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 rounded-lg">
+                                Eşit Rekor
+                              </span>
+                            )}
                           </div>
-                          <div className="flex h-3.5 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-0.5 shadow-inner">
-                             <div className="h-full transition-all rounded-full" style={{ backgroundColor: "#1cb0f6", width: `${(kiyasMaxSen / (kiyasMaxSen + kiyasMaxRakip || 1)) * 100}%` }} />
-                             <div className="h-full transition-all rounded-full" style={{ backgroundColor: "#ff2d55", width: `${(kiyasMaxRakip / (kiyasMaxSen + kiyasMaxRakip || 1)) * 100}%` }} />
+
+                          <div className="flex items-center justify-between">
+                            <div className="text-left">
+                              <span className="text-[10px] font-black uppercase text-[#1cb0f6] tracking-wider block">SEN</span>
+                              <span className="text-3xl font-black font-mono text-[#1cb0f6]">
+                                {kiyasMaxSen.toFixed(1)}
+                              </span>
+                            </div>
+                            <div className="text-center">
+                              <span className="text-xs font-black text-slate-400 uppercase">VS</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[10px] font-black uppercase text-[#F43F5E] tracking-wider block">RAKİP</span>
+                              <span className="text-3xl font-black font-mono text-[#F43F5E]">
+                                {kiyasMaxRakip.toFixed(1)}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="h-4 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 p-0.5 shadow-inner flex gap-1">
+                            <motion.div 
+                              className="h-full rounded-full bg-gradient-to-r from-[#1cb0f6] to-[#0099e6] shadow-xs"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(kiyasMaxSen / (kiyasMaxSen + kiyasMaxRakip || 1)) * 100}%` }}
+                              transition={{ duration: 0.5, ease: "easeOut" }}
+                            />
+                            <motion.div 
+                              className="h-full rounded-full bg-gradient-to-r from-[#F43F5E] to-[#e11d48] shadow-xs"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(kiyasMaxRakip / (kiyasMaxSen + kiyasMaxRakip || 1)) * 100}%` }}
+                              transition={{ duration: 0.5, ease: "easeOut" }}
+                            />
                           </div>
                         </div>
 
-                        {/* Çözülen Denemeler Cards */}
+                        {/* 3. Çözülen Deneme Sayısı (3D Push-Card) */}
                         <div className="flex items-center justify-between gap-3">
-                           <div className="flex-1 bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 p-5 rounded-2xl border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-center shadow-2xs">
-                              <p className="text-xs font-black uppercase tracking-widest text-[#1cb0f6] mb-1">Sen</p>
+                           <div className="flex-1 bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-center shadow-xs">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-[#1cb0f6] mb-1">Sen</p>
                               <p className="text-3xl font-black text-[#1cb0f6] font-mono leading-none mb-1">{kiyasTotalSen}</p>
-                              <p className="text-[10px] font-extrabold text-[#1cb0f6]/80 uppercase tracking-wider leading-tight">
-                                Tane {kiyasType === "brans" ? DENEME_SUBJECTS.find(s=>s.id===kiyasBransSubject)?.title + " Branş Denemesi" : "Genel Deneme"} Çözüldü
+                              <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                                Deneme Çözüldü
                               </p>
                            </div>
                            
-                           <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-b-2 border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-2xs">
-                             <AppleEmoji emoji="⚔️" size={20} />
+                           <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-b-2 border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-2xs">
+                             <AppleEmoji emoji="⚔️" size={18} />
                            </div>
                            
-                           <div className="flex-1 bg-[#fff0f3] dark:bg-[#ff2d55]/10 p-5 rounded-2xl border-2 border-b-4 border-[#ff2d55] border-b-[#e02649] text-center shadow-2xs">
-                              <p className="text-xs font-black uppercase tracking-widest text-[#ff2d55] mb-1">Rakip</p>
-                              <p className="text-3xl font-black text-[#ff2d55] font-mono leading-none mb-1">{kiyasTotalRakip}</p>
-                              <p className="text-[10px] font-extrabold text-[#ff2d55]/80 uppercase tracking-wider leading-tight">
-                                Tane {kiyasType === "brans" ? DENEME_SUBJECTS.find(s=>s.id===kiyasBransSubject)?.title + " Branş Denemesi" : "Genel Deneme"} Çözüldü
+                           <div className="flex-1 bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border-2 border-b-4 border-[#F43F5E] border-b-[#e11d48] text-center shadow-xs">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-[#F43F5E] mb-1">Rakip</p>
+                              <p className="text-3xl font-black text-[#F43F5E] font-mono leading-none mb-1">{kiyasTotalRakip}</p>
+                              <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                                Deneme Çözüldü
                               </p>
                            </div>
                         </div>
                       </div>
 
-                      {/* Right Column: 3D Bar Chart Container */}
-                      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs flex flex-col h-[380px]">
-                        <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4 text-center">
-                          {typeLabel} - Ders Bazlı Net Ortalamaları
-                        </p>
-                        <div className="flex-1">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                              data={[
-                                { subject: 'Türkçe', sen: senSbjAvg?.['turkce'] || 0, rakip: rakipSbjAvg['turkce'] || 0 },
-                                { subject: 'Matematik', sen: senSbjAvg?.['matematik'] || 0, rakip: rakipSbjAvg['matematik'] || 0 },
-                                { subject: 'Tarih', sen: senSbjAvg?.['tarih'] || 0, rakip: rakipSbjAvg['tarih'] || 0 },
-                                { subject: 'Coğrafya', sen: senSbjAvg?.['cografya'] || 0, rakip: rakipSbjAvg['cografya'] || 0 },
-                                { subject: 'Vatandaşlık', sen: senSbjAvg?.['vatandaslik'] || 0, rakip: rakipSbjAvg['vatandaslik'] || 0 },
-                                { subject: 'Güncel', sen: senSbjAvg?.['guncel-bilgiler'] || 0, rakip: rakipSbjAvg['guncel-bilgiler'] || 0 },
-                              ]}
-                              layout="vertical"
-                              margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
-                            >
-                              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="rgba(148, 163, 184, 0.2)" />
-                              <XAxis type="number" hide />
-                              <YAxis dataKey="subject" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 900, fill: '#64748b' }} width={80} />
-                              <Tooltip 
-                                cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }}
-                                contentStyle={{ borderRadius: '1rem', border: '2px solid rgba(148, 163, 184, 0.3)', fontWeight: 900, fontSize: '12px', background: 'var(--color-surface, #ffffff)' }}
-                                formatter={(value: any) => Number(value).toFixed(1) + " Net"}
-                              />
-                              <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', fontWeight: 900 }} />
-                              <Bar dataKey="sen" name="Sen" fill="#1cb0f6" radius={[0, 6, 6, 0]} barSize={12} />
-                              <Bar dataKey="rakip" name="Rakip" fill="#ff2d55" radius={[0, 6, 6, 0]} barSize={12} />
-                            </BarChart>
-                          </ResponsiveContainer>
+                      {/* ━━━ SAĞ KOLON: DERS BAZLI 3D DÜELLO DAĞILIMI (7 Kolon) ━━━ */}
+                      <div className="lg:col-span-7 bg-slate-50 dark:bg-slate-800/80 p-5 sm:p-6 rounded-3xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs space-y-4">
+                        <div className="flex items-center justify-between pb-2 border-b-2 border-slate-200/60 dark:border-slate-700/60">
+                          <div className="flex items-center gap-2">
+                            <AppleEmoji emoji="📊" size={16} />
+                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-200">
+                              Ders Bazlı Net Dağılımı
+                            </h4>
+                          </div>
+                          
+                          {/* Legend */}
+                          <div className="flex items-center gap-3 text-[11px] font-black uppercase">
+                            <span className="flex items-center gap-1.5 text-[#1cb0f6]">
+                              <span className="w-2.5 h-2.5 rounded-full bg-[#1cb0f6]" /> Sen
+                            </span>
+                            <span className="flex items-center gap-1.5 text-[#F43F5E]">
+                              <span className="w-2.5 h-2.5 rounded-full bg-[#F43F5E]" /> Rakip
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Subject Rows */}
+                        <div className="space-y-3.5">
+                          {DENEME_SUBJECTS.map((subj) => {
+                            const senNet = senSbjAvg?.[subj.id] ?? 0;
+                            const rakipNet = rakipSbjAvg?.[subj.id] ?? 0;
+                            const totalMax = subj.questionCount;
+                            const senPct = Math.min(100, Math.max(0, (senNet / totalMax) * 100));
+                            const rakipPct = Math.min(100, Math.max(0, (rakipNet / totalMax) * 100));
+                            const isSenWinner = senNet > rakipNet;
+                            const isRakipWinner = rakipNet > senNet;
+
+                            return (
+                              <div 
+                                key={subj.id}
+                                className="bg-white dark:bg-slate-900/80 p-3.5 rounded-2xl border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs space-y-2 group hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+                              >
+                                {/* Row Header */}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <div 
+                                      className="w-7 h-7 rounded-xl flex items-center justify-center border-2 border-b-2 shadow-2xs"
+                                      style={{ backgroundColor: `${subj.color}15`, borderColor: `${subj.color}40` }}
+                                    >
+                                      <AppleEmoji emoji={subj.icon} size={14} />
+                                    </div>
+                                    <span className="text-xs font-black text-slate-800 dark:text-white">
+                                      {subj.title}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-slate-400">
+                                      ({subj.questionCount} Soru)
+                                    </span>
+                                  </div>
+
+                                  {/* Net Score Values */}
+                                  <div className="flex items-center gap-3 text-xs font-mono font-black">
+                                    <span className={`flex items-center gap-1 ${isSenWinner ? "text-[#1cb0f6]" : "text-slate-400"}`}>
+                                      {isSenWinner && <AppleEmoji emoji="👑" size={11} />}
+                                      {senNet.toFixed(1)}
+                                    </span>
+                                    <span className="text-slate-300 dark:text-slate-600">/</span>
+                                    <span className={`flex items-center gap-1 ${isRakipWinner ? "text-[#F43F5E]" : "text-slate-400"}`}>
+                                      {rakipNet.toFixed(1)}
+                                      {isRakipWinner && <AppleEmoji emoji="👑" size={11} />}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Dual Bars */}
+                                <div className="space-y-1">
+                                  {/* Sen Bar */}
+                                  <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
+                                    <motion.div 
+                                      className="h-full bg-gradient-to-r from-[#1cb0f6] to-[#0099e6] rounded-full shadow-2xs"
+                                      initial={{ width: 0 }}
+                                      animate={{ width: `${senPct}%` }}
+                                      transition={{ duration: 0.5, ease: "easeOut" }}
+                                    />
+                                  </div>
+                                  {/* Rakip Bar */}
+                                  <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
+                                    <motion.div 
+                                      className="h-full bg-gradient-to-r from-[#F43F5E] to-[#e11d48] rounded-full shadow-2xs"
+                                      initial={{ width: 0 }}
+                                      animate={{ width: `${rakipPct}%` }}
+                                      transition={{ duration: 0.5, ease: "easeOut" }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>

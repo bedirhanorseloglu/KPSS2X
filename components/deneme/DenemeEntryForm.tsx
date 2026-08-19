@@ -75,7 +75,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const [hoveredSubjectId, setHoveredSubjectId] = useState<string | null>(null);
   const [name, setName] = useState(initial?.name ?? "");
   const [date, setDate] = useState(initial?.date ?? format(getStudyDate(), "yyyy-MM-dd"));
-  
+
   const initialPub = initial?.publisher?.trim() ?? "";
   const isKnownPub = PUBLISHER_OPTIONS.includes(initialPub);
   const [isPubDropdownOpen, setIsPubDropdownOpen] = useState(false);
@@ -126,7 +126,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !result.isValid || (examType === "brans" && !bransSubjectId) || isSubmitting) return;
-    
+
     setIsSubmitting(true);
     try {
       await onSubmit({
@@ -139,7 +139,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
         examType,
         bransSubjectId: examType === "brans" ? bransSubjectId : undefined,
       });
-      
+
       if (!initial) {
         setName("");
         setSelectedPublisher("");
@@ -161,17 +161,17 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   const totalAnswered = examType === "genel" ? result.totalCorrect + result.totalWrong : (selectedBranchSubject ? selectedBranchSubject.correct + selectedBranchSubject.wrong : 0);
   const maxQuestions = examType === "genel" ? 120 : (selectedBranchSubject?.questionCount ?? 0);
   const answeredPercentage = maxQuestions > 0 ? (totalAnswered / maxQuestions) * 100 : 0;
-  
+
   const displayNet = examType === "genel" ? result.totalNet : (selectedBranchSubject?.net ?? 0);
   const successRate = maxQuestions > 0 ? Math.max(0, Math.round((displayNet / maxQuestions) * 100)) : 0;
   const activeColor = examType === "brans" ? (selectedBranchSubject?.color || "#1cb0f6") : "#1cb0f6";
 
   return (
     <form onSubmit={handleSubmit} className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8 xl:gap-10 items-start">
-      
+
       {/* ━━━ SOL PANEL: FORM YÜZEYİ ━━━ */}
       <div className="space-y-6 min-w-0">
-        
+
         {/* Site Style Segmented Header */}
         <div className="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-[1.5rem] border-2 border-b-4 border-slate-200 dark:border-slate-700 mb-8 overflow-hidden">
           {([
@@ -183,7 +183,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
               key={tab.id}
               type="button"
               disabled={tab.id > 1 && (!name.trim() || !publisher.trim() || (examType === "brans" && !bransSubjectId))}
-              onClick={() => setStep(tab.id as 1|2|3)}
+              onClick={() => setStep(tab.id as 1 | 2 | 3)}
               className="relative flex-1 py-3 px-4 text-center disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none"
             >
               {step === tab.id && (
@@ -232,37 +232,33 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         setStep(1);
                         window.history.replaceState(null, '', "?mode=genel");
                       }}
-                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left outline-none cursor-pointer active:translate-y-0.5 ${
-                        examType === "genel"
-                          ? "border-[#1cb0f6] border-b-[#1899d6] bg-sky-50/60 dark:bg-sky-950/30"
-                          : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
-                      }`}
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left outline-none cursor-pointer active:translate-y-0.5 ${examType === "genel"
+                        ? "border-[#1cb0f6] border-b-[#1899d6] bg-sky-50/60 dark:bg-sky-950/30"
+                        : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
+                        }`}
                     >
                       {/* Seçili işareti */}
-                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                        examType === "genel" ? "border-[#1cb0f6] bg-[#1cb0f6]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
-                      }`}>
+                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${examType === "genel" ? "border-[#1cb0f6] bg-[#1cb0f6]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
+                        }`}>
                         {examType === "genel" && (
                           <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="12" height="12" viewBox="0 0 10 10" fill="none">
-                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                           </motion.svg>
                         )}
                       </div>
 
                       {/* Apple 3D Emoji Icon */}
-                      <div className={`w-13 h-13 rounded-2xl flex items-center justify-center transition-all border-2 border-b-4 ${
-                        examType === "genel" 
-                          ? "bg-sky-100/80 dark:bg-sky-900/40 border-sky-200 dark:border-sky-800" 
-                          : "bg-slate-100/80 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600"
-                      }`}>
+                      <div className={`w-13 h-13 rounded-2xl flex items-center justify-center transition-all border-2 border-b-4 ${examType === "genel"
+                        ? "bg-sky-100/80 dark:bg-sky-900/40 border-sky-200 dark:border-sky-800"
+                        : "bg-slate-100/80 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600"
+                        }`}>
                         <AppleEmoji emoji="🌍" size={30} color="#1cb0f6" />
                       </div>
 
                       {/* Başlık + Açıklama */}
                       <div>
-                        <p className={`text-base font-black tracking-tight transition-colors ${
-                          examType === "genel" ? "text-[#1cb0f6]" : "text-slate-800 dark:text-white"
-                        }`}>
+                        <p className={`text-base font-black tracking-tight transition-colors ${examType === "genel" ? "text-[#1cb0f6]" : "text-slate-800 dark:text-white"
+                          }`}>
                           Genel Deneme
                         </p>
                         <p className="text-xs font-bold text-slate-400 mt-0.5 leading-snug">
@@ -271,11 +267,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       </div>
 
                       {/* Alt etiket */}
-                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl transition-all border ${
-                        examType === "genel"
-                          ? "bg-sky-100 text-[#1cb0f6] dark:bg-sky-950/60 dark:text-sky-300 border-sky-200 dark:border-sky-800"
-                          : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-600"
-                      }`}>
+                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl transition-all border ${examType === "genel"
+                        ? "bg-sky-100 text-[#1cb0f6] dark:bg-sky-950/60 dark:text-sky-300 border-sky-200 dark:border-sky-800"
+                        : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-600"
+                        }`}>
                         Türkiye Geneli
                       </div>
                     </button>
@@ -283,42 +278,38 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                     {/* Branş Denemesi Kartı */}
                     <button
                       type="button"
-                      onClick={() => { 
-                        setExamType("brans"); 
-                        setStep(1); 
+                      onClick={() => {
+                        setExamType("brans");
+                        setStep(1);
                         window.history.replaceState(null, '', `?mode=brans${bransSubjectId ? `&subject=${bransSubjectId}` : ""}`);
                       }}
-                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left outline-none cursor-pointer active:translate-y-0.5 ${
-                        examType === "brans"
-                          ? "border-[#af52de] border-b-[#8e24aa] bg-purple-50/60 dark:bg-purple-950/30"
-                          : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#af52de] dark:hover:border-[#af52de]"
-                      }`}
+                      className={`relative group flex flex-col items-start gap-3.5 p-5 rounded-2xl border-2 border-b-4 transition-all duration-200 text-left outline-none cursor-pointer active:translate-y-0.5 ${examType === "brans"
+                        ? "border-[#af52de] border-b-[#8e24aa] bg-purple-50/60 dark:bg-purple-950/30"
+                        : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#af52de] dark:hover:border-[#af52de]"
+                        }`}
                     >
                       {/* Seçili işareti */}
-                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                        examType === "brans" ? "border-[#af52de] bg-[#af52de]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
-                      }`}>
+                      <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${examType === "brans" ? "border-[#af52de] bg-[#af52de]" : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800"
+                        }`}>
                         {examType === "brans" && (
                           <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="12" height="12" viewBox="0 0 10 10" fill="none">
-                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                           </motion.svg>
                         )}
                       </div>
 
                       {/* Apple 3D Emoji Icon */}
-                      <div className={`w-13 h-13 rounded-2xl flex items-center justify-center transition-all border-2 border-b-4 ${
-                        examType === "brans" 
-                          ? "bg-purple-100/80 dark:bg-purple-900/40 border-purple-200 dark:border-purple-800" 
-                          : "bg-slate-100/80 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600"
-                      }`}>
+                      <div className={`w-13 h-13 rounded-2xl flex items-center justify-center transition-all border-2 border-b-4 ${examType === "brans"
+                        ? "bg-purple-100/80 dark:bg-purple-900/40 border-purple-200 dark:border-purple-800"
+                        : "bg-slate-100/80 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600"
+                        }`}>
                         <AppleEmoji emoji="🎯" size={30} color="#af52de" />
                       </div>
 
                       {/* Başlık + Açıklama */}
                       <div>
-                        <p className={`text-base font-black tracking-tight transition-colors ${
-                          examType === "brans" ? "text-[#af52de]" : "text-slate-800 dark:text-white"
-                        }`}>
+                        <p className={`text-base font-black tracking-tight transition-colors ${examType === "brans" ? "text-[#af52de]" : "text-slate-800 dark:text-white"
+                          }`}>
                           Branş Denemesi
                         </p>
                         <p className="text-xs font-bold text-slate-400 mt-0.5 leading-snug">
@@ -327,11 +318,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       </div>
 
                       {/* Alt etiket */}
-                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl transition-all border ${
-                        examType === "brans"
-                          ? "bg-purple-100 text-[#af52de] dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800"
-                          : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-600"
-                      }`}>
+                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl transition-all border ${examType === "brans"
+                        ? "bg-purple-100 text-[#af52de] dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                        : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-600"
+                        }`}>
                         Ders Bazlı
                       </div>
                     </button>
@@ -346,11 +336,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                         <button
                           type="button"
                           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                          className={`w-full flex items-center justify-between bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 rounded-2xl px-5 py-3.5 text-sm font-black transition-all shadow-xs text-left cursor-pointer active:translate-y-0.5 ${
-                            isDropdownOpen
-                              ? "border-[#1cb0f6] border-b-[#1899d6] bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
-                              : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 dark:bg-slate-800/80 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
-                          }`}
+                          className={`w-full flex items-center justify-between bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 rounded-2xl px-5 py-3.5 text-sm font-black transition-all shadow-xs text-left cursor-pointer active:translate-y-0.5 ${isDropdownOpen
+                            ? "border-[#1cb0f6] border-b-[#1899d6] bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
+                            : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 dark:bg-slate-800/80 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
+                            }`}
                         >
                           <span className={`font-black flex items-center gap-2.5 ${bransSubjectId ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}`}>
                             {bransSubjectId ? (
@@ -369,12 +358,12 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                           </span>
                           <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-[#1cb0f6]' : ''}`} />
                         </button>
-                        
+
                         <AnimatePresence>
                           {isDropdownOpen && (
                             <>
-                              <div 
-                                className="fixed inset-0 z-40" 
+                              <div
+                                className="fixed inset-0 z-40"
                                 onClick={() => setIsDropdownOpen(false)}
                               />
                               <motion.div
@@ -389,7 +378,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                                   const isSelected = bransSubjectId === s.id;
                                   const isHovered = hoveredSubjectId === s.id;
                                   const bransCount = getSubjectQuestionCount(s.id, "brans");
-                                  
+
                                   return (
                                     <button
                                       key={s.id}
@@ -451,11 +440,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       <button
                         type="button"
                         onClick={() => setIsPubDropdownOpen(!isPubDropdownOpen)}
-                        className={`w-full flex items-center justify-between bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 rounded-2xl px-5 py-3.5 text-sm font-black transition-all shadow-xs text-left cursor-pointer active:translate-y-0.5 ${
-                          isPubDropdownOpen
-                            ? "border-[#1cb0f6] border-b-[#1899d6] bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
-                            : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 dark:bg-slate-800/80 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
-                        }`}
+                        className={`w-full flex items-center justify-between bg-slate-100/70 dark:bg-white/5 border-2 border-b-4 rounded-2xl px-5 py-3.5 text-sm font-black transition-all shadow-xs text-left cursor-pointer active:translate-y-0.5 ${isPubDropdownOpen
+                          ? "border-[#1cb0f6] border-b-[#1899d6] bg-white dark:bg-slate-800 text-slate-800 dark:text-white"
+                          : "border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 dark:bg-slate-800/80 text-slate-800 dark:text-white hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]"
+                          }`}
                       >
                         <span className={`font-black ${selectedPublisher ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500"}`}>
                           {selectedPublisher || "Yayınevi seçin..."}
@@ -466,8 +454,8 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                       <AnimatePresence>
                         {isPubDropdownOpen && (
                           <>
-                            <div 
-                              className="fixed inset-0 z-40" 
+                            <div
+                              className="fixed inset-0 z-40"
                               onClick={() => setIsPubDropdownOpen(false)}
                             />
                             <motion.div
@@ -492,13 +480,12 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                                       }
                                       setIsPubDropdownOpen(false);
                                     }}
-                                    className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                                      isSelected
-                                        ? "bg-[#1cb0f6] text-white font-black shadow-xs"
-                                        : isOtherOption
+                                    className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${isSelected
+                                      ? "bg-[#1cb0f6] text-white font-black shadow-xs"
+                                      : isOtherOption
                                         ? "bg-slate-100 dark:bg-slate-700/60 text-[#1cb0f6] hover:bg-[#1cb0f6] hover:text-white border-t border-slate-200 dark:border-slate-700 mt-1 font-black"
                                         : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/70 hover:text-[#1cb0f6]"
-                                    }`}
+                                      }`}
                                   >
                                     <span className="flex items-center gap-2">
                                       {isOtherOption ? <Tag className="w-3.5 h-3.5" /> : null}
@@ -555,7 +542,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                   </h3>
                   <p className="text-sm font-bold text-slate-400 mt-1">Doğru, yanlış ve boş sayılarınızı girin.</p>
                 </div>
-                
+
                 <div className="space-y-5">
                   {(examType === "genel" ? step2Subjects : result.subjects.filter((s) => s.subjectId === bransSubjectId)).map((subject, i) => (
                     <SubjectScoreRow
@@ -589,7 +576,7 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                   </h3>
                   <p className="text-sm font-bold text-slate-400 mt-1">Genel kültür testinin doğru ve yanlışlarını girin.</p>
                 </div>
-                
+
                 <div className="space-y-5">
                   {step3Subjects.map((subject, i) => (
                     <SubjectScoreRow
@@ -636,11 +623,10 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 type="submit"
                 disabled={!name.trim() || !publisher.trim() || !result.isValid || isSubmitting}
                 whileTap={{ scale: 0.95 }}
-                className={`flex items-center gap-2.5 px-8 py-3.5 rounded-2xl text-[15px] font-black text-white transition-all cursor-pointer shadow-lg ${
-                  isSubmitting
-                    ? "bg-[#46a302] border-2 border-b-2 border-[#378202] translate-y-0.5 opacity-90 cursor-wait shadow-none"
-                    : "bg-[#58cc02] hover:bg-[#4eb802] active:bg-[#46a302] border-2 border-b-4 border-[#46a302] active:border-b-2 active:translate-y-0.5 shadow-[#58cc02]/30 hover:scale-[1.02]"
-                } disabled:opacity-50 disabled:cursor-not-allowed disabled:border-b-2 disabled:translate-y-0.5 disabled:hover:scale-100`}
+                className={`flex items-center gap-2.5 px-8 py-3.5 rounded-2xl text-[15px] font-black text-white transition-all cursor-pointer shadow-lg ${isSubmitting
+                  ? "bg-[#46a302] border-2 border-b-2 border-[#378202] translate-y-0.5 opacity-90 cursor-wait shadow-none"
+                  : "bg-[#58cc02] hover:bg-[#4eb802] active:bg-[#46a302] border-2 border-b-4 border-[#46a302] active:border-b-2 active:translate-y-0.5 shadow-[#58cc02]/30 hover:scale-[1.02]"
+                  } disabled:opacity-50 disabled:cursor-not-allowed disabled:border-b-2 disabled:translate-y-0.5 disabled:hover:scale-100`}
               >
                 {isSubmitting ? (
                   <>
@@ -662,45 +648,74 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
       {/* ━━━ SAĞ PANEL: CANLI SKOR WIDGETLARI ━━━ */}
       <aside className="lg:sticky lg:top-28 h-fit space-y-6">
         <div className="bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 sm:p-7 shadow-md relative overflow-hidden space-y-6">
-          
+
+          {/* Ambient Top Glow */}
+          <div
+            className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl pointer-events-none opacity-20"
+            style={{ backgroundColor: activeColor }}
+          />
+
           {/* Header Bar */}
-          <div className="flex items-center justify-between pb-4 border-b-2 border-slate-100 dark:border-slate-700/60">
+          <div className="flex items-center justify-between pb-4 border-b-2 border-slate-100 dark:border-slate-700/60 relative z-10">
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: activeColor }} />
                 <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: activeColor }} />
               </span>
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Canlı Skor Paneli</h4>
+              <div className="flex items-center gap-2">
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">Canlı Skor Paneli</h4>
+                <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-[#58cc02] border border-[#58cc02]/30">CANLI</span>
+              </div>
             </div>
-            <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700/60 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-2xs">
+            <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700/60 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-2xs hover:scale-105 transition-transform">
               <AppleEmoji emoji="📊" size={16} />
             </div>
           </div>
 
           {/* ━━━ CANLI SKOR GÖSTERGE KARTI (3D HERO PEDESTAL) ━━━ */}
-          <div className="bg-slate-50 dark:bg-slate-900/50 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-3xl p-6 text-center relative overflow-hidden shadow-2xs">
+          <div className="bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 rounded-3xl p-6 text-center relative overflow-hidden shadow-2xs group">
+            {/* Ambient glow */}
+            <div
+              className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-20 transition-all duration-500"
+              style={{ backgroundColor: activeColor }}
+            />
+
             {/* Top 3D Subject Pill */}
-            <div 
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-white text-xs font-black uppercase tracking-wider mb-3 shadow-xs border-b-2"
+            <div
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-white text-xs font-black uppercase tracking-wider mb-3 shadow-xs border-b-2 transition-transform group-hover:scale-102"
               style={{
                 backgroundColor: activeColor,
-                borderBottomColor: "rgba(0, 0, 0, 0.3)"
+                borderBottomColor: "rgba(0, 0, 0, 0.25)"
               }}
             >
-              <AppleEmoji emoji={examType === "genel" ? "🎯" : (selectedBranchSubject?.icon || "📘")} size={16} color="white" className="text-white" />
+              <AppleEmoji emoji={examType === "genel" ? "🎯" : (selectedBranchSubject?.icon || "📘")} size={15} color="white" className="text-white" />
               <span>{examType === "genel" ? "Toplam Canlı Net" : `${selectedBranchSubject?.title || "Ders"} Neti`}</span>
             </div>
 
-            <div className="flex items-baseline justify-center gap-2 my-1">
-              <span className="text-6xl sm:text-7xl font-black font-mono tracking-tight text-slate-800 dark:text-white leading-none">
+            {/* Net Count with smooth animation & mono styling */}
+            <div className="flex items-baseline justify-center gap-2.5 my-1.5">
+              <motion.span
+                key={displayNet}
+                initial={{ scale: 0.92, opacity: 0.8 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                className="text-6xl sm:text-7xl font-black font-mono tracking-tight text-slate-800 dark:text-white leading-none drop-shadow-xs"
+              >
                 {displayNet.toFixed(2).replace(/\.?0+$/, "")}
-              </span>
-              <span className="text-lg font-black uppercase tracking-wider" style={{ color: activeColor }}>NET</span>
+              </motion.span>
+              <span className="text-xl font-black uppercase tracking-wider" style={{ color: activeColor }}>NET</span>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 text-[10px] font-black text-slate-400 mt-3 uppercase tracking-widest bg-white dark:bg-slate-800 px-3 py-1 rounded-xl border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs">
-              <AppleEmoji emoji="📝" size={12} />
-              <span>{maxQuestions > 0 ? `${maxQuestions} Soru Üzerinden` : "Soru Girişi Bekleniyor"}</span>
+            {/* Soru Sayısı & İsabet Oranı 3D Chips */}
+            <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border-2 border-b-2 border-slate-200 dark:border-slate-700 shadow-2xs">
+                <AppleEmoji emoji="📝" size={13} />
+                <span>{maxQuestions > 0 ? `${maxQuestions} Soru` : "Giriş Bekleniyor"}</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-black text-[#58cc02] dark:text-[#58cc02] uppercase tracking-wider bg-[#e5f9e7] dark:bg-[#58cc02]/15 px-3 py-1.5 rounded-xl border-2 border-b-2 border-[#58cc02]/30 dark:border-[#58cc02]/40 shadow-2xs">
+                <AppleEmoji emoji="🎯" size={13} color="#58cc02" />
+                <span>%{successRate} İsabet</span>
+              </div>
             </div>
           </div>
 
@@ -709,35 +724,45 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
             {(() => {
               const correctCount = examType === "genel" ? result.totalCorrect : (selectedBranchSubject?.correct ?? 0);
               const wrongCount = examType === "genel" ? result.totalWrong : (selectedBranchSubject?.wrong ?? 0);
+              const emptyCount = maxQuestions - (correctCount + wrongCount);
               const correctPct = maxQuestions === 0 ? 0 : (correctCount / maxQuestions) * 100;
               const wrongPct = maxQuestions === 0 ? 0 : (wrongCount / maxQuestions) * 100;
-              
+
               return (
                 <>
                   <div className="flex justify-between items-center text-[11px] font-black uppercase tracking-wider">
-                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#58cc02] ring-2 ring-[#58cc02]/20"></span>
-                      <span>Cevaplanan</span>
-                      <span className="text-slate-800 dark:text-white font-mono font-black ml-0.5">{totalAnswered}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex items-center gap-1.5 text-[#58cc02]">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#58cc02] ring-2 ring-[#58cc02]/25 shadow-xs" />
+                        <span className="text-slate-600 dark:text-slate-300">Doğru:</span>
+                        <span className="font-mono font-black text-slate-800 dark:text-white">{correctCount}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-[#ff4b4b]">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#ff4b4b] ring-2 ring-[#ff4b4b]/25 shadow-xs" />
+                        <span className="text-slate-600 dark:text-slate-300">Yanlış:</span>
+                        <span className="font-mono font-black text-slate-800 dark:text-white">{wrongCount}</span>
+                      </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                      <span>Kalan</span>
-                      <span className="text-slate-800 dark:text-white font-mono font-black ml-0.5">{maxQuestions - totalAnswered}</span>
-                      <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                      <span>Kalan:</span>
+                      <span className="text-slate-800 dark:text-white font-mono font-black">{Math.max(0, emptyCount)}</span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600" />
                     </div>
                   </div>
-                  <div className="h-4 w-full bg-slate-200 dark:bg-slate-950 rounded-full border-2 border-b-2 border-slate-300 dark:border-slate-700 p-0.5 relative overflow-hidden shadow-inner flex gap-1">
-                    <motion.div 
-                      className="h-full bg-[#58cc02] rounded-full shadow-2xs"
+
+                  {/* 3D Segmented Track */}
+                  <div className="h-4.5 w-full bg-slate-100 dark:bg-slate-950 rounded-full border-2 border-b-2 border-slate-200 dark:border-slate-700/80 p-0.5 relative overflow-hidden shadow-inner flex gap-1 items-center">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-[#58cc02] to-[#4eb802] rounded-full shadow-2xs"
                       initial={{ width: 0 }}
                       animate={{ width: `${correctPct}%` }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      transition={{ type: "spring", stiffness: 260, damping: 24 }}
                     />
-                    <motion.div 
-                      className="h-full bg-[#ff4b4b] rounded-full shadow-2xs"
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-[#ff4b4b] to-[#e03b3b] rounded-full shadow-2xs"
                       initial={{ width: 0 }}
                       animate={{ width: `${wrongPct}%` }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      transition={{ type: "spring", stiffness: 260, damping: 24 }}
                     />
                   </div>
                 </>
@@ -753,15 +778,15 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 <Stat3DCard label="GK Net" value={formatNet(result.gkNet)} emoji="🏛️" variant="purple" />
                 <Stat3DCard label="Doğru" value={String(result.totalCorrect)} emoji="✅" variant="green" />
                 <Stat3DCard label="Yanlış" value={String(result.totalWrong)} emoji="❌" variant="red" />
-                
+
                 {/* 3D P3 Puan Tahmini Kartı */}
-                <div className="col-span-2 rounded-2xl p-4 bg-gradient-to-br from-[#fff8ed] to-white dark:from-slate-900/80 dark:to-slate-900/50 border-2 border-b-4 border-[#ff9500]/40 dark:border-[#ff9500]/30 flex items-center justify-between shadow-2xs hover:border-[#ff9500] dark:hover:border-[#ff9500] transition-all group">
+                <div className="col-span-2 rounded-2xl p-4 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-white dark:from-amber-500/15 dark:via-slate-900/80 dark:to-slate-900/60 border-2 border-b-4 border-[#ff9500]/40 dark:border-[#ff9500]/30 flex items-center justify-between shadow-2xs hover:border-[#ff9500] dark:hover:border-[#ff9500] transition-all group">
                   <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff9500] to-[#e08400] text-white border-2 border-b-4 border-[#ff9500] border-b-[#c77200] flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-b from-[#ff9500] to-[#e08400] text-white border-2 border-b-4 border-[#e08400] border-b-[#b86900] flex items-center justify-center shadow-md shrink-0 group-hover:scale-105 transition-transform">
                       <AppleEmoji emoji="🏆" size={22} color="white" className="text-white" />
                     </div>
-                    <div>
-                      <span className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-white block">
+                    <div className="text-left">
+                      <span className="text-[11px] font-black uppercase tracking-widest text-slate-800 dark:text-white block">
                         P3 Puan Tahmini
                       </span>
                     </div>
@@ -778,11 +803,11 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
                 <Stat3DCard label="Doğru" value={String(selectedBranchSubject?.correct ?? 0)} emoji="✅" variant="green" />
                 <Stat3DCard label="Yanlış" value={String(selectedBranchSubject?.wrong ?? 0)} emoji="❌" variant="red" />
                 <Stat3DCard label="Boş" value={String(selectedBranchSubject?.empty ?? 0)} emoji="⚪" variant="slate" />
-                <Stat3DCard 
-                  label="İsabet" 
-                  value={maxQuestions > 0 ? `%${Math.max(0, Math.round(((displayNet) / maxQuestions) * 100))}` : "%0"} 
-                  emoji="🎯" 
-                  variant="orange" 
+                <Stat3DCard
+                  label="İsabet"
+                  value={maxQuestions > 0 ? `%${Math.max(0, Math.round(((displayNet) / maxQuestions) * 100))}` : "%0"}
+                  emoji="🎯"
+                  variant="orange"
                 />
               </>
             )}
@@ -799,16 +824,16 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
   );
 }
 
-function Stat3DCard({ 
-  label, 
-  value, 
-  emoji, 
+function Stat3DCard({
+  label,
+  value,
+  emoji,
   variant = "slate",
-}: { 
-  label: string; 
-  value: string; 
-  emoji: string; 
-  variant?: "green" | "red" | "blue" | "purple" | "orange" | "slate"; 
+}: {
+  label: string;
+  value: string;
+  emoji: string;
+  variant?: "green" | "red" | "blue" | "purple" | "orange" | "slate";
 }) {
   const config = {
     green: {
@@ -850,16 +875,16 @@ function Stat3DCard({
   }[variant];
 
   return (
-    <div className={`bg-white dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between items-center text-center gap-2.5 shadow-2xs ${config.borderColor} transition-all duration-200 group`}>
+    <div className={`bg-white dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between items-center text-center gap-2 shadow-2xs ${config.borderColor} transition-all duration-200 group hover:translate-y-[-2px]`}>
       <div className="flex items-center justify-center gap-2 w-full">
         <div className={`w-8 h-8 rounded-xl ${config.badgeBg} border-2 border-b-2 flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform`}>
-          <AppleEmoji emoji={emoji} size={16} color={config.accent} />
+          <AppleEmoji emoji={emoji} size={15} color={config.accent} />
         </div>
-        <span className="text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">
+        <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 truncate">
           {label}
         </span>
       </div>
-      <p className={`text-3xl sm:text-4xl font-black font-mono leading-none tracking-tight ${config.color} text-center`}>
+      <p className={`text-2xl sm:text-3xl font-black font-mono leading-none tracking-tight ${config.color} text-center`}>
         {value}
       </p>
     </div>

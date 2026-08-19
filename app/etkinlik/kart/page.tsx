@@ -40,7 +40,10 @@ function KartContent() {
         
         {/* Top bar back button */}
         <div className="mb-6">
-          <Link href="/etkinlik" className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-600 font-bold uppercase tracking-widest text-xs transition-colors">
+          <Link 
+            href="/etkinlik" 
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black text-xs uppercase tracking-wider hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] active:translate-y-0.5 transition-all shadow-sm cursor-pointer"
+          >
             <ArrowLeft className="w-4 h-4" /> ETKİNLİKLERE DÖN
           </Link>
         </div>

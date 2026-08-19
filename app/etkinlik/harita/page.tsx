@@ -37,10 +37,13 @@ function HaritaContent() {
   return (
     <main className="min-h-screen bg-white dark:bg-[#0f172a] pt-28 pb-12 px-4">
       <div className="max-w-4xl mx-auto">
-        
+
         {/* Top bar back button */}
         <div className="mb-6">
-          <Link href="/etkinlik" className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-600 font-bold uppercase tracking-widest text-xs transition-colors">
+          <Link 
+            href="/etkinlik" 
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black text-xs uppercase tracking-wider hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] active:translate-y-0.5 transition-all shadow-sm cursor-pointer"
+          >
             <ArrowLeft className="w-4 h-4" /> ETKİNLİKLERE DÖN
           </Link>
         </div>
@@ -71,7 +74,7 @@ function HaritaContent() {
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {MAP_TOPICS.map((t, i) => {
             const colors = TOPIC_COLORS[t.id] ?? { bg: "bg-slate-400", text: "text-slate-400", border: "border-slate-500" };
-            
+
             return (
               <motion.div
                 key={t.id}
@@ -97,11 +100,11 @@ function HaritaContent() {
                       </h2>
                     </div>
                   </div>
-                  
+
                   <p className="text-slate-500 font-bold mb-6">
                     {t.description}
                   </p>
-                  
+
                   <div className={`w-full text-center font-black text-white text-lg py-4 rounded-2xl ${colors.bg} border-b-4 ${colors.border} group-active:border-b-0 group-active:translate-y-[4px] transition-all`}>
                     BAŞLA
                   </div>

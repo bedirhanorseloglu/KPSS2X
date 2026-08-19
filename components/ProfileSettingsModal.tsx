@@ -233,13 +233,13 @@ export default function ProfileSettingsModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 30 }}
             transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            className="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 overflow-hidden max-h-[90vh] flex flex-col"
+            className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.75rem] shadow-2xl border-2 border-b-[8px] border-slate-200 dark:border-slate-800 overflow-hidden max-h-[90vh] flex flex-col"
           >
             {/* 3D Close Button */}
             <button
               type="button"
               onClick={() => { if (view === "avatar") setView("main"); else onClose(); }}
-              className="absolute top-5 right-5 z-20 w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center font-black active:translate-y-0.5 transition-all shadow-2xs cursor-pointer"
+              className="absolute top-5 right-5 z-20 w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] hover:bg-slate-50 dark:hover:bg-slate-700/80 flex items-center justify-center font-black active:translate-y-0.5 transition-all shadow-sm cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -262,7 +262,7 @@ export default function ProfileSettingsModal({
                       onClick={() => setView("avatar")}
                       className="relative z-10 group focus:outline-none cursor-pointer"
                     >
-                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs flex items-center justify-center relative">
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden bg-slate-50 dark:bg-slate-800 border-2 border-b-[6px] border-slate-200 dark:border-slate-700 shadow-md flex items-center justify-center relative">
                         {selectedPhotoURL ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={selectedPhotoURL} alt="Avatar" className="w-full h-full object-cover" />
@@ -282,7 +282,7 @@ export default function ProfileSettingsModal({
                     <button 
                       type="button"
                       onClick={() => setView("avatar")} 
-                      className="mt-3 text-xs font-black text-[#1cb0f6] hover:underline cursor-pointer flex items-center gap-1.5"
+                      className="mt-3 px-3.5 py-1.5 rounded-xl bg-[#1cb0f6]/15 hover:bg-[#1cb0f6]/25 text-[#1cb0f6] border-2 border-b-2 border-[#1cb0f6]/30 font-black text-xs uppercase tracking-wider transition-all active:translate-y-0.5 cursor-pointer flex items-center gap-1.5 shadow-2xs"
                     >
                       <span>Avatarı Değiştir</span>
                     </button>
@@ -302,36 +302,36 @@ export default function ProfileSettingsModal({
                   <div className="px-8 pb-8 space-y-5">
                     {/* Display Name Input */}
                     <div>
-                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 mb-2 flex items-center gap-2">
                         <AppleEmoji emoji="👤" size={16} />
                         <span>Görünen Ad</span>
                       </label>
-                      <div className="bg-slate-50 dark:bg-slate-900/80 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 flex items-center gap-3 focus-within:border-[#1cb0f6] focus-within:bg-white dark:focus-within:bg-slate-900 transition-all shadow-2xs">
+                      <div className="bg-slate-50 dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 flex items-center gap-3 focus-within:border-[#1cb0f6] dark:focus-within:border-[#1cb0f6] focus-within:bg-white dark:focus-within:bg-slate-800 transition-all shadow-2xs">
                         <User className="w-4 h-4 text-slate-400 shrink-0" />
                         <input
                           type="text"
                           value={displayName}
                           onChange={(e) => setDisplayName(e.target.value)}
                           placeholder="Adınızı girin..."
-                          className="w-full bg-transparent outline-none font-bold text-slate-800 dark:text-white text-sm placeholder:text-slate-400"
+                          className="w-full bg-transparent outline-none font-black text-slate-800 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         />
                       </div>
                     </div>
 
                     {/* Email Input */}
                     <div>
-                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-400 mb-2 flex items-center gap-2">
                         <AppleEmoji emoji="✉️" size={16} />
                         <span>E-posta</span>
                       </label>
-                      <div className="bg-slate-100/80 dark:bg-slate-900/40 border-2 border-b-4 border-slate-200/80 dark:border-slate-700/60 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-2xs">
+                      <div className="bg-slate-100/70 dark:bg-slate-800/60 border-2 border-b-4 border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-2xs">
                         <div className="flex items-center gap-3 overflow-hidden">
                           <Mail className="w-4 h-4 text-slate-400 shrink-0" />
-                          <span className="font-bold text-slate-500 dark:text-slate-400 text-sm truncate">
+                          <span className="font-bold text-slate-500 dark:text-slate-300 text-sm truncate">
                             {user.email}
                           </span>
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-200 dark:bg-slate-800 px-2.5 py-1 rounded-lg border-2 border-b-2 border-slate-300 dark:border-slate-700 shrink-0">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-slate-200/80 dark:bg-slate-700/80 px-2.5 py-1 rounded-lg border-2 border-b-2 border-slate-300 dark:border-slate-600 shrink-0">
                           SALT OKUNUR
                         </span>
                       </div>
@@ -339,14 +339,14 @@ export default function ProfileSettingsModal({
 
                     {/* 3D Account Info Chips */}
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-slate-50 dark:bg-slate-900/80 rounded-2xl p-3.5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-3">
+                      <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-3">
                         <AppleEmoji emoji="📅" size={20} />
                         <div>
                           <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Katılım</p>
                           <p className="text-xs font-black text-slate-800 dark:text-white">{creationDate}</p>
                         </div>
                       </div>
-                      <div className="bg-slate-50 dark:bg-slate-900/80 rounded-2xl p-3.5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-3">
+                      <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-3">
                         <AppleEmoji emoji="⏱️" size={20} />
                         <div>
                           <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Son Giriş</p>
@@ -356,17 +356,17 @@ export default function ProfileSettingsModal({
                     </div>
 
                     {/* Google Auth Badge */}
-                    <div className="bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 rounded-2xl p-3.5 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] flex items-center gap-3 text-[#1cb0f6] font-black text-xs shadow-2xs">
+                    <div className="bg-[#1cb0f6]/10 dark:bg-[#1cb0f6]/15 rounded-2xl p-3.5 border-2 border-b-4 border-[#1cb0f6]/40 border-b-[#1cb0f6] flex items-center gap-3 text-[#1cb0f6] dark:text-[#38bdf8] font-black text-xs shadow-2xs">
                       <AppleEmoji emoji="🛡️" size={20} />
                       <span>Google ile güvenli giriş aktif</span>
                     </div>
 
                     {/* Delete Account Button */}
-                    <div className="pt-2 border-t-2 border-slate-100 dark:border-slate-700">
+                    <div className="pt-2 border-t-2 border-slate-100 dark:border-slate-800">
                       <button
                         type="button"
                         onClick={() => { setShowDeleteConfirm(true); setDeleteConfirmText(""); }}
-                        className="w-full py-2.5 rounded-2xl text-xs font-black text-[#ff4b4b] hover:bg-red-50 dark:hover:bg-red-500/10 transition-all flex items-center justify-center gap-2 border-2 border-transparent hover:border-red-200 cursor-pointer"
+                        className="w-full py-3 rounded-2xl text-xs font-black text-[#ff4b4b] hover:bg-red-50 dark:hover:bg-red-500/10 transition-all flex items-center justify-center gap-2 border-2 border-dashed border-red-200 dark:border-red-500/30 cursor-pointer active:translate-y-0.5"
                       >
                         <AppleEmoji emoji="🗑️" size={16} />
                         <span>Hesabı Kalıcı Olarak Sil</span>
@@ -379,10 +379,10 @@ export default function ProfileSettingsModal({
                         type="button"
                         onClick={handleSave}
                         disabled={!hasChanges || isSaving}
-                        className={`flex-1 py-3.5 rounded-2xl font-black text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                        className={`flex-1 py-4 rounded-2xl font-black text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
                           hasChanges
-                            ? "bg-[#58cc02] text-white border-2 border-b-4 border-[#58cc02] border-b-[#46a302] hover:bg-[#4ecc00] active:translate-y-0.5"
-                            : "bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 border-2 border-b-4 border-slate-300 dark:border-slate-600 cursor-not-allowed"
+                            ? "bg-[#58cc02] text-white border-2 border-b-4 border-[#58cc02] border-b-[#46a302] hover:bg-[#46a302] active:translate-y-0.5"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-2 border-b-4 border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-75"
                         }`}
                       >
                         {saveStatus === "saving" ? (
@@ -397,7 +397,7 @@ export default function ProfileSettingsModal({
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-4 border-[#ff4b4b] border-b-[#e03030] flex items-center justify-center shadow-2xs hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer"
+                        className="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-500/10 text-[#ff4b4b] border-2 border-b-4 border-[#ff4b4b]/40 border-b-[#ff4b4b] hover:border-[#ff4b4b] hover:bg-red-100 dark:hover:bg-red-500/20 flex items-center justify-center shadow-2xs active:translate-y-0.5 transition-all cursor-pointer"
                         title="Çıkış Yap"
                       >
                         <LogOut className="w-5 h-5" />
@@ -441,7 +441,7 @@ export default function ProfileSettingsModal({
                             <button
                               type="button"
                               onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
-                              className="flex-1 py-3 rounded-2xl text-xs font-black bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs active:translate-y-0.5 cursor-pointer"
+                              className="flex-1 py-3 rounded-2xl text-xs font-black bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-2 border-b-4 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/60 shadow-2xs active:translate-y-0.5 cursor-pointer"
                             >
                               İptal
                             </button>
@@ -484,7 +484,7 @@ export default function ProfileSettingsModal({
                             <button
                               type="button"
                               onClick={() => setShowApiKeyHelp(false)}
-                              className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-700 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer"
+                              className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] hover:bg-slate-50 dark:hover:bg-slate-700/80 font-black active:translate-y-0.5 transition-all shadow-sm cursor-pointer"
                             >
                               <X className="w-5 h-5" />
                             </button>
@@ -557,7 +557,7 @@ export default function ProfileSettingsModal({
                     <button
                       type="button"
                       onClick={handleRefreshAvatars}
-                      className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-700 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all active:translate-y-0.5 cursor-pointer"
+                      className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] hover:bg-slate-50 dark:hover:bg-slate-700/80 font-black active:translate-y-0.5 transition-all shadow-sm cursor-pointer"
                       title="Yeni avatarlar oluştur"
                     >
                       <RefreshCw className="w-5 h-5" />

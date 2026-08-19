@@ -6,7 +6,7 @@ import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, en
 import { tr } from "date-fns/locale";
 import { Topic, Subject } from "@/types";
 import { UNIVERSITY_CLASSES } from "@/lib/data";
-import { ChevronLeft, ChevronRight, Check, X, Calendar, ArrowRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, X, Calendar, ArrowRight, Search, RotateCcw } from "lucide-react";
 import AppleEmoji from "@/components/AppleEmoji";
 import { DenemeRecord, evaluateDeneme, formatNet, getDenemeTheme, inferBransSubjectId } from "@/lib/denemeUtils";
 import { DENEME_SUBJECTS } from "@/lib/denemeConfig";
@@ -113,22 +113,22 @@ function DroppableDayCell({
     <div
       ref={setNodeRef}
       onClick={onSelectDay}
-      className={`min-h-[58px] sm:min-h-[66px] p-1 sm:p-1.5 border-2 border-b-4 rounded-xl transition-all duration-200 cursor-pointer flex flex-col justify-between relative group ${
+      className={`min-h-[58px] sm:min-h-[66px] p-1 sm:p-1.5 border-2 border-b-4 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between relative group ${
         !isCurrentMonth 
-          ? 'opacity-25 pointer-events-none border-slate-100 dark:border-slate-800' 
+          ? 'opacity-25 pointer-events-none border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40' 
           : hasActiveSearchFilter && !isFilteredMatch
-            ? 'opacity-25 blur-[0.3px] scale-98 border-slate-200 dark:border-slate-800'
+            ? 'opacity-25 blur-[0.3px] scale-98 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800'
             : hasActiveSearchFilter && isFilteredMatch
-              ? 'ring-4 ring-[#1cb0f6] border-[#1cb0f6] border-b-[#1899d6] bg-[#e8f7ff] dark:bg-[#1cb0f6]/20 shadow-xl scale-[1.02] z-30'
+              ? 'border-[#1cb0f6] border-b-[#1899d6] bg-white dark:bg-slate-800 shadow-md scale-[1.01] z-20'
               : 'hover:-translate-y-0.5 shadow-2xs hover:shadow-md'
       } ${
         isToday && !hasActiveSearchFilter
           ? 'bg-[#e8f7ff] dark:bg-[#1cb0f6]/10 border-[#1cb0f6] border-b-[#1899d6] shadow-xs' 
           : !hasActiveSearchFilter
-            ? 'border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]'
+            ? 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6]'
             : ''
       } ${
-        isOver ? 'scale-105 z-40 ring-4 ring-[#1cb0f6]/40 bg-[#e8f7ff] border-[#1cb0f6] shadow-2xl' : ''
+        isOver ? 'scale-105 z-30 border-[#1cb0f6] border-b-[#1899d6] bg-[#1cb0f6]/10 shadow-xl' : ''
       }`}
     >
       {/* ━━━ INSTANT 3D HOVER OVERLAY (FAREYLES GEZİNCE ANINDA AÇILAN DETAY POPUP) ━━━ */}
@@ -345,7 +345,7 @@ function DroppableDayCell({
       </div>
       
       {isDragging && !isHoliday && !isExamDay && isCurrentMonth && (
-        <div className="absolute inset-0 bg-[#e8f7ff] border-2 border-dashed border-[#1cb0f6] rounded-2xl animate-pulse" />
+        <div className="absolute inset-0 bg-[#1cb0f6]/10 border-2 border-dashed border-[#1cb0f6] rounded-2xl pointer-events-none" />
       )}
     </div>
   );
@@ -744,14 +744,14 @@ export default function MonthlyCalendar({
           </div>
 
           {/* Hızlı Filtre Butonları */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
             <button
               type="button"
               onClick={() => setActiveFilter("all")}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all active:translate-y-0.5 cursor-pointer border-2 border-b-4 select-none ${
                 activeFilter === "all"
-                  ? "bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1899d6] shadow-2xs"
-                  : "bg-white dark:bg-slate-800 text-slate-500 border-2 border-slate-200 dark:border-slate-700 hover:text-slate-800"
+                  ? "bg-[#1cb0f6] text-white border-[#1cb0f6] border-b-[#1899d6] shadow-xs"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] hover:bg-slate-50 dark:hover:bg-slate-700/60 shadow-2xs"
               }`}
             >
               Tümü
@@ -760,26 +760,26 @@ export default function MonthlyCalendar({
             <button
               type="button"
               onClick={() => setActiveFilter("deneme")}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all active:translate-y-0.5 cursor-pointer flex items-center gap-1.5 border-2 border-b-4 select-none ${
                 activeFilter === "deneme"
-                  ? "bg-[#58cc02] text-white border-2 border-b-4 border-green-700 shadow-2xs"
-                  : "bg-white dark:bg-slate-800 text-slate-500 border-2 border-slate-200 dark:border-slate-700 hover:text-[#58cc02]"
+                  ? "bg-[#af52de] text-white border-[#af52de] border-b-[#9a38ca] shadow-xs"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#af52de] dark:hover:border-[#af52de] hover:text-[#af52de] dark:hover:text-[#c477ee] hover:bg-purple-50 dark:hover:bg-[#af52de]/10 shadow-2xs"
               }`}
             >
-              <AppleEmoji emoji="🎯" size={13} />
+              <AppleEmoji emoji="📊" size={14} color={activeFilter === "deneme" ? "#ffffff" : "#af52de"} />
               <span>Denemeler</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveFilter("completed")}
-              className={`px-3 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all active:translate-y-0.5 cursor-pointer flex items-center gap-1.5 border-2 border-b-4 select-none ${
                 activeFilter === "completed"
-                  ? "bg-[#58cc02] text-white border-2 border-b-4 border-green-700 shadow-2xs"
-                  : "bg-white dark:bg-slate-800 text-slate-500 border-2 border-slate-200 dark:border-slate-700 hover:text-[#58cc02]"
+                  ? "bg-[#58cc02] text-white border-[#58cc02] border-b-[#46a302] shadow-xs"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#58cc02] dark:hover:border-[#58cc02] hover:text-[#58cc02] dark:hover:text-[#70df1c] hover:bg-emerald-50 dark:hover:bg-[#58cc02]/10 shadow-2xs"
               }`}
             >
-              <AppleEmoji emoji="✅" size={13} />
+              <AppleEmoji emoji="✅" size={14} color={activeFilter === "completed" ? "#ffffff" : "#58cc02"} />
               <span>Tamamlananlar</span>
             </button>
           </div>
@@ -794,11 +794,11 @@ export default function MonthlyCalendar({
           <span>{format(currentDate, "MMMM yyyy", { locale: tr })}</span>
         </h2>
         
-        <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 p-2 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs w-fit">
+        <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-2xs w-fit">
           <button 
             type="button"
             onClick={() => setCurrentDate(subMonths(currentDate, 1))} 
-            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-slate-50 dark:hover:bg-slate-700/60 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
             title="Önceki Ay"
           >
             <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
@@ -807,16 +807,25 @@ export default function MonthlyCalendar({
           <button 
             type="button"
             onClick={() => setCurrentDate(new Date())} 
-            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-xs text-[#1cb0f6] hover:bg-[#e8f7ff] dark:hover:bg-[#1cb0f6]/20 hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
-            title="Bugün"
+            disabled={isSameMonth(currentDate, new Date())}
+            className={`px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 select-none ${
+              isSameMonth(currentDate, new Date())
+                ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 border-2 border-b-2 border-slate-200 dark:border-slate-700 cursor-default opacity-80'
+                : 'bg-[#1cb0f6] text-white border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] hover:bg-[#159ee0] active:translate-y-0.5 cursor-pointer shadow-xs animate-in fade-in duration-200'
+            }`}
+            title={isSameMonth(currentDate, new Date()) ? "Şu anki aydasınız" : "Mevcut aya geri dön"}
           >
-            Bugün
+            {isSameMonth(currentDate, new Date()) ? (
+              <span>Bu Ay</span>
+            ) : (
+              <span>Bu Aya Dön</span>
+            )}
           </button>
 
           <button 
             type="button"
             onClick={() => setCurrentDate(addMonths(currentDate, 1))} 
-            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-sky-50 dark:hover:bg-[#1cb0f6]/10 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
+            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 font-black text-slate-600 dark:text-slate-300 hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:bg-slate-50 dark:hover:bg-slate-700/60 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs"
             title="Sonraki Ay"
           >
             <ChevronRight className="w-5 h-5 stroke-[2.5]" />

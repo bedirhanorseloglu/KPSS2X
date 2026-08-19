@@ -585,25 +585,28 @@ export default function DenemeAnalytics({
       {viewType === "brans" && bransStats && (
         <>
           <div className="flex gap-2.5 p-2 bg-slate-100 dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700 shadow-xs overflow-x-auto no-scrollbar snap-x">
-            {availableBransSubjects.map((sub) => (
-              <button
-                key={sub.id}
-                onClick={() => setSelectedBransSubjectId(sub.id)}
-                className={`flex-shrink-0 flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-black text-xs transition-all snap-start cursor-pointer ${
-                  selectedBransSubjectId === sub.id
-                    ? "bg-white dark:bg-slate-800 border-2 border-b-4 text-slate-800 dark:text-white shadow-xs"
-                    : "text-slate-500 hover:text-slate-800 dark:hover:text-white border-2 border-transparent"
-                }`}
-                style={
-                  selectedBransSubjectId === sub.id
-                    ? { borderColor: sub.color, borderBottomColor: sub.color }
-                    : {}
-                }
-              >
-                <AppleEmoji emoji={sub.icon} size={20} />
-                <span>{sub.title}</span>
-              </button>
-            ))}
+            {availableBransSubjects.map((sub) => {
+              const isSelected = selectedBransSubjectId === sub.id;
+              return (
+                <button
+                  key={sub.id}
+                  onClick={() => setSelectedBransSubjectId(sub.id)}
+                  className={`flex-shrink-0 flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-black text-xs transition-all snap-start cursor-pointer border-2 border-b-4 ${
+                    isSelected
+                      ? "text-white shadow-xs"
+                      : "bg-white dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                  }`}
+                  style={
+                    isSelected
+                      ? { backgroundColor: sub.color, borderColor: sub.color, borderBottomColor: "rgba(0,0,0,0.35)" }
+                      : {}
+                  }
+                >
+                  <AppleEmoji emoji={sub.icon} size={20} color={isSelected ? "white" : sub.color} />
+                  <span>{sub.title}</span>
+                </button>
+              );
+            })}
           </div>
 
           <Section

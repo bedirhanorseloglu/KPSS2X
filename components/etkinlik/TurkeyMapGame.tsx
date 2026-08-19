@@ -2,10 +2,11 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { MapPoint, MapTopic } from "@/lib/mapData";
-import { Check, RefreshCw, X, Trophy, Target, Play } from "lucide-react";
+import { Check, RefreshCw, X, Trophy, Target, Play, Lightbulb } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { geoMercator, geoCentroid } from "d3-geo";
 import { motion, AnimatePresence } from "framer-motion";
+import AppleEmoji from "@/components/AppleEmoji";
 
 const GEO_URL = "/turkey-topo.json";
 
@@ -23,26 +24,26 @@ function lngLatToPercent(lng: number, lat: number): { x: number; y: number } {
   return { x: (px / VIEW_W) * 100, y: (py / VIEW_H) * 100 };
 }
 
-// ── Type visuals ──
-const TYPE_VISUALS: Record<string, { bg: string; border: string; text: string; glow: string; icon: string }> = {
-  tektonik: { bg: "bg-[#1cb0f6]", border: "border-[#1899d6]", text: "text-[#1899d6]", glow: "shadow-blue-500/40", icon: "💥" },
-  karstik: { bg: "bg-[#2bced6]", border: "border-[#20aeb5]", text: "text-[#20aeb5]", glow: "shadow-cyan-500/40", icon: "💧" },
-  volkanik: { bg: "bg-[#ff4b4b]", border: "border-[#e04343]", text: "text-[#e04343]", glow: "shadow-red-500/40", icon: "🌋" },
-  heyelan: { bg: "bg-[#ff9600]", border: "border-[#e08400]", text: "text-[#e08400]", glow: "shadow-orange-500/40", icon: "🪨" },
-  aluvyal: { bg: "bg-[#58cc02]", border: "border-[#46a302]", text: "text-[#46a302]", glow: "shadow-emerald-500/40", icon: "🌿" },
-  kiyi: { bg: "bg-[#00c1ac]", border: "border-[#00a392]", text: "text-[#00a392]", glow: "shadow-teal-500/40", icon: "🏖️" },
-  karma: { bg: "bg-[#ce82ff]", border: "border-[#b16be0]", text: "text-[#b16be0]", glow: "shadow-purple-500/40", icon: "🔄" },
-  kivrim: { bg: "bg-[#8965f0]", border: "border-[#6f50c8]", text: "text-[#6f50c8]", glow: "shadow-indigo-500/40", icon: "〰️" },
-  kirik: { bg: "bg-[#ffc800]", border: "border-[#e0b000]", text: "text-[#e0b000]", glow: "shadow-yellow-500/40", icon: "⚡" },
-  plato: { bg: "bg-[#58cc02]", border: "border-[#46a302]", text: "text-[#46a302]", glow: "shadow-lime-600/40", icon: "🌄" },
-  tabaka: { bg: "bg-[#ff9600]", border: "border-[#e08400]", text: "text-[#e08400]", glow: "shadow-orange-500/40", icon: "🥞" },
-  lav: { bg: "bg-[#ff4b4b]", border: "border-[#e04343]", text: "text-[#e04343]", glow: "shadow-red-500/40", icon: "🌋" },
-  asinim: { bg: "bg-[#8965f0]", border: "border-[#6f50c8]", text: "text-[#6f50c8]", glow: "shadow-indigo-500/40", icon: "💨" },
-  delta: { bg: "bg-[#58cc02]", border: "border-[#46a302]", text: "text-[#46a302]", glow: "shadow-emerald-500/40", icon: "🌱" },
-  kiyiduzlugu: { bg: "bg-[#2bced6]", border: "border-[#20aeb5]", text: "text-[#20aeb5]", glow: "shadow-cyan-500/40", icon: "🏖️" },
-  buzul: { bg: "bg-[#7dd3fc]", border: "border-[#38bdf8]", text: "text-[#0ea5e9]", glow: "shadow-sky-300/40", icon: "🧊" },
-  traverten: { bg: "bg-[#d6d3d1]", border: "border-[#a8a29e]", text: "text-[#78716c]", glow: "shadow-stone-300/40", icon: "🧱" },
-  baraj: { bg: "bg-[#475569]", border: "border-[#334155]", text: "text-[#334155]", glow: "shadow-slate-500/40", icon: "🏗️" },
+// ── Canonical Type visuals ──
+const TYPE_COLORS: Record<string, { color: string; emoji: string }> = {
+  tektonik: { color: "#1cb0f6", emoji: "💥" },
+  karstik: { color: "#2bced6", emoji: "💧" },
+  volkanik: { color: "#ff4b4b", emoji: "🌋" },
+  heyelan: { color: "#ff9500", emoji: "🪨" },
+  aluvyal: { color: "#58cc02", emoji: "🌿" },
+  kiyi: { color: "#00c1ac", emoji: "🏖️" },
+  karma: { color: "#af52de", emoji: "🔄" },
+  kivrim: { color: "#5856d6", emoji: "🏔️" },
+  kirik: { color: "#ff9500", emoji: "⛰️" },
+  plato: { color: "#ff9500", emoji: "🌄" },
+  tabaka: { color: "#ff9500", emoji: "🥞" },
+  lav: { color: "#ff4b4b", emoji: "🌋" },
+  asinim: { color: "#8965f0", emoji: "💨" },
+  delta: { color: "#58cc02", emoji: "🌱" },
+  kiyiduzlugu: { color: "#2bced6", emoji: "🏖️" },
+  buzul: { color: "#7dd3fc", emoji: "🧊" },
+  traverten: { color: "#d6d3d1", emoji: "🧱" },
+  baraj: { color: "#475569", emoji: "🏗️" },
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -67,7 +68,14 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 function getTypeVisual(type: string) {
-  return TYPE_VISUALS[type] ?? { bg: "bg-slate-500", border: "border-slate-400", text: "text-slate-600", glow: "shadow-slate-500/40", icon: "📌" };
+  const conf = TYPE_COLORS[type] || { color: "#1cb0f6", emoji: "📍" };
+  return {
+    color: conf.color,
+    icon: conf.emoji,
+    bg: "bg-slate-800",
+    border: "border-slate-900",
+    text: "text-white",
+  };
 }
 
 function formatName(name: string) {
@@ -76,11 +84,11 @@ function formatName(name: string) {
 
 // ── Progress Bar ──
 function ProgressBar({ progress, total }: { progress: number; total: number }) {
-  const pct = total > 0 ? (progress / total) * 100 : 0;
-  
+  const pct = total > 0 ? Math.min(100, Math.max(0, (progress / total) * 100)) : 0;
+
   return (
     <div className="flex-1 max-w-2xl mx-auto h-4 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
-      <motion.div 
+      <motion.div
         className="h-full bg-[#58cc02] rounded-full relative"
         initial={{ width: 0 }}
         animate={{ width: `${pct}%` }}
@@ -93,10 +101,10 @@ function ProgressBar({ progress, total }: { progress: number; total: number }) {
 }
 
 // ── Clickable Spot ──
-function ClickableSpot({ 
-  lake, placed, isError, isActiveTarget, onClick, showHint 
-}: { 
-  lake: MapPoint; placed: boolean; isError: boolean; isActiveTarget: boolean; onClick: () => void; showHint?: boolean 
+function ClickableSpot({
+  lake, placed, isError, isActiveTarget, onClick, showHint
+}: {
+  lake: MapPoint; placed: boolean; isError: boolean; isActiveTarget: boolean; onClick: () => void; showHint?: boolean
 }) {
   const pos = useMemo(() => lngLatToPercent(lake.lng, lake.lat), [lake.lng, lake.lat]);
   const c = getTypeVisual(lake.type);
@@ -113,11 +121,15 @@ function ClickableSpot({
           animate={{ scale: 1, opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
           whileHover={{ scale: 1.15 }}
-          className={`px-2 py-1 rounded-xl text-[10px] md:text-xs font-black shadow-sm flex flex-col items-center
-            ${c.bg} text-white border-b-4 ${c.border} whitespace-nowrap`}
+          style={{
+            backgroundColor: c.color,
+            borderColor: c.color,
+            borderBottomColor: "rgba(0, 0, 0, 0.35)",
+          }}
+          className="px-2.5 py-1 rounded-xl text-[10px] md:text-xs font-black shadow-md flex flex-col items-center text-white border-2 border-b-4 whitespace-nowrap"
         >
-          <div className="flex items-center gap-1">
-            <span className="text-[14px]">{c.icon}</span>
+          <div className="flex items-center gap-1.5">
+            <AppleEmoji emoji={c.icon} size={13} color="#ffffff" />
             <span>{formatName(lake.name)}</span>
           </div>
           {lake.type === "karma" && lake.description && (
@@ -207,7 +219,7 @@ export default function TurkeyMapGame({ topic, onQuit }: { topic: MapTopic, onQu
 
       {/* ── Game Header ── */}
       <div className="flex items-center gap-4 py-4 px-4 sm:px-8 w-full max-w-5xl mx-auto z-10">
-        <button 
+        <button
           onClick={onQuit}
           className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
         >
@@ -221,15 +233,15 @@ export default function TurkeyMapGame({ topic, onQuit }: { topic: MapTopic, onQu
 
       {/* ── Map Content ── */}
       <div className="flex-1 w-full overflow-hidden flex flex-col items-center justify-center relative z-0 pb-32">
-        
-        <div 
-          className="relative w-full h-full flex items-center justify-center" 
-          style={{ 
-            maxHeight: "calc(100vh - 200px)", 
+
+        <div
+          className="relative w-full h-full flex items-center justify-center"
+          style={{
+            maxHeight: "calc(100vh - 200px)",
           }}
         >
           <div className="relative w-full" style={{ aspectRatio: `${VIEW_W}/${VIEW_H}`, maxHeight: "100%", maxWidth: "100%" }}>
-          <ComposableMap
+            <ComposableMap
               width={VIEW_W} height={VIEW_H}
               projection="geoMercator"
               projectionConfig={{ center: MAP_CENTER, scale: MAP_SCALE }}
@@ -263,8 +275,8 @@ export default function TurkeyMapGame({ topic, onQuit }: { topic: MapTopic, onQu
                           <text
                             textAnchor="middle"
                             y={3}
-                            style={{ fontSize: "10px", fontWeight: 800, userSelect: "none" }}
-                            className="fill-slate-400 dark:fill-slate-600"
+                            style={{ fontSize: "10px", fontWeight: 700, userSelect: "none" }}
+                            className="fill-slate-500 dark:fill-slate-300 dark:opacity-75"
                           >
                             {geo.properties.name}
                           </text>
@@ -293,56 +305,69 @@ export default function TurkeyMapGame({ topic, onQuit }: { topic: MapTopic, onQu
         </div>
       </div>
 
-      {/* ── Bottom Drawer / Floating Card ── */}
+      {/* ── 3D Floating Target Island Capsule ── */}
       <AnimatePresence mode="wait">
         {!isComplete && activePoint && activeVisual && (
           <motion.div
             key={activePoint.id}
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
-            className="fixed bottom-0 left-0 w-full z-50 pointer-events-auto border-t-2 border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+            initial={{ y: 60, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.95, transition: { duration: 0.2 } }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto max-w-xl w-[92%] sm:w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[2.25rem] p-4 sm:p-5 border-2 border-b-[6px] border-slate-200 dark:border-slate-800 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.35)] flex items-center justify-between gap-4"
           >
-            <div className="max-w-4xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-              
-              <div className="flex items-center gap-6">
-                <div className={`w-20 h-20 rounded-[1.5rem] flex items-center justify-center text-4xl shadow-sm ${activeVisual.bg} border-b-4 ${activeVisual.border} text-white`}>
-                  {activeVisual.icon}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-sm font-black uppercase tracking-widest text-slate-400 mb-1">
-                    Hedefini Bul
-                  </span>
-                  <div className="flex flex-col">
-                    <h3 className={`text-3xl font-black ${activeVisual.text}`}>
-                      {formatName(activePoint.name)}
-                    </h3>
-                  </div>
-                </div>
+            <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+              {/* 3D Pedestal Icon */}
+              <div 
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 border-2 border-b-4 shadow-sm"
+                style={{
+                  backgroundColor: `${activeVisual.color}18`,
+                  borderColor: `${activeVisual.color}40`,
+                  borderBottomColor: activeVisual.color,
+                }}
+              >
+                <AppleEmoji emoji={activeVisual.icon} size={30} color={activeVisual.color} />
               </div>
 
-              <div className="flex flex-col sm:items-end">
-                {failCount >= 3 && !showHint ? (
-                  <button
-                    onClick={() => setShowHint(true)}
-                    className="px-6 py-3 rounded-2xl bg-[#ffc800] text-white font-black uppercase tracking-widest text-sm border-b-4 border-[#e0b000] hover:-translate-y-1 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2"
+              <div className="flex flex-col min-w-0">
+                <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
+                  HEDEFİNİ BUL
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight truncate leading-tight">
+                  {formatName(activePoint.name)}
+                </h3>
+              </div>
+            </div>
+
+            <div className="flex items-center shrink-0">
+              {failCount >= 3 && !showHint ? (
+                <button
+                  type="button"
+                  onClick={() => setShowHint(true)}
+                  className="px-4 py-2.5 rounded-2xl bg-[#ff9500] hover:bg-[#e08400] text-white font-black text-xs uppercase tracking-wider border-2 border-b-4 border-[#ff9500] border-b-[#c76300] active:translate-y-0.5 transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+                >
+                  <AppleEmoji emoji="💡" size={16} color="#ffffff" />
+                  <span>İPUCU</span>
+                </button>
+              ) : (
+                <div className="flex flex-col items-end gap-0.5">
+                  <span 
+                    className="text-[11px] font-black uppercase tracking-wider px-3.5 py-1.5 rounded-xl border-2 border-b-2 shadow-2xs text-white"
+                    style={{
+                      backgroundColor: activeVisual.color,
+                      borderColor: activeVisual.color,
+                      borderBottomColor: "rgba(0, 0, 0, 0.35)",
+                    }}
                   >
-                    💡 İPUCU İSTER MİSİN?
-                  </button>
-                ) : (
-                  <div className="flex flex-col items-center sm:items-end gap-1">
-                    <div className="px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 font-bold text-slate-500 uppercase tracking-widest text-xs border-2 border-slate-200 dark:border-slate-700">
-                      {TYPE_LABELS[activePoint.type] || `${activePoint.type} Türü`}
-                    </div>
-                    {activePoint.type === "karma" && activePoint.description && (
-                      <span className={`text-xs font-bold opacity-80 ${activeVisual.text}`}>
-                        ({activePoint.description})
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-
+                    {TYPE_LABELS[activePoint.type] || `${activePoint.type}`}
+                  </span>
+                  {activePoint.type === "karma" && activePoint.description && (
+                    <span className="text-[10px] font-bold text-slate-400 truncate max-w-[120px]">
+                      ({activePoint.description})
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -357,7 +382,7 @@ export default function TurkeyMapGame({ topic, onQuit }: { topic: MapTopic, onQu
             className="fixed bottom-0 left-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-gray-200 dark:border-slate-800 p-6 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.1)]"
           >
             <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-              
+
               <div className="flex items-center gap-6">
                 <div className="w-20 h-20 bg-[#58cc02] rounded-[1.5rem] border-b-[6px] border-[#46a302] flex items-center justify-center animate-bounce shrink-0">
                   <Trophy className="w-10 h-10 text-white" />

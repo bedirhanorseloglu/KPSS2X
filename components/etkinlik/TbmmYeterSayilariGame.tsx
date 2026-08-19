@@ -269,10 +269,10 @@ export default function TbmmYeterSayilariGame() {
         {/* Back Button */}
         <Link
           href="/etkinlik"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-black text-xs uppercase tracking-widest hover:border-[#5856d6] dark:hover:border-[#5856d6] hover:bg-[#5856d6]/10 dark:hover:bg-[#5856d6]/20 active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-black text-xs uppercase tracking-wider hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] hover:bg-slate-50 dark:hover:bg-slate-800 active:translate-y-0.5 transition-all shadow-2xs cursor-pointer shrink-0"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Etkinlikler</span>
+          <span className="hidden sm:inline">ETKİNLİKLERE DÖN</span>
         </Link>
 
         {/* Progress Bar */}
@@ -284,7 +284,7 @@ export default function TbmmYeterSayilariGame() {
             <motion.div
               className="h-full bg-[#5856d6] rounded-full"
               initial={{ width: 0 }}
-              animate={{ width: `${((currentIdx + 1) / totalItemsCount) * 100}%` }}
+              animate={{ width: `${totalItemsCount > 0 ? Math.min(100, Math.max(0, ((currentIdx + 1) / totalItemsCount) * 100)) : 0}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>

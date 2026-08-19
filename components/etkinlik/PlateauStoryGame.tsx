@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PLATEAU_FEATURES, PlateauFeature } from "@/lib/plateauData";
-import { Mountain, Check, X, ArrowRight } from "lucide-react";
+import { PLATEAU_FEATURES } from "@/lib/plateauData";
+import { Check, X, ArrowRight, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
+import AppleEmoji from "@/components/AppleEmoji";
 
 interface PlateauStoryGameProps {
   onComplete: () => void;
@@ -21,16 +22,16 @@ export default function PlateauStoryGame({ onComplete }: PlateauStoryGameProps) 
   const currentPlateau = questions[currentIndex];
 
   const handleOptionClick = (option: string) => {
-    if (selectedOption !== null) return; // already answered
+    if (selectedOption !== null) return;
     setSelectedOption(option);
     
     if (option === currentPlateau.blank) {
       setIsCorrect(true);
       confetti({
-        particleCount: 50,
-        spread: 60,
+        particleCount: 60,
+        spread: 70,
         origin: { y: 0.8 },
-        colors: ['#58cc02', '#ffffff']
+        colors: ['#58cc02', '#ff9500', '#ffffff']
       });
     } else {
       setIsCorrect(false);
@@ -49,69 +50,78 @@ export default function PlateauStoryGame({ onComplete }: PlateauStoryGameProps) 
 
   if (!currentPlateau) return null;
 
-  // Split story into parts: before blank and after blank
   const parts = currentPlateau.story.split("_____");
+  const progressPct = ((currentIndex + 1) / questions.length) * 100;
 
   return (
     <div className="flex flex-col items-center max-w-2xl mx-auto w-full pb-32">
-      {/* Progress */}
+      {/* ── 3D Progress Bar Header ── */}
       <div className="w-full mb-8 flex items-center gap-4">
-        <Mountain className="text-orange-500 w-6 h-6 shrink-0" />
-        <div className="flex-1 h-4 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-          <motion.div 
-            className="h-full bg-[#58cc02]"
-            initial={{ width: 0 }}
-            animate={{ width: `${(currentIndex / questions.length) * 100}%` }}
-            transition={{ type: "spring", stiffness: 100 }}
-          />
+        <div className="w-10 h-10 rounded-xl bg-[#ff9500]/15 border-2 border-b-4 border-[#ff9500]/40 border-b-[#ff9500] flex items-center justify-center shrink-0">
+          <AppleEmoji emoji="🏔️" size={20} color="#ff9500" />
         </div>
+        <div className="flex-1 h-4 bg-slate-200 dark:bg-slate-700/60 rounded-full border-2 border-slate-200 dark:border-slate-700 overflow-hidden relative">
+          <motion.div 
+            className="h-full bg-[#58cc02] rounded-full relative"
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPct}%` }}
+            transition={{ type: "spring", stiffness: 100, damping: 18 }}
+          >
+            <div className="absolute top-0.5 left-2 right-2 h-1 bg-white/30 rounded-full" />
+          </motion.div>
+        </div>
+        <span className="text-xs font-black text-slate-500 dark:text-slate-400 shrink-0">
+          {currentIndex + 1} / {questions.length}
+        </span>
       </div>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.98 }}
+          transition={{ duration: 0.25 }}
           className="w-full flex flex-col items-center"
         >
-          {/* Question Box */}
-          <div className="bg-white dark:bg-[#1e293b] w-full rounded-3xl p-8 border-2 border-slate-200 dark:border-slate-700 shadow-sm mb-8 text-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-2 bg-orange-500" />
-            <h2 className="text-xl font-black text-slate-400 mb-2 uppercase tracking-widest">SORU {currentIndex + 1}</h2>
-            <div className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white leading-snug">
+          {/* ── 3D Question Story Card ── */}
+          <div className="bg-white dark:bg-slate-800 w-full rounded-[2.25rem] p-6 sm:p-8 border-2 border-b-[6px] border-slate-200 dark:border-slate-700 shadow-xl mb-6 text-center relative overflow-hidden">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#ff9500]/10 text-[#ff9500] border-2 border-b-4 border-[#ff9500]/30 border-b-[#ff9500] text-xs font-black uppercase tracking-wider mb-5">
+              <Sparkles className="w-3.5 h-3.5" />
+              SORU {currentIndex + 1}
+            </div>
+
+            <div className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white leading-relaxed">
               {parts[0]}
-              <span className={`inline-block mx-2 px-4 py-1 min-w-[120px] border-b-4 text-center transition-colors ${
+              <span className={`inline-flex items-center justify-center px-4 py-1 mx-1.5 rounded-xl border-2 border-b-4 text-base sm:text-lg font-black transition-all ${
                 selectedOption === null 
-                  ? "border-slate-300 dark:border-slate-600 text-transparent" 
+                  ? "bg-slate-100 dark:bg-slate-700/60 border-slate-300 dark:border-slate-600 text-slate-400" 
                   : isCorrect 
-                    ? "border-[#58cc02] text-[#58cc02]" 
-                    : "border-[#ff4b4b] text-[#ff4b4b]"
+                    ? "bg-[#58cc02]/15 text-[#58cc02] border-[#58cc02]/40 border-b-[#46a302]" 
+                    : "bg-[#ff4b4b]/15 text-[#ff4b4b] border-[#ff4b4b]/40 border-b-[#d93a3a]"
               }`}>
-                {selectedOption || "......"}
+                {selectedOption || "______"}
               </span>
               {parts[1]}
             </div>
           </div>
 
-          {/* Options Grid */}
-          <div className="grid grid-cols-2 gap-4 w-full">
+          {/* ── 3D Options Grid ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
             {currentPlateau.options.map((option) => {
               const isSelected = selectedOption === option;
-              let btnClass = "bg-white dark:bg-[#1e293b] border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white border-b-4 hover:bg-slate-50 dark:hover:bg-slate-800";
+              let styleClass = "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-[#ff9500] dark:hover:border-[#ff9500] hover:text-[#ff9500] dark:hover:text-[#ffb049] hover:bg-slate-50 dark:hover:bg-slate-700/60";
               
               if (isSelected) {
                 if (isCorrect) {
-                  btnClass = "bg-[#d7ffb8] dark:bg-[#58cc02]/20 border-[#58cc02] text-[#58cc02] border-b-0 translate-y-1";
+                  styleClass = "bg-[#58cc02] text-white border-[#58cc02] border-b-[#46a302]";
                 } else {
-                  btnClass = "bg-[#ffdfdf] dark:bg-[#ff4b4b]/20 border-[#ff4b4b] text-[#ff4b4b] border-b-0 translate-y-1";
+                  styleClass = "bg-[#ff4b4b] text-white border-[#ff4b4b] border-b-[#d93a3a]";
                 }
               } else if (selectedOption !== null && option === currentPlateau.blank) {
-                // Show correct answer if wrong was selected
-                btnClass = "bg-[#d7ffb8] dark:bg-[#58cc02]/20 border-[#58cc02] text-[#58cc02] border-b-4 opacity-50";
+                styleClass = "bg-[#58cc02]/20 border-[#58cc02] text-[#58cc02] opacity-75";
               } else if (selectedOption !== null) {
-                // Dim others
-                btnClass = "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 border-b-4 opacity-50";
+                styleClass = "bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-400 opacity-40";
               }
 
               return (
@@ -119,7 +129,7 @@ export default function PlateauStoryGame({ onComplete }: PlateauStoryGameProps) 
                   key={option}
                   onClick={() => handleOptionClick(option)}
                   disabled={selectedOption !== null}
-                  className={`p-4 rounded-2xl border-2 font-bold text-lg md:text-xl transition-all ${btnClass}`}
+                  className={`p-4 sm:p-5 rounded-2xl border-2 border-b-4 font-black text-sm sm:text-base transition-all flex items-center justify-center text-center active:translate-y-0.5 shadow-sm ${styleClass}`}
                 >
                   {option}
                 </button>
@@ -129,35 +139,47 @@ export default function PlateauStoryGame({ onComplete }: PlateauStoryGameProps) 
         </motion.div>
       </AnimatePresence>
 
-      {/* Next Button Footer */}
+      {/* ── 3D Bottom Result Feedback Bar ── */}
       <AnimatePresence>
         {selectedOption !== null && (
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className={`fixed bottom-0 left-0 right-0 p-4 md:p-8 border-t-2 z-50 flex justify-center ${
-              isCorrect ? "bg-[#d7ffb8] dark:bg-[#1a3809] border-[#c0e8a0] dark:border-[#2a5910]" : "bg-[#ffdfdf] dark:bg-[#4a1515] border-[#f0c0c0] dark:border-[#6a1e1e]"
+            className={`fixed bottom-0 left-0 right-0 p-4 md:p-6 border-t-2 z-50 flex justify-center backdrop-blur-md ${
+              isCorrect 
+                ? "bg-[#58cc02]/15 dark:bg-[#58cc02]/20 border-[#58cc02]/40" 
+                : "bg-[#ff4b4b]/15 dark:bg-[#ff4b4b]/20 border-[#ff4b4b]/40"
             }`}
           >
-            <div className="max-w-4xl w-full flex items-center justify-between">
+            <div className="max-w-4xl w-full flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isCorrect ? "bg-[#58cc02]" : "bg-[#ff4b4b]"}`}>
-                  {isCorrect ? <Check className="w-8 h-8" /> : <X className="w-8 h-8" />}
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white border-2 border-b-4 shrink-0 shadow-md ${
+                  isCorrect 
+                    ? "bg-[#58cc02] border-[#58cc02] border-b-[#46a302]" 
+                    : "bg-[#ff4b4b] border-[#ff4b4b] border-b-[#d93a3a]"
+                }`}>
+                  {isCorrect ? <Check className="w-7 h-7 stroke-[3]" /> : <X className="w-7 h-7 stroke-[3]" />}
                 </div>
-                <div className={`font-black text-2xl ${isCorrect ? "text-[#58cc02]" : "text-[#ff4b4b]"}`}>
-                  {isCorrect ? "Harika!" : "Yanlış Cevap"}
+                <div>
+                  <h4 className={`font-black text-xl sm:text-2xl ${isCorrect ? "text-[#58cc02]" : "text-[#ff4b4b]"}`}>
+                    {isCorrect ? "Harika Doğru!" : "Yanlış Cevap"}
+                  </h4>
+                  <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+                    {isCorrect ? "Bilgiyi hafızana başarıyla kopyaladın." : `Doğru cevap: ${currentPlateau.blank}`}
+                  </p>
                 </div>
               </div>
+
               <button
                 onClick={handleNext}
-                className={`px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-white shadow-sm border-b-4 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-2 ${
+                className={`px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-black uppercase tracking-wider text-sm sm:text-base text-white shadow-md border-2 border-b-4 active:translate-y-0.5 transition-all flex items-center gap-2 shrink-0 ${
                   isCorrect 
-                    ? "bg-[#58cc02] hover:bg-[#46a302] border-[#46a302]" 
-                    : "bg-[#ff4b4b] hover:bg-[#e04343] border-[#e04343]"
+                    ? "bg-[#58cc02] border-[#58cc02] border-b-[#46a302] hover:bg-[#46a302]" 
+                    : "bg-[#ff4b4b] border-[#ff4b4b] border-b-[#d93a3a] hover:bg-[#e04343]"
                 }`}
               >
-                Devam Et <ArrowRight className="w-6 h-6" />
+                Devam Et <ArrowRight className="w-5 h-5 stroke-[3]" />
               </button>
             </div>
           </motion.div>

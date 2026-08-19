@@ -167,31 +167,47 @@ export default function FloatingNavbar() {
                   <motion.div 
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    className="absolute right-0 top-full mt-3 w-60 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border-2 border-b-4 border-slate-200 dark:border-slate-700 overflow-hidden z-50 pointer-events-auto p-2"
+                    className="absolute right-0 top-full mt-3 w-64 bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border-2 border-b-[6px] border-slate-200 dark:border-slate-800 overflow-hidden z-50 pointer-events-auto p-2.5 space-y-1.5"
                   >
-                    <div className="p-3 border-b-2 border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 rounded-xl mb-1">
-                      <p className="text-sm font-black text-slate-800 dark:text-white truncate">{user?.displayName || "Kullanıcı"}</p>
-                      <p className="text-xs font-semibold text-slate-400 truncate mt-0.5">{user?.email}</p>
+                    {/* User Header */}
+                    <div className="p-3 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border-2 border-b-2 border-slate-200/80 dark:border-slate-700/80 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#1cb0f6] text-white flex items-center justify-center font-black text-sm border-2 border-b-4 border-[#1899d6] shrink-0 shadow-2xs">
+                        {user?.email?.charAt(0).toUpperCase() || "U"}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-black text-slate-800 dark:text-white truncate">
+                          {user?.displayName || "Kullanıcı"}
+                        </p>
+                        <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 truncate">
+                          {user?.email}
+                        </p>
+                      </div>
                     </div>
-                    <div className="space-y-1">
+
+                    {/* Menu Items */}
+                    <div className="space-y-1 pt-0.5">
                       <button 
                         type="button"
                         onClick={() => {
                           setIsProfileOpen(false);
                           setIsProfileSettingsOpen(true);
                         }}
-                        className="w-full text-left px-3.5 py-2.5 text-xs font-black text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors flex items-center gap-3 cursor-pointer"
+                        className="w-full text-left px-3 py-2.5 text-xs font-black text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1cb0f6] dark:hover:text-[#38bdf8] rounded-xl transition-all flex items-center gap-2.5 active:translate-y-0.5 cursor-pointer"
                       >
-                        <Settings className="w-4 h-4 text-[#1cb0f6]" />
+                        <div className="w-7 h-7 rounded-lg bg-[#1cb0f6]/15 text-[#1cb0f6] flex items-center justify-center shrink-0 border border-[#1cb0f6]/30">
+                          <Settings className="w-3.5 h-3.5" />
+                        </div>
                         <span>Profil Ayarları</span>
                       </button>
                       
                       <button 
                         type="button"
                         onClick={() => { setIsProfileOpen(false); signOut(); }}
-                        className="w-full text-left px-3.5 py-2.5 text-xs font-black text-[#ff4b4b] hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors flex items-center gap-3 cursor-pointer"
+                        className="w-full text-left px-3 py-2.5 text-xs font-black text-[#ff4b4b] hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all flex items-center gap-2.5 active:translate-y-0.5 cursor-pointer"
                       >
-                        <LogOut className="w-4 h-4" />
+                        <div className="w-7 h-7 rounded-lg bg-red-500/15 text-[#ff4b4b] flex items-center justify-center shrink-0 border border-red-500/30">
+                          <LogOut className="w-3.5 h-3.5" />
+                        </div>
                         <span>Çıkış Yap</span>
                       </button>
                     </div>
