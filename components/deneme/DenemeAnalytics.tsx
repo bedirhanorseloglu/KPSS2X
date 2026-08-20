@@ -169,10 +169,10 @@ export default function DenemeAnalytics({
     const gyBest = gyNets.length > 0 ? Math.max(...gyNets) : 0;
     const gkBest = gkNets.length > 0 ? Math.max(...gkNets) : 0;
 
-    const gyLatest = gyNets.length > 0 ? gyNets[gyNets.length - 1] : 0;
-    const gkLatest = gkNets.length > 0 ? gkNets[gkNets.length - 1] : 0;
+    const gyLatest = gyNets.length > 0 ? gyNets[0] : 0;
+    const gkLatest = gkNets.length > 0 ? gkNets[0] : 0;
 
-    const trend = evals.map((e) => {
+    const trend = [...evals].reverse().map((e) => {
       const gy = e.r.subjects
         .filter((s) => s.subjectId === "turkce" || s.subjectId === "matematik")
         .reduce(
@@ -228,8 +228,9 @@ export default function DenemeAnalytics({
 
     const avgSecondsPerQuestion = avgDuration ? (avgDuration * 60) / 120 : null;
 
-    const latest = nets[nets.length - 1];
-    const improvement = nets.length > 1 ? latest - nets[0] : 0;
+    const latest = nets[0];
+    const firstNet = nets[nets.length - 1];
+    const improvement = nets.length > 1 ? latest - firstNet : 0;
     const p3 = estimateP3Score(gyAvg, gkAvg);
     const bestP3 = estimateP3Score(gyBest, gkBest);
 
@@ -282,8 +283,9 @@ export default function DenemeAnalytics({
     const nets = evals.map((e) => e.net);
     const avg = nets.reduce((a, b) => a + b, 0) / nets.length;
     const best = Math.max(...nets);
-    const latest = nets[nets.length - 1];
-    const improvement = nets.length > 1 ? latest - nets[0] : 0;
+    const latest = nets[0];
+    const firstNet = nets[nets.length - 1];
+    const improvement = nets.length > 1 ? latest - firstNet : 0;
 
     const avgC = evals.reduce((a, b) => a + b.correct, 0) / evals.length;
     const avgW = evals.reduce((a, b) => a + b.wrong, 0) / evals.length;
@@ -299,7 +301,7 @@ export default function DenemeAnalytics({
     const avgSecondsPerQuestion =
       avgDuration && maxQuestions > 0 ? (avgDuration * 60) / maxQuestions : null;
 
-    const trend = evals.map((e) => ({
+    const trend = [...evals].reverse().map((e) => ({
       name: e.d.name,
       date: e.d.date,
       net: e.net,
@@ -531,8 +533,8 @@ export default function DenemeAnalytics({
                         stats.improvement > 0 ? "text-[#58cc02]" : "text-[#ff4b4b]"
                       }`}
                     >
-                      {stats.improvement > 0 ? "+" : ""}
-                      {formatNet(stats.improvement)} net
+                      {stats.improvement > 0 ? "+" : "-"}
+                      {formatNet(Math.abs(stats.improvement))} net
                     </span>{" "}
                     {stats.improvement > 0 ? "ilerleme!" : "gerileme."}
                   </span>
