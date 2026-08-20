@@ -91,8 +91,8 @@ export default function FloatingNavbar() {
               </span>
             </Link>
 
-            {/* 3D Navigation Links - Scrollable on tight viewports */}
-            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 overflow-x-auto no-scrollbar py-0.5 min-w-0 flex-1">
+            {/* 3D Navigation Links */}
+            <nav className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 overflow-x-auto no-scrollbar py-0.5 min-w-0">
               {NAV_LINKS.map((link) => {
                 const isActive = link.href === "/dashboard" || link.href === "/deneme" || link.href === "/simulator" || link.href === "/liderlik" 
                   ? pathname === link.href 
@@ -102,10 +102,10 @@ export default function FloatingNavbar() {
                   <Link 
                     key={link.name} 
                     href={link.href}
-                    className={`relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 xl:px-4 py-1.5 sm:py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap shrink-0 active:translate-y-0.5 ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 xl:px-4 py-2 rounded-xl text-xs xl:text-sm font-black transition-all cursor-pointer whitespace-nowrap shrink-0 active:translate-y-0.5 select-none ${
                       isActive 
-                        ? "bg-white dark:bg-slate-800 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-sm" 
-                        : "bg-transparent border-2 border-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6]"
+                        ? "bg-white dark:bg-slate-800 border-2 border-b-4 border-[#1cb0f6] border-b-[#1899d6] text-[#1cb0f6] shadow-xs" 
+                        : "bg-transparent border-2 border-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1cb0f6] dark:hover:text-[#1cb0f6]"
                     }`}
                   >
                     <AppleEmoji emoji={link.emoji} size={18} />
@@ -116,36 +116,36 @@ export default function FloatingNavbar() {
             </nav>
           </div>
 
-          {/* Right Side: Actions & Profile */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Theme Toggle Button */}
+          {/* Right Side: 3D Actions & Profile */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Theme Toggle 3D Button */}
             <button 
               type="button"
-              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 flex items-center justify-center text-slate-700 dark:text-white shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all cursor-pointer"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               title="Tema Değiştir"
             >
               <AppleEmoji emoji={theme === 'dark' ? '☀️' : '🌙'} size={18} />
             </button>
             
-            {/* Notification Bell */}
+            {/* Notification Bell 3D Button */}
             <button 
               type="button"
-              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/80 border-2 border-b-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all relative cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-2xs hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] active:translate-y-0.5 transition-all relative cursor-pointer"
               title="Bildirimler"
             >
               <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ff4b4b] rounded-full border-2 border-white dark:border-slate-800" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#ff4b4b] rounded-full border-2 border-white dark:border-slate-800 shadow-2xs animate-pulse" />
             </button>
             
-            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block" />
+            <div className="h-6 w-0.5 bg-slate-200 dark:border-slate-700 dark:bg-slate-700 mx-1 hidden sm:block rounded-full" />
             
-            {/* User Profile Avatar & Dropdown */}
+            {/* User Profile Avatar 3D Button & Dropdown */}
             <div className="relative">
               <button 
                 type="button"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="w-10 h-10 rounded-xl border-2 border-b-4 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-2xs overflow-hidden flex items-center justify-center hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer"
+                className="w-10 h-10 rounded-xl border-2 border-b-4 border-slate-200 border-b-slate-300 dark:border-slate-700 dark:border-b-slate-800 bg-white dark:bg-slate-800 shadow-2xs overflow-hidden flex items-center justify-center hover:border-[#1cb0f6] dark:hover:border-[#1cb0f6] hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer"
               >
                 {user?.photoURL ? (
                   // eslint-disable-next-line @next/next/no-img-element

@@ -5,7 +5,7 @@ import ScoreStepper from "./ScoreStepper";
 import DenemeAlert from "./DenemeAlert";
 import AppleEmoji from "../AppleEmoji";
 import { getSubjectTopics } from "@/lib/topicUtils";
-import { Search, Check, RotateCcw, X, Target, Plus } from "lucide-react";
+import { Search, Check, RotateCcw, X, Target, Plus, Minus } from "lucide-react";
 
 type Props = {
   subject: SubjectScoreResult;
@@ -86,7 +86,7 @@ export default function SubjectScoreRow({
     }
   }, [subject.wrong, subject.empty, topicErrors, onTopicErrorsChange]);
 
-  const toggleWrongClick = (topicId: string, topicTitle: string) => {
+  const changeWrongCount = (topicId: string, topicTitle: string, delta: number) => {
     if (!onTopicErrorsChange) return;
 
     const existingIndex = topicErrors.findIndex((t) => t.topicId === topicId);
@@ -94,25 +94,29 @@ export default function SubjectScoreRow({
 
     if (existingIndex > -1) {
       const curW = updated[existingIndex].wrongCount || 0;
-      if (remainingWrongSlots > 0) {
-        updated[existingIndex] = { ...updated[existingIndex], wrongCount: curW + 1 };
-      } else {
-        updated[existingIndex] = { ...updated[existingIndex], wrongCount: 0 };
+      const nextW = Math.max(0, curW + delta);
+
+      // If incrementing beyond remaining slots, auto increment subject.wrong
+      if (delta > 0 && remainingWrongSlots <= 0) {
+        onChange("wrong", subject.wrong + delta);
       }
 
-      if ((updated[existingIndex].wrongCount || 0) === 0 && (updated[existingIndex].emptyCount || 0) === 0) {
+      updated[existingIndex] = { ...updated[existingIndex], wrongCount: nextW };
+
+      if (nextW === 0 && (updated[existingIndex].emptyCount || 0) === 0) {
         updated = updated.filter((t) => t.topicId !== topicId);
       }
-    } else {
-      if (remainingWrongSlots > 0) {
-        updated.push({ topicId, topicTitle, wrongCount: 1, emptyCount: 0 });
+    } else if (delta > 0) {
+      if (remainingWrongSlots <= 0) {
+        onChange("wrong", subject.wrong + delta);
       }
+      updated.push({ topicId, topicTitle, wrongCount: delta, emptyCount: 0 });
     }
 
     onTopicErrorsChange(updated);
   };
 
-  const toggleEmptyClick = (topicId: string, topicTitle: string) => {
+  const changeEmptyCount = (topicId: string, topicTitle: string, delta: number) => {
     if (!onTopicErrorsChange) return;
 
     const existingIndex = topicErrors.findIndex((t) => t.topicId === topicId);
@@ -120,19 +124,23 @@ export default function SubjectScoreRow({
 
     if (existingIndex > -1) {
       const curE = updated[existingIndex].emptyCount || 0;
-      if (remainingEmptySlots > 0) {
-        updated[existingIndex] = { ...updated[existingIndex], emptyCount: curE + 1 };
-      } else {
-        updated[existingIndex] = { ...updated[existingIndex], emptyCount: 0 };
+      const nextE = Math.max(0, curE + delta);
+
+      // If incrementing beyond remaining slots, auto increment subject.empty
+      if (delta > 0 && remainingEmptySlots <= 0) {
+        onChange("empty", subject.empty + delta);
       }
 
-      if ((updated[existingIndex].wrongCount || 0) === 0 && (updated[existingIndex].emptyCount || 0) === 0) {
+      updated[existingIndex] = { ...updated[existingIndex], emptyCount: nextE };
+
+      if (nextE === 0 && (updated[existingIndex].wrongCount || 0) === 0) {
         updated = updated.filter((t) => t.topicId !== topicId);
       }
-    } else {
-      if (remainingEmptySlots > 0) {
-        updated.push({ topicId, topicTitle, wrongCount: 0, emptyCount: 1 });
+    } else if (delta > 0) {
+      if (remainingEmptySlots <= 0) {
+        onChange("empty", subject.empty + delta);
       }
+      updated.push({ topicId, topicTitle, wrongCount: 0, emptyCount: delta });
     }
 
     onTopicErrorsChange(updated);
@@ -234,7 +242,7 @@ export default function SubjectScoreRow({
       </div>
 
       {/* ━━━ KOMPAKT KONU ŞERİDİ & MODAL BUTONU (SAYFAYI UZATMAZ) ━━━ */}
-      {topics.length > 0 && (subject.wrong > 0 || subject.empty > 0) && (
+      {topics.length > 0 && (
         <div className="mt-4 pt-3.5 border-t-2 border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-3 flex-wrap">
           
           {/* Seçili Konu Rozetleri Şeridi */}
@@ -244,9 +252,11 @@ export default function SubjectScoreRow({
                 <span
                   key={t.topicId}
                   className={`px-3 py-1 rounded-xl text-xs font-black border-2 border-b-4 flex items-center gap-1.5 shadow-2xs ${
-                    (t.wrongCount || 0) > 0
+                    (t.wrongCount || 0) > 0 && (t.emptyCount || 0) > 0
+                      ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/40"
+                      : (t.wrongCount || 0) > 0
                       ? "bg-[#ff4b4b]/10 text-[#ff4b4b] border-[#ff4b4b]/40"
-                      : "bg-amber-500/10 text-amber-500 border-amber-500/40"
+                      : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/40"
                   }`}
                 >
                   <span className="truncate max-w-[160px]">{t.topicTitle.split("(")[0]}</span>
@@ -280,84 +290,93 @@ export default function SubjectScoreRow({
         </div>
       )}
 
-      {/* ━━━ ŞIK POP-UP MODAL PENCERESİ (PAGE HEİGHT KESİNLİKLE UZAMAZ) ━━━ */}
+      {/* ━━━ ŞIK POP-UP MODAL PENCERESİ (SİTE STANDARDI 3D TASARIM) ━━━ */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-md">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="w-full max-w-2xl sm:max-w-3xl bg-white dark:bg-slate-800 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 shadow-2xl space-y-4 max-h-[88vh] flex flex-col overflow-hidden"
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ type: "spring", stiffness: 350, damping: 28 }}
+              className="w-full max-w-2xl sm:max-w-3xl bg-white dark:bg-slate-800 border-2 border-b-6 border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-6 sm:p-7 shadow-2xl space-y-4 max-h-[88vh] flex flex-col overflow-hidden"
             >
               {/* Modal Başlık Barı */}
-              <div className="flex items-center justify-between pb-3 border-b-2 border-slate-100 dark:border-slate-700/60 shrink-0">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between pb-3.5 border-b-2 border-slate-100 dark:border-slate-700/80 shrink-0">
+                <div className="flex items-center gap-3.5">
                   <div
-                    className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg border-2 border-b-4 shadow-2xs shrink-0"
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg border-2 border-b-4 shadow-2xs shrink-0"
                     style={{ backgroundColor: `${subject.color}15`, borderColor: subject.color, color: subject.color }}
                   >
-                    <AppleEmoji emoji={subject.icon} size={22} color={subject.color} />
+                    <AppleEmoji emoji={subject.icon} size={24} color={subject.color} />
                   </div>
                   <div>
-                    <h3 className="font-black text-slate-800 dark:text-white text-base">{subject.title} - Hangi Konularda Takıldın?</h3>
-                    <p className="text-xs font-bold text-slate-400">Tek tıkla hatalı konularınızı işaretleyin</p>
+                    <h3 className="font-black text-slate-800 dark:text-white text-lg tracking-tight">
+                      {subject.title} - Hangi Konularda Takıldın?
+                    </h3>
+                    <p className="text-xs font-bold text-slate-400 dark:text-slate-400 mt-0.5">
+                      Hatalı veya boş bıraktığınız konuları işaretleyip adetlerini belirleyin
+                    </p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer shrink-0"
+                  className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-600 border-2 border-b-4 border-slate-200 dark:border-slate-600 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer shadow-2xs shrink-0"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5 stroke-[2.5]" />
                 </button>
               </div>
 
-              {/* Canlı Eşleşme Sayaç Çubuğu */}
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 shrink-0 text-xs font-bold">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {subject.wrong > 0 && (
-                    <span className={`px-2.5 py-1 rounded-xl border-2 border-b-4 text-[11px] font-black tracking-wide ${
-                      totalMarkedWrong === subject.wrong ? "bg-[#58cc02]/15 text-[#58cc02] border-[#58cc02]/40" : "bg-[#ff4b4b]/15 text-[#ff4b4b] border-[#ff4b4b]/40"
-                    }`}>
-                      Yanlış: {totalMarkedWrong}/{subject.wrong}
-                    </span>
-                  )}
-                  {subject.empty > 0 && (
-                    <span className={`px-2.5 py-1 rounded-xl border-2 border-b-4 text-[11px] font-black tracking-wide ${
-                      totalMarkedEmpty === subject.empty ? "bg-[#58cc02]/15 text-[#58cc02] border-[#58cc02]/40" : "bg-amber-500/15 text-amber-500 border-amber-500/40"
-                    }`}>
-                      Boş: {totalMarkedEmpty}/{subject.empty}
-                    </span>
-                  )}
+              {/* Canlı Eşleşme Sayaç Çubuğu (3D HUD) */}
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/90 border-2 border-b-4 border-slate-200 dark:border-slate-700 shrink-0 text-xs font-bold gap-3 flex-wrap">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  {/* Yanlış Rozeti (Her zaman Kırmızı) */}
+                  <span className={`px-3 py-1.5 rounded-xl border-2 border-b-4 text-xs font-black tracking-wide flex items-center gap-1.5 shadow-2xs ${
+                    subject.wrong > 0 || totalMarkedWrong > 0
+                      ? "bg-[#ff4b4b]/15 text-[#ff4b4b] border-[#ff4b4b]/50"
+                      : "bg-slate-200/60 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-700"
+                  }`}>
+                    <AppleEmoji emoji="❌" size={13} color={subject.wrong > 0 || totalMarkedWrong > 0 ? "#ff4b4b" : "#94a3b8"} />
+                    <span>Yanlış: <strong className="font-mono">{totalMarkedWrong}</strong>{subject.wrong > 0 ? ` / ${subject.wrong}` : ""}</span>
+                  </span>
+
+                  {/* Boş Rozeti (Her zaman Turuncu) */}
+                  <span className={`px-3 py-1.5 rounded-xl border-2 border-b-4 text-xs font-black tracking-wide flex items-center gap-1.5 shadow-2xs ${
+                    subject.empty > 0 || totalMarkedEmpty > 0
+                      ? "bg-amber-500/15 text-amber-500 border-amber-500/50"
+                      : "bg-slate-200/60 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-700"
+                  }`}>
+                    <AppleEmoji emoji="⚪" size={13} color={subject.empty > 0 || totalMarkedEmpty > 0 ? "#ff9500" : "#94a3b8"} />
+                    <span>Boş: <strong className="font-mono">{totalMarkedEmpty}</strong>{subject.empty > 0 ? ` / ${subject.empty}` : ""}</span>
+                  </span>
                 </div>
 
                 {topicErrors.length > 0 && (
                   <button
                     type="button"
                     onClick={() => onTopicErrorsChange && onTopicErrorsChange([])}
-                    className="px-2.5 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/30 text-rose-500 border-2 border-rose-200 dark:border-rose-800 text-[11px] font-black flex items-center gap-1 hover:bg-rose-100 cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-500 hover:text-rose-600 dark:text-rose-400 border-2 border-b-4 border-rose-200 border-b-rose-300 dark:border-rose-800 dark:border-b-rose-900 hover:border-rose-400 hover:border-b-rose-500 dark:hover:border-rose-500 dark:hover:border-b-rose-600 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs font-black flex items-center gap-1.5 cursor-pointer active:translate-y-0.5 shadow-2xs transition-all"
                   >
-                    <RotateCcw className="w-3 h-3" /> Temizle
+                    <RotateCcw className="w-3.5 h-3.5 stroke-[2.5]" /> Temizle
                   </button>
                 )}
               </div>
 
               {/* Arama Barı */}
               <div className="relative shrink-0">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Konu ara..."
-                  className="w-full bg-slate-100 dark:bg-slate-900 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl pl-10 pr-4 py-2.5 text-xs font-bold text-slate-800 dark:text-white placeholder:text-slate-400 outline-none focus:border-[#1cb0f6] shadow-2xs"
+                  placeholder="Konularda hızlıca ara..."
+                  className="w-full bg-slate-100/90 dark:bg-slate-900/90 border-2 border-b-4 border-slate-200 dark:border-slate-700 rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm font-bold text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-[#1cb0f6] focus:border-b-[#1899d6] dark:focus:border-[#1cb0f6] dark:focus:border-b-[#1899d6] transition-all shadow-2xs"
                 />
               </div>
 
               {/* Konu Kartları Scroll Listesi */}
-              <div className="space-y-2.5 overflow-y-auto pr-1 flex-1">
+              <div className="space-y-3 overflow-y-auto pr-1 flex-1">
                 {filteredTopics.map((t) => {
                   const errorEntry = topicErrors.find((e) => e.topicId === t.id);
                   const wCount = errorEntry?.wrongCount || 0;
@@ -368,22 +387,24 @@ export default function SubjectScoreRow({
                   return (
                     <div
                       key={t.id}
-                      className={`p-4 rounded-2xl border-2 border-b-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                        isWrongActive
-                          ? "bg-rose-50/90 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 shadow-2xs"
+                      className={`p-4 rounded-2xl border-2 border-b-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 shadow-xs ${
+                        isWrongActive && isEmptyActive
+                          ? "bg-purple-50/80 dark:bg-purple-950/25 border-purple-300 dark:border-purple-800/80 border-b-[#af52de]"
+                          : isWrongActive
+                          ? "bg-rose-50/80 dark:bg-rose-950/25 border-rose-300 dark:border-rose-800/80 border-b-[#ff4b4b]"
                           : isEmptyActive
-                          ? "bg-amber-50/90 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800 shadow-2xs"
-                          : "bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                          ? "bg-amber-50/80 dark:bg-amber-950/25 border-amber-300 dark:border-amber-800/80 border-b-[#ff9500]"
+                          : "bg-white dark:bg-slate-800/90 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                       }`}
                     >
                       <div className="flex-1 min-w-0">
                         {t.questionRange && (
                           <div className="mb-1.5">
                             <span 
-                              className="px-2.5 py-0.5 rounded-lg text-[11px] font-black tracking-wide border-2 border-b-2 shadow-2xs inline-block"
+                              className="px-2.5 py-0.8 rounded-xl text-xs font-black tracking-wide border-2 border-b-2 shadow-2xs inline-flex items-center gap-1"
                               style={{
                                 backgroundColor: `${subject.color}15`,
-                                borderColor: `${subject.color}40`,
+                                borderColor: `${subject.color}50`,
                                 color: subject.color
                               }}
                             >
@@ -395,53 +416,81 @@ export default function SubjectScoreRow({
                           {t.title}
                         </p>
                         {t.questionCount && (
-                          <p className="text-[10px] font-bold text-slate-400 mt-1">Sınav Ağırlığı: {t.questionCount}</p>
+                          <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 mt-1 flex items-center gap-1">
+                            Sınav Ağırlığı: <span className="font-mono text-slate-600 dark:text-slate-300 font-black">{t.questionCount}</span>
+                          </p>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        {subject.wrong > 0 && (
+                      <div className="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap justify-end">
+                        {/* YANLIŞ SEÇENEĞİ & 3D MİNİ STEPPER */}
+                        {wCount === 0 ? (
                           <button
                             type="button"
-                            onClick={() => toggleWrongClick(t.id, t.title)}
-                            disabled={!isWrongActive && remainingWrongSlots <= 0}
-                            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all border-2 border-b-4 cursor-pointer active:translate-y-0.5 flex items-center gap-1.5 ${
-                              isWrongActive
-                                ? "bg-[#ff4b4b] text-white border-rose-700 shadow-xs"
-                                : remainingWrongSlots > 0
-                                ? "bg-slate-100 dark:bg-slate-700/80 text-rose-500 dark:text-rose-400 border-slate-200 dark:border-slate-600 hover:border-rose-400"
-                                : "bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-40"
-                            }`}
+                            onClick={() => changeWrongCount(t.id, t.title, 1)}
+                            className="px-3.5 py-2 rounded-xl text-xs font-black transition-all border-2 border-b-4 cursor-pointer active:translate-y-0.5 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-rose-500 dark:text-rose-400 border-slate-200 dark:border-slate-600 hover:border-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 shadow-xs"
                           >
-                            <span>❌ YANLIŞ</span>
-                            {wCount > 0 && (
-                              <span className="px-1.5 py-0.2 rounded-md bg-white text-[#ff4b4b] text-[11px] font-black shadow-2xs">
-                                {wCount}
-                              </span>
-                            )}
+                            <AppleEmoji emoji="❌" size={13} color="#ff4b4b" />
+                            <span>YANLIŞ</span>
                           </button>
+                        ) : (
+                          <div className="flex items-center rounded-xl bg-[#ff4b4b] text-white border-2 border-b-4 border-[#d63a3a] shadow-xs overflow-hidden h-9">
+                            <button
+                              type="button"
+                              onClick={() => changeWrongCount(t.id, t.title, -1)}
+                              className="w-7.5 h-full flex items-center justify-center hover:bg-black/15 active:bg-black/25 transition-colors cursor-pointer select-none text-white"
+                              title="Yanlışı Azalt"
+                            >
+                              <Minus className="w-3.5 h-3.5 stroke-[3]" />
+                            </button>
+                            <div className="px-2 font-black text-xs min-w-[54px] text-center flex items-center justify-center gap-1 select-none">
+                              <span className="font-mono text-sm">{wCount}</span>
+                              <span className="text-[10px] uppercase font-bold opacity-90">Yanlış</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => changeWrongCount(t.id, t.title, 1)}
+                              className="w-7.5 h-full flex items-center justify-center hover:bg-black/15 active:bg-black/25 transition-colors cursor-pointer select-none text-white"
+                              title="Yanlışı Artır"
+                            >
+                              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                            </button>
+                          </div>
                         )}
 
-                        {subject.empty > 0 && (
+                        {/* BOŞ SEÇENEĞİ & 3D MİNİ STEPPER */}
+                        {eCount === 0 ? (
                           <button
                             type="button"
-                            onClick={() => toggleEmptyClick(t.id, t.title)}
-                            disabled={!isEmptyActive && remainingEmptySlots <= 0}
-                            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all border-2 border-b-4 cursor-pointer active:translate-y-0.5 flex items-center gap-1.5 ${
-                              isEmptyActive
-                                ? "bg-amber-500 text-white border-amber-700 shadow-xs"
-                                : remainingEmptySlots > 0
-                                ? "bg-slate-100 dark:bg-slate-700/80 text-amber-600 dark:text-amber-400 border-slate-200 dark:border-slate-600 hover:border-amber-400"
-                                : "bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-40"
-                            }`}
+                            onClick={() => changeEmptyCount(t.id, t.title, 1)}
+                            className="px-3.5 py-2 rounded-xl text-xs font-black transition-all border-2 border-b-4 cursor-pointer active:translate-y-0.5 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-amber-600 dark:text-amber-400 border-slate-200 dark:border-slate-600 hover:border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 shadow-xs"
                           >
-                            <span>⚪ BOŞ</span>
-                            {eCount > 0 && (
-                              <span className="px-1.5 py-0.2 rounded-md bg-white text-amber-600 text-[11px] font-black shadow-2xs">
-                                {eCount}
-                              </span>
-                            )}
+                            <AppleEmoji emoji="⚪" size={13} color="#ff9500" />
+                            <span>BOŞ</span>
                           </button>
+                        ) : (
+                          <div className="flex items-center rounded-xl bg-[#ff9500] text-white border-2 border-b-4 border-[#d97d00] shadow-xs overflow-hidden h-9">
+                            <button
+                              type="button"
+                              onClick={() => changeEmptyCount(t.id, t.title, -1)}
+                              className="w-7.5 h-full flex items-center justify-center hover:bg-black/15 active:bg-black/25 transition-colors cursor-pointer select-none text-white"
+                              title="Boşu Azalt"
+                            >
+                              <Minus className="w-3.5 h-3.5 stroke-[3]" />
+                            </button>
+                            <div className="px-2 font-black text-xs min-w-[46px] text-center flex items-center justify-center gap-1 select-none">
+                              <span className="font-mono text-sm">{eCount}</span>
+                              <span className="text-[10px] uppercase font-bold opacity-90">Boş</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => changeEmptyCount(t.id, t.title, 1)}
+                              className="w-7.5 h-full flex items-center justify-center hover:bg-black/15 active:bg-black/25 transition-colors cursor-pointer select-none text-white"
+                              title="Boşu Artır"
+                            >
+                              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -449,14 +498,14 @@ export default function SubjectScoreRow({
                 })}
               </div>
 
-              {/* Modal Alt Tamam Butonu */}
-              <div className="pt-3 border-t-2 border-slate-100 dark:border-slate-700/60 shrink-0">
+              {/* Modal Alt Tamam Butonu (3D Duolingo Green) */}
+              <div className="pt-3.5 border-t-2 border-slate-100 dark:border-slate-700/80 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="w-full py-3 rounded-2xl bg-[#58cc02] text-white border-2 border-b-4 border-emerald-700 hover:bg-[#4eb602] text-xs font-black cursor-pointer active:translate-y-0.5 shadow-xs"
+                  className="w-full py-3.5 rounded-2xl bg-[#58cc02] hover:bg-[#4eb602] text-white font-black text-sm uppercase tracking-wider border-2 border-b-4 border-[#429902] active:translate-y-0.5 shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
-                  Tamamla ve Kaydet
+                  <Check className="w-5 h-5 stroke-[3]" /> Tamamla ve Kaydet
                 </button>
               </div>
             </motion.div>

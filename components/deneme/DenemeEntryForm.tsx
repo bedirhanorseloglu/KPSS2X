@@ -674,12 +674,6 @@ export default function DenemeEntryForm({ targetNet, onSubmit, onCancel, initial
 
           {/* ━━━ CANLI SKOR GÖSTERGE KARTI (3D HERO PEDESTAL) ━━━ */}
           <div className="bg-slate-50 dark:bg-slate-900/60 border-2 border-b-4 border-slate-200 dark:border-slate-700/80 rounded-3xl p-6 text-center relative overflow-hidden shadow-2xs group">
-            {/* Ambient glow */}
-            <div
-              className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-20 transition-all duration-500"
-              style={{ backgroundColor: activeColor }}
-            />
-
             {/* Top 3D Subject Pill */}
             <div
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-white text-xs font-black uppercase tracking-wider mb-3 shadow-xs border-b-2 transition-transform group-hover:scale-102"
